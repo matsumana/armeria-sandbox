@@ -14,12 +14,6 @@ version = "0.0.1-SNAPSHOT"
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_10
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
-jar {
-    manifest {
-        attributes "Main-Class": "info.matsumana.armeria.BasicServer"
-    }
-}
-
 dependencies {
     compile "com.linecorp.armeria:armeria:0.69.0"
 
@@ -35,5 +29,11 @@ test {
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
+    }
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "info.matsumana.armeria.BasicServer"
     }
 }
