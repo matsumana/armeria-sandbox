@@ -8,6 +8,8 @@ import com.linecorp.armeria.common.MediaType;
 import com.linecorp.armeria.server.Server;
 import com.linecorp.armeria.server.ServerBuilder;
 
+import info.matsumana.armeria.service.MyService;
+
 public final class BasicServer {
 
     public static void main(String[] args) {
@@ -16,6 +18,8 @@ public final class BasicServer {
 
         sb.service("/hello", (ctx, res) -> HttpResponse.of(
                 HttpStatus.OK, MediaType.PLAIN_TEXT_UTF_8, "Hello World!"));
+
+        sb.annotatedService(new MyService());
 
         final Server server = sb.build();
         final CompletableFuture<Void> future = server.start();
