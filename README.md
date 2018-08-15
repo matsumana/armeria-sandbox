@@ -3,11 +3,11 @@
 ## How to build
 
 ```
-$ ./gradlew clean shadowJar
+$ ./gradlew clean build
 ```
 
 ## How to run
 
 ```
-$ java -jar build/libs/armeria-sandbox-*-all.jar
+$ java -jar ./build/libs/armeria-sandbox-*.jar
 ```
