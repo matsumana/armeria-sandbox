@@ -32,6 +32,13 @@ public class IntegrationTest {
     }
 
     @Test
+    public void healthCheck() throws Exception {
+        final AggregatedHttpMessage res = client.get("/internal/healthcheck").aggregate().join();
+        assertThat(res.status()).isEqualTo(HttpStatus.OK);
+        assertThat(res.content().toStringUtf8()).isEqualTo("ok");
+    }
+
+    @Test
     public void index() {
         final AggregatedHttpMessage res = client.get("/").aggregate().join();
         assertThat(res.status()).isEqualTo(HttpStatus.OK);
@@ -46,9 +53,9 @@ public class IntegrationTest {
     }
 
     @Test
-    public void healthCheck() throws Exception {
-        final AggregatedHttpMessage res = client.get("/internal/healthcheck").aggregate().join();
+    public void hello_thrift() throws Exception {
+        final AggregatedHttpMessage res = client.get("/hello/bar").aggregate().join();
         assertThat(res.status()).isEqualTo(HttpStatus.OK);
-        assertThat(res.content().toStringUtf8()).isEqualTo("ok");
+        assertThat(res.content().toStringUtf8()).isEqualTo("Hello, bar");
     }
 }
