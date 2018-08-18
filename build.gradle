@@ -35,7 +35,7 @@ dependencyManagement {
 
 dependencies {
     compile "com.linecorp.armeria:armeria"
-    compile "com.linecorp.armeria:armeria-spring-boot-autoconfigure"
+    compile "com.linecorp.armeria:armeria-spring-boot-starter"
     compile "com.linecorp.armeria:armeria-tomcat"
     compile "com.linecorp.armeria:armeria-thrift"
     compile "org.springframework.boot:spring-boot-starter-web"
