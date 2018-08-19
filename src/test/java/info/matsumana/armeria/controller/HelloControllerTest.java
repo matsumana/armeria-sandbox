@@ -3,9 +3,8 @@ package info.matsumana.armeria.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.inject.Inject;
-
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,7 +16,7 @@ import info.matsumana.armeria.TextContext;
 @WebMvcTest(HelloController.class)
 public class HelloControllerTest {
 
-    @Inject
+    @Autowired
     private MockMvc mvc;
 
     @Test

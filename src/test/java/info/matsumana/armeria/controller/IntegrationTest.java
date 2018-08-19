@@ -2,10 +2,9 @@ package info.matsumana.armeria.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.inject.Inject;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -21,7 +20,7 @@ import info.matsumana.armeria.TextContext;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
 
-    @Inject
+    @Autowired
     private Server server;
 
     private HttpClient client;
