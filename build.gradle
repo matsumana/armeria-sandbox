@@ -1,9 +1,10 @@
 buildscript {
     ext {
-        springBootVersion = "2.0.4.RELEASE"
         thriftGradlePluginVersion = "0.4.0"
-        thriftVersion = "0.11.0"
+
+        springBootVersion = "2.0.4.RELEASE"
         armeriaVersion = "0.69.0"
+        thriftVersion = "0.11.0"
         junitVersion = "5.2.0"
     }
     repositories {
