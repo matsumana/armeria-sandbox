@@ -6,15 +6,9 @@ import org.springframework.boot.web.servlet.context.ServletWebServerApplicationC
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.google.common.collect.ImmutableList;
-
 import com.linecorp.armeria.server.healthcheck.HealthChecker;
-import com.linecorp.armeria.server.thrift.THttpService;
 import com.linecorp.armeria.server.tomcat.TomcatService;
 import com.linecorp.armeria.spring.ArmeriaServerConfigurator;
-import com.linecorp.armeria.spring.ThriftServiceRegistrationBean;
-
-import info.matsumana.armeria.thrift.HelloService;
 
 @Configuration
 public class ArmeriaConfig {
@@ -39,14 +33,5 @@ public class ArmeriaConfig {
     @Bean
     public ArmeriaServerConfigurator armeriaServiceInitializer(TomcatService tomcatService) {
         return sb -> sb.service("prefix:/", tomcatService);
-    }
-
-    @Bean
-    public ThriftServiceRegistrationBean helloService(HelloService.Iface helloService) {
-        return new ThriftServiceRegistrationBean()
-                .setPath("/thrift/hello")
-                .setService(THttpService.of(helloService))
-                .setServiceName("HelloService")
-                .setExampleRequests(ImmutableList.of(new HelloService.hello_args("foo")));
     }
 }

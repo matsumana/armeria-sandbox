@@ -14,9 +14,9 @@ import com.linecorp.armeria.common.AggregatedHttpMessage;
 import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.server.Server;
 
-import info.matsumana.armeria.TextContext;
+import info.matsumana.armeria.TestContext;
 
-@SpringJUnitConfig(TextContext.class)
+@SpringJUnitConfig(TestContext.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
 
@@ -56,5 +56,12 @@ public class IntegrationTest {
         final AggregatedHttpMessage res = client.get("/hello/bar").aggregate().join();
         assertThat(res.status()).isEqualTo(HttpStatus.OK);
         assertThat(res.content().toStringUtf8()).isEqualTo("Hello, bar");
+    }
+
+    @Test
+    public void ping_thrift() throws Exception {
+        final AggregatedHttpMessage res = client.get("/ping").aggregate().join();
+        assertThat(res.status()).isEqualTo(HttpStatus.OK);
+        assertThat(res.content().toStringUtf8()).isEqualTo("pong");
     }
 }

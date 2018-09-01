@@ -10,9 +10,9 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import info.matsumana.armeria.TextContext;
+import info.matsumana.armeria.TestContext;
 
-@SpringJUnitConfig(TextContext.class)
+@SpringJUnitConfig(TestContext.class)
 @WebMvcTest(RootController.class)
 public class RootControllerTest {
 

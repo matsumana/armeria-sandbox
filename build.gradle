@@ -3,7 +3,8 @@ buildscript {
         thriftGradlePluginVersion = "0.4.0"
 
         springBootVersion = "2.0.4.RELEASE"
-        armeriaVersion = "0.69.0"
+        zipkinBomVersion = "5.2.0"
+        armeriaVersion = "0.70.1"
         thriftVersion = "0.11.0"
         junitVersion = "5.2.0"
     }
@@ -28,7 +29,7 @@ apply plugin: "org.jruyi.thrift"
 group = "info.matsumana.armeria"
 version = "0.0.2-SNAPSHOT"
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_10
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 repositories {
@@ -38,6 +39,7 @@ repositories {
 dependencyManagement {
     imports {
         mavenBom "com.linecorp.armeria:armeria-bom:${armeriaVersion}"
+        mavenBom "io.zipkin.brave:brave-bom:${zipkinBomVersion}"
     }
 }
 
@@ -46,8 +48,10 @@ dependencies {
     compile "com.linecorp.armeria:armeria-spring-boot-starter"
     compile "com.linecorp.armeria:armeria-tomcat"
     compile "com.linecorp.armeria:armeria-thrift"
+    compile "com.linecorp.armeria:armeria-zipkin"
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.apache.thrift:libthrift:${thriftVersion}"
+    compile "io.zipkin.reporter2:zipkin-sender-urlconnection"
 
     testCompile("org.springframework.boot:spring-boot-starter-test") {
         exclude group: "junit", module: "junit"
@@ -60,6 +64,7 @@ dependencies {
 
 compileThrift {
     thriftExecutable "/usr/local/bin/thrift"  // TODO Put thrift binary in this repo and refer it
+    sourceDir "${projectDir}/src/main/thrift"
 }
 
 compileJava {

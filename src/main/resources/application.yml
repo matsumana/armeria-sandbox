@@ -6,3 +6,9 @@ armeria:
   ports:
     - port: 8080
       protocol: HTTP
+
+api-server: 127.0.0.1:8080
+
+zipkin:
+  endpoint: http://127.0.0.1:19411/api/v2/spans
+  service-name: backend
