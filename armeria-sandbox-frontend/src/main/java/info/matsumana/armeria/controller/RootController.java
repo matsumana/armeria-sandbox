@@ -1,15 +1,15 @@
 package info.matsumana.armeria.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
-@RestController
-@RequestMapping("/")
+import com.linecorp.armeria.common.HttpResponse;
+import com.linecorp.armeria.server.annotation.Get;
+
+@Component
 public class RootController {
 
-    @GetMapping
-    String index() {
-        return "index";
+    @Get("/")
+    public HttpResponse index() {
+        return HttpResponse.of("index");
     }
 }

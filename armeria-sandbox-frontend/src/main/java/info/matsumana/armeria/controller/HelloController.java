@@ -1,23 +1,21 @@
 package info.matsumana.armeria.controller;
 
 import org.apache.thrift.TException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
 import com.linecorp.armeria.client.ClientBuilder;
 import com.linecorp.armeria.client.tracing.HttpTracingClient;
 import com.linecorp.armeria.common.HttpRequest;
 import com.linecorp.armeria.common.HttpResponse;
+import com.linecorp.armeria.server.annotation.Get;
+import com.linecorp.armeria.server.annotation.Param;
 
 import brave.Tracing;
 import info.matsumana.armeria.config.ApiServerSetting;
 import info.matsumana.armeria.config.ZipkinTracingFactory;
 import info.matsumana.armeria.thrift.HelloService;
 
-@RestController
-@RequestMapping("/")
+@Component
 public class HelloController {
 
     private final ApiServerSetting apiServerSetting;
@@ -28,8 +26,8 @@ public class HelloController {
         tracing = tracingFactory.create("frontend");
     }
 
-    @GetMapping("hello/{name}")
-    String hello(@PathVariable String name) throws TException {
+    @Get("/hello/:name")
+    public HttpResponse hello(@Param String name) throws TException {
         {
             final HelloService.Iface helloService = new ClientBuilder(
                     String.format("tbinary+h2c://%s/thrift/hello", apiServerSetting.getBackend1()))
@@ -57,6 +55,6 @@ public class HelloController {
             final String ret3 = helloService.hello(name);
         }
 
-        return "Hello, " + name;
+        return HttpResponse.of("Hello, " + name);
     }
 }

@@ -105,18 +105,17 @@ project(":armeria-sandbox-common") {
     }
 }
 
-// Frontend REST server (Armeria w/ Spring MVC and Embedded Tomcat)
+// Frontend REST server
 project(":armeria-sandbox-frontend") {
     dependencies {
         compile project(":armeria-sandbox-thrift")
         compile project(":armeria-sandbox-common")
-        compile "org.springframework.boot:spring-boot-starter-web"
-        compile "com.linecorp.armeria:armeria-tomcat"
+        compile "org.springframework.boot:spring-boot-starter-validation"
         compile "com.linecorp.armeria:armeria-thrift"
     }
 }
 
-// Backend 1 Thrift server (Armeria w/o Spring MVC and Embedded Tomcat)
+// Backend 1 Thrift server
 project(":armeria-sandbox-backend1") {
     dependencies {
         compile project(":armeria-sandbox-thrift")
@@ -126,7 +125,7 @@ project(":armeria-sandbox-backend1") {
     }
 }
 
-// Backend 2 Thrift server (Armeria w/o Spring MVC and Embedded Tomcat)
+// Backend 2 Thrift server
 project(":armeria-sandbox-backend2") {
     dependencies {
         compile project(":armeria-sandbox-thrift")
@@ -136,7 +135,7 @@ project(":armeria-sandbox-backend2") {
     }
 }
 
-// Backend 3 Thrift server (Armeria w/o Spring MVC and Embedded Tomcat)
+// Backend 3 Thrift server
 project(":armeria-sandbox-backend3") {
     dependencies {
         compile project(":armeria-sandbox-thrift")
@@ -150,7 +149,7 @@ project(":armeria-sandbox-backend3") {
     }
 }
 
-// Backend 4 REST server (Armeria w/o Spring MVC and Embedded Tomcat)
+// Backend 4 REST server
 project(":armeria-sandbox-backend4") {
     dependencies {
         compile project(":armeria-sandbox-common")
