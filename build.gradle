@@ -6,6 +6,7 @@ buildscript {
         zipkinBomVersion = "5.2.0"
         armeriaVersion = "0.70.1"
         thriftVersion = "0.11.0"
+        retrofitVersion = "2.4.0"
         junitVersion = "5.2.0"
     }
     repositories {
@@ -20,60 +21,139 @@ buildscript {
     }
 }
 
-apply plugin: "java"
-apply plugin: "eclipse"
-apply plugin: "org.springframework.boot"
-apply plugin: "io.spring.dependency-management"
-apply plugin: "org.jruyi.thrift"
+subprojects {
+    apply plugin: "java"
+    apply plugin: "eclipse"
+    apply plugin: "org.springframework.boot"
+    apply plugin: "io.spring.dependency-management"
 
-group = "info.matsumana.armeria"
-version = "0.0.2-SNAPSHOT"
+    group = "info.matsumana.armeria"
+    version = "0.0.2-SNAPSHOT"
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
-[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
+    [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
-repositories {
-    mavenCentral()
-}
+    repositories {
+        mavenCentral()
+    }
 
-dependencyManagement {
-    imports {
-        mavenBom "com.linecorp.armeria:armeria-bom:${armeriaVersion}"
-        mavenBom "io.zipkin.brave:brave-bom:${zipkinBomVersion}"
+    dependencyManagement {
+        imports {
+            mavenBom "com.linecorp.armeria:armeria-bom:${armeriaVersion}"
+            mavenBom "io.zipkin.brave:brave-bom:${zipkinBomVersion}"
+        }
+    }
+
+    dependencies {
+        testCompile("org.springframework.boot:spring-boot-starter-test") {
+            exclude group: "junit", module: "junit"
+        }
+        testCompile "org.assertj:assertj-core"
+        testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+        testCompile "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+        testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    }
+
+    compileJava {
+        options.compilerArgs += "-parameters"
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
     }
 }
 
-dependencies {
-    compile "com.linecorp.armeria:armeria"
-    compile "com.linecorp.armeria:armeria-spring-boot-starter"
-    compile "com.linecorp.armeria:armeria-tomcat"
-    compile "com.linecorp.armeria:armeria-thrift"
-    compile "com.linecorp.armeria:armeria-zipkin"
-    compile "org.springframework.boot:spring-boot-starter-web"
-    compile "org.apache.thrift:libthrift:${thriftVersion}"
-    compile "io.zipkin.reporter2:zipkin-sender-urlconnection"
+// Thrift IDL
+project(":armeria-sandbox-thrift") {
+    apply plugin: "org.jruyi.thrift"
 
-    testCompile("org.springframework.boot:spring-boot-starter-test") {
-        exclude group: "junit", module: "junit"
+    dependencies {
+        compile "org.apache.thrift:libthrift:${thriftVersion}"
+        compile "javax.annotation:javax.annotation-api"
     }
-    testCompile "org.assertj:assertj-core"
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testCompile "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+
+    compileThrift {
+        thriftExecutable "/usr/local/bin/thrift"  // TODO Put thrift binary in this repo and refer it
+        sourceDir "${projectDir}/src/main/thrift"
+    }
+
+    bootJar {
+        enabled = false
+    }
+    jar {
+        enabled = true
+    }
 }
 
-compileThrift {
-    thriftExecutable "/usr/local/bin/thrift"  // TODO Put thrift binary in this repo and refer it
-    sourceDir "${projectDir}/src/main/thrift"
+// Common
+project(":armeria-sandbox-common") {
+    dependencies {
+        compile "com.linecorp.armeria:armeria"
+        compile "com.linecorp.armeria:armeria-spring-boot-starter"
+        compile "com.linecorp.armeria:armeria-zipkin"
+        compile "io.zipkin.reporter2:zipkin-sender-urlconnection"
+    }
+
+    bootJar {
+        enabled = false
+    }
+    jar {
+        enabled = true
+    }
 }
 
-compileJava {
-    options.compilerArgs += "-parameters"
+// Frontend REST server (Armeria w/ Spring MVC and Embedded Tomcat)
+project(":armeria-sandbox-frontend") {
+    dependencies {
+        compile project(":armeria-sandbox-thrift")
+        compile project(":armeria-sandbox-common")
+        compile "org.springframework.boot:spring-boot-starter-web"
+        compile "com.linecorp.armeria:armeria-tomcat"
+        compile "com.linecorp.armeria:armeria-thrift"
+    }
 }
 
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
+// Backend 1 Thrift server (Armeria w/o Spring MVC and Embedded Tomcat)
+project(":armeria-sandbox-backend1") {
+    dependencies {
+        compile project(":armeria-sandbox-thrift")
+        compile project(":armeria-sandbox-common")
+        compile "org.springframework.boot:spring-boot-starter-validation"
+        compile "com.linecorp.armeria:armeria-thrift"
+    }
+}
+
+// Backend 2 Thrift server (Armeria w/o Spring MVC and Embedded Tomcat)
+project(":armeria-sandbox-backend2") {
+    dependencies {
+        compile project(":armeria-sandbox-thrift")
+        compile project(":armeria-sandbox-common")
+        compile "org.springframework.boot:spring-boot-starter-validation"
+        compile "com.linecorp.armeria:armeria-thrift"
+    }
+}
+
+// Backend 3 Thrift server (Armeria w/o Spring MVC and Embedded Tomcat)
+project(":armeria-sandbox-backend3") {
+    dependencies {
+        compile project(":armeria-sandbox-thrift")
+        compile project(":armeria-sandbox-common")
+        compile "org.springframework.boot:spring-boot-starter-validation"
+        compile "com.linecorp.armeria:armeria-thrift"
+        compile "com.linecorp.armeria:armeria-retrofit2"
+        compile "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
+//        compile "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
+        compile "com.squareup.retrofit2:adapter-java8:${retrofitVersion}"
+    }
+}
+
+// Backend 4 REST server (Armeria w/o Spring MVC and Embedded Tomcat)
+project(":armeria-sandbox-backend4") {
+    dependencies {
+        compile project(":armeria-sandbox-common")
+        compile "org.springframework.boot:spring-boot-starter-validation"
     }
 }

@@ -1,8 +1,0 @@
-armeria:
-  ports:
-    - port: 0
-      protocol: HTTP
-
-zipkin:
-  endpoint: http://127.0.0.1:19411/api/v2/spans
-  service-name: backend

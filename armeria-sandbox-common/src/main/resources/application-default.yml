@@ -1,0 +1,8 @@
+zipkin:
+  endpoint: http://127.0.0.1:9411/api/v2/spans
+
+api-servers:
+  backend1: 127.0.0.1:8081
+  backend2: 127.0.0.1:8082
+  backend3: 127.0.0.1:8083
+  backend4: 127.0.0.1:8084

@@ -1,0 +1,4 @@
+armeria:
+  ports:
+  - port: 8083
+    protocol: HTTP

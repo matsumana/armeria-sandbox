@@ -4,7 +4,7 @@ services:
   zipkin:
     image: openzipkin/zipkin:2.11.3
     ports:
-    - 19411:9411
+    - 9411:9411
 
   zipkin-ui:
     image: openzipkin/zipkin-ui:2.11.3
