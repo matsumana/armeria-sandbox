@@ -10,3 +10,5 @@ services:
     image: openzipkin/zipkin-ui:2.11.3
     ports:
     - 10080:80
+    depends_on:
+    - zipkin
