@@ -11,7 +11,7 @@ import com.linecorp.armeria.server.tomcat.TomcatService;
 import com.linecorp.armeria.spring.ArmeriaServerConfigurator;
 
 @Configuration
-public class ArmeriaConfig {
+public class ArmeriaTomcatConfig {
 
     private static Connector getConnector(ServletWebServerApplicationContext applicationContext) {
         final TomcatWebServer container = (TomcatWebServer) applicationContext.getWebServer();
