@@ -31,21 +31,24 @@ public class HelloServiceImpl implements HelloService.Iface {
 
     @Override
     public String hello(String name) throws TException {
-        final Retrofit retrofit = new ArmeriaRetrofitBuilder()
-                .baseUrl(String.format("http://%s/", apiServerSetting.getBackend4()))
-                .addConverterFactory(ScalarsConverterFactory.create())
-//                .addConverterFactory(JacksonConverterFactory.create())
-                .addCallAdapterFactory(Java8CallAdapterFactory.create())
-                .withClientOptions((uri, ob) ->
-                                           ob.decorator(HttpRequest.class, HttpResponse.class,
-                                                        HttpTracingClient.newDecorator(tracing, "backend4")))
-                .build();
+        {
+            final Retrofit retrofit = new ArmeriaRetrofitBuilder()
+                    .baseUrl(String.format("http://%s/", apiServerSetting.getBackend4()))
+                    .addConverterFactory(ScalarsConverterFactory.create())
+//                    .addConverterFactory(JacksonConverterFactory.create())
+                    .addCallAdapterFactory(Java8CallAdapterFactory.create())
+                    .withClientOptions((uri, optionsBuilder) ->
+                                               optionsBuilder.decorator(
+                                                       HttpRequest.class, HttpResponse.class,
+                                                       HttpTracingClient.newDecorator(tracing, "backend4")))
+                    .build();
 
-        try {
-            final HelloHttp helloHttp = retrofit.create(HelloHttp.class);
-            final String ret = helloHttp.hello(name).get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+            try {
+                final HelloHttp helloHttp = retrofit.create(HelloHttp.class);
+                final String ret = helloHttp.hello(name).get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return "Hello, " + name;

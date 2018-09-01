@@ -9,25 +9,32 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import com.linecorp.armeria.client.ClientBuilder;
 import com.linecorp.armeria.client.HttpClient;
 import com.linecorp.armeria.common.AggregatedHttpMessage;
 import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
+import info.matsumana.armeria.thrift.HelloService;
 
 @SpringJUnitConfig(TestContext.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public class IntegrationTest {
 
     @Autowired
     private Server server;
 
     private HttpClient client;
+    private HelloService.Iface helloService;
 
     @BeforeEach
     public void beforeEach() {
         client = HttpClient.of("http://127.0.0.1:" + server.activePort().get().localAddress().getPort());
+        helloService = new ClientBuilder(
+                String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello",
+                              server.activePort().get().localAddress().getPort()))
+                .build(HelloService.Iface.class);
     }
 
     @Test
@@ -38,30 +45,8 @@ public class IntegrationTest {
     }
 
     @Test
-    public void index() {
-        final AggregatedHttpMessage res = client.get("/").aggregate().join();
-        assertThat(res.status()).isEqualTo(HttpStatus.OK);
-        assertThat(res.content().toStringUtf8()).isEqualTo("index");
-    }
-
-    @Test
     public void hello() throws Exception {
-        final AggregatedHttpMessage res = client.get("/hello").aggregate().join();
-        assertThat(res.status()).isEqualTo(HttpStatus.OK);
-        assertThat(res.content().toStringUtf8()).isEqualTo("Hello, World");
-    }
-
-    @Test
-    public void hello_thrift() throws Exception {
-        final AggregatedHttpMessage res = client.get("/hello/bar").aggregate().join();
-        assertThat(res.status()).isEqualTo(HttpStatus.OK);
-        assertThat(res.content().toStringUtf8()).isEqualTo("Hello, bar");
-    }
-
-    @Test
-    public void ping_thrift() throws Exception {
-        final AggregatedHttpMessage res = client.get("/ping").aggregate().join();
-        assertThat(res.status()).isEqualTo(HttpStatus.OK);
-        assertThat(res.content().toStringUtf8()).isEqualTo("pong");
+        final String res = helloService.hello("foo");
+        assertThat(res).isEqualTo("Hello, foo");
     }
 }

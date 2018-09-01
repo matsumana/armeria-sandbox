@@ -7,9 +7,4 @@ public class TestContext {
 
     // Mock beans will be defined here
 
-//    @Bean
-//    @Primary
-//    ApiServerConfig apiServerConfig(@Nullable Server server) {
-//        return new ApiServerConfig("", server);
-//    }
 }
