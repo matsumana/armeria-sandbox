@@ -45,6 +45,18 @@ public class IntegrationTest {
     }
 
     @Test
+    public void docs() throws Exception {
+        final AggregatedHttpMessage res = client.get("/internal/docs/").aggregate().join();
+        assertThat(res.status()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void metrics() throws Exception {
+        final AggregatedHttpMessage res = client.get("/internal/metrics").aggregate().join();
+        assertThat(res.status()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
     public void hello() throws Exception {
         final String res = helloService.hello("foo");
         assertThat(res).isEqualTo("Hello, foo");
