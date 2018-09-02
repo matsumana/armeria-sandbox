@@ -13,7 +13,7 @@ import com.linecorp.armeria.common.HttpResponse;
 import brave.Tracing;
 import info.matsumana.armeria.config.ApiServerSetting;
 import info.matsumana.armeria.config.ZipkinTracingFactory;
-import info.matsumana.armeria.retrofit.HelloHttp;
+import info.matsumana.armeria.retrofit.HelloClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.java8.Java8CallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -44,8 +44,8 @@ public class HelloServiceImpl implements HelloService.Iface {
                     .build();
 
             try {
-                final HelloHttp helloHttp = retrofit.create(HelloHttp.class);
-                final String ret = helloHttp.hello(name).get();
+                final HelloClient helloClient = retrofit.create(HelloClient.class);
+                final String ret = helloClient.hello(name).get();
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
