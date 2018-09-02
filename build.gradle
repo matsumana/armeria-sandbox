@@ -105,7 +105,7 @@ project(":armeria-sandbox-common") {
     }
 }
 
-// Frontend REST server
+// Frontend (REST server)
 project(":armeria-sandbox-frontend") {
     dependencies {
         compile project(":armeria-sandbox-thrift")
@@ -115,7 +115,7 @@ project(":armeria-sandbox-frontend") {
     }
 }
 
-// Backend 1 Thrift server
+// Backend 1 (Thrift server)
 project(":armeria-sandbox-backend1") {
     dependencies {
         compile project(":armeria-sandbox-thrift")
@@ -125,7 +125,7 @@ project(":armeria-sandbox-backend1") {
     }
 }
 
-// Backend 2 Thrift server
+// Backend 2 (Thrift server)
 project(":armeria-sandbox-backend2") {
     dependencies {
         compile project(":armeria-sandbox-thrift")
@@ -135,7 +135,7 @@ project(":armeria-sandbox-backend2") {
     }
 }
 
-// Backend 3 Thrift server
+// Backend 3 (Thrift server)
 project(":armeria-sandbox-backend3") {
     dependencies {
         compile project(":armeria-sandbox-thrift")
@@ -149,7 +149,7 @@ project(":armeria-sandbox-backend3") {
     }
 }
 
-// Backend 4 REST server
+// Backend 4 (REST server)
 project(":armeria-sandbox-backend4") {
     dependencies {
         compile project(":armeria-sandbox-common")
