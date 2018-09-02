@@ -30,10 +30,9 @@ public class IntegrationTest {
 
     @BeforeEach
     public void beforeEach() {
-        client = HttpClient.of("http://127.0.0.1:" + server.activePort().get().localAddress().getPort());
-        helloService = new ClientBuilder(
-                String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello",
-                              server.activePort().get().localAddress().getPort()))
+        final int port = server.activePort().get().localAddress().getPort();
+        client = HttpClient.of("http://127.0.0.1:" + port);
+        helloService = new ClientBuilder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello", port))
                 .build(HelloService.Iface.class);
     }
 
