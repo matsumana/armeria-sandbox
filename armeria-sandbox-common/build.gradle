@@ -1,0 +1,15 @@
+project(":armeria-sandbox-common") {
+    dependencies {
+        compile "com.linecorp.armeria:armeria"
+        compile "com.linecorp.armeria:armeria-spring-boot-starter"
+        compile "com.linecorp.armeria:armeria-zipkin"
+        compile "io.zipkin.reporter2:zipkin-sender-urlconnection"
+    }
+
+    bootJar {
+        enabled = false
+    }
+    jar {
+        enabled = true
+    }
+}

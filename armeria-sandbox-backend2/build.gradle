@@ -1,0 +1,9 @@
+// Thrift server
+project(":armeria-sandbox-backend2") {
+    dependencies {
+        compile project(":armeria-sandbox-thrift")
+        compile project(":armeria-sandbox-common")
+        compile "org.springframework.boot:spring-boot-starter-validation"
+        compile "com.linecorp.armeria:armeria-thrift"
+    }
+}

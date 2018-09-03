@@ -1,7 +1,7 @@
 include "armeria-sandbox-thrift"
 include "armeria-sandbox-common"
-include "armeria-sandbox-frontend"
 include "armeria-sandbox-backend1"
 include "armeria-sandbox-backend2"
 include "armeria-sandbox-backend3"
 include "armeria-sandbox-backend4"
+include "armeria-sandbox-frontend"

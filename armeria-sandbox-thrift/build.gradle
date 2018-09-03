@@ -1,0 +1,24 @@
+// Thrift IDL
+project(":armeria-sandbox-thrift") {
+    apply plugin: "org.jruyi.thrift"
+
+    dependencies {
+        compile "org.apache.thrift:libthrift:${thriftVersion}"
+        compile "javax.annotation:javax.annotation-api"
+    }
+
+    compileThrift {
+        // TODO Put thrift binary in this repo and refer it
+        thriftExecutable "/usr/local/bin/thrift"
+
+        // FIXME workaround for https://github.com/jruyi/thrift-gradle-plugin/pull/22
+        sourceDir "${projectDir}/src/main/thrift"
+    }
+
+    bootJar {
+        enabled = false
+    }
+    jar {
+        enabled = true
+    }
+}
