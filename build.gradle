@@ -3,7 +3,7 @@ buildscript {
         thriftGradlePluginVersion = "0.4.0"
 
         springBootVersion = "2.0.4.RELEASE"
-        zipkinBomVersion = "5.2.0"
+        braveVersion = "5.2.0"
         armeriaVersion = "0.70.1"
         thriftVersion = "0.11.0"
         retrofitVersion = "2.4.0"
@@ -40,7 +40,7 @@ subprojects {
     dependencyManagement {
         imports {
             mavenBom "com.linecorp.armeria:armeria-bom:${armeriaVersion}"
-            mavenBom "io.zipkin.brave:brave-bom:${zipkinBomVersion}"
+            mavenBom "io.zipkin.brave:brave-bom:${braveVersion}"
             mavenBom "org.junit:junit-bom:${junitVersion}"
         }
     }
