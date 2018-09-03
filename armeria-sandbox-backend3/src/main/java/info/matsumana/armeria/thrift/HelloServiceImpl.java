@@ -26,7 +26,7 @@ public class HelloServiceImpl implements HelloService.Iface {
 
     HelloServiceImpl(ApiServerSetting apiServerSetting, ZipkinTracingFactory tracingFactory) {
         this.apiServerSetting = apiServerSetting;
-        tracing = tracingFactory.create("frontend");
+        tracing = tracingFactory.create("backend3");
     }
 
     @Override
