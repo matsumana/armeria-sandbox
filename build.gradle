@@ -76,7 +76,10 @@ project(":armeria-sandbox-thrift") {
     }
 
     compileThrift {
-        thriftExecutable "/usr/local/bin/thrift"  // TODO Put thrift binary in this repo and refer it
+        // TODO Put thrift binary in this repo and refer it
+        thriftExecutable "/usr/local/bin/thrift"
+
+        // FIXME workaround for https://github.com/jruyi/thrift-gradle-plugin/pull/22
         sourceDir "${projectDir}/src/main/thrift"
     }
 
