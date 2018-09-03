@@ -41,6 +41,7 @@ subprojects {
         imports {
             mavenBom "com.linecorp.armeria:armeria-bom:${armeriaVersion}"
             mavenBom "io.zipkin.brave:brave-bom:${zipkinBomVersion}"
+            mavenBom "org.junit:junit-bom:${junitVersion}"
         }
     }
 
@@ -49,9 +50,9 @@ subprojects {
             exclude group: "junit", module: "junit"
         }
         testCompile "org.assertj:assertj-core"
-        testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-        testCompile "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
-        testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+        testCompile "org.junit.jupiter:junit-jupiter-api"
+        testCompile "org.junit.jupiter:junit-jupiter-params"
+        testRuntime "org.junit.jupiter:junit-jupiter-engine"
     }
 
     compileJava {
