@@ -1,0 +1,6 @@
+FROM openjdk:11-ea-28-slim
+
+WORKDIR /root
+ADD ./armeria-sandbox-backend2/build/libs/armeria-sandbox-backend2-*.jar ./armeria-sandbox-backend2.jar
+ENTRYPOINT java -jar ./armeria-sandbox-backend2.jar --spring.profiles.active=docker
+EXPOSE 8082

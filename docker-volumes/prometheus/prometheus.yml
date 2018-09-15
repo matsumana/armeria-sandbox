@@ -1,0 +1,33 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+scrape_configs:
+- job_name: 'prometheus'
+  static_configs:
+  - targets: ['localhost:9090']
+
+- job_name: 'backend1'
+  metrics_path: /internal/metrics
+  static_configs:
+  - targets: ['backend1:8081']
+
+- job_name: 'backend2'
+  metrics_path: /internal/metrics
+  static_configs:
+  - targets: ['backend2:8082']
+
+- job_name: 'backend3'
+  metrics_path: /internal/metrics
+  static_configs:
+  - targets: ['backend3:8083']
+
+- job_name: 'backend4'
+  metrics_path: /internal/metrics
+  static_configs:
+  - targets: ['backend4:8084']
+
+- job_name: 'frontend'
+  metrics_path: /internal/metrics
+  static_configs:
+  - targets: ['frontend:8080']

@@ -5,3 +5,65 @@ services:
     image: openzipkin/zipkin:2.11.3
     ports:
     - 9411:9411
+
+  prometheus:
+    image: prom/prometheus:v2.4.0
+    ports:
+    - 9090:9090
+    volumes:
+    - ./docker-volumes/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  backend1:
+    depends_on:
+    - zipkin
+    - prometheus
+    build:
+      context: .
+      dockerfile: Dockerfile-backend1
+    ports:
+    - 8081:8081
+
+  backend2:
+    depends_on:
+    - zipkin
+    - prometheus
+    build:
+      context: .
+      dockerfile: Dockerfile-backend2
+    ports:
+    - 8082:8083
+
+  backend3:
+    depends_on:
+    - zipkin
+    - prometheus
+    - backend4
+    build:
+      context: .
+      dockerfile: Dockerfile-backend3
+    ports:
+    - 8083:8083
+
+  backend4:
+    depends_on:
+    - zipkin
+    - prometheus
+    build:
+      context: .
+      dockerfile: Dockerfile-backend4
+    ports:
+    - 8084:8084
+
+  frontend:
+    depends_on:
+    - zipkin
+    - prometheus
+    - backend1
+    - backend2
+    - backend3
+    - backend4
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend
+    ports:
+    - 8080:8080
