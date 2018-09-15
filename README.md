@@ -8,7 +8,7 @@ $ ./gradlew clean build
 
 ## How to run dependent containers
 
-The following the apps depend on Zipkin and Zipkin UI.
+The following the apps depend on Zipkin.
 
 ```
 $ docker-compose up -d
