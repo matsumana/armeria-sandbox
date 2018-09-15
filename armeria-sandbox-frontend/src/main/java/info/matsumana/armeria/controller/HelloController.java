@@ -3,57 +3,34 @@ package info.matsumana.armeria.controller;
 import org.apache.thrift.TException;
 import org.springframework.stereotype.Component;
 
-import com.linecorp.armeria.client.ClientBuilder;
-import com.linecorp.armeria.client.tracing.HttpTracingClient;
-import com.linecorp.armeria.common.HttpRequest;
 import com.linecorp.armeria.common.HttpResponse;
 import com.linecorp.armeria.server.annotation.Get;
 import com.linecorp.armeria.server.annotation.Param;
 
-import brave.Tracing;
-import info.matsumana.armeria.config.ApiServerSetting;
-import info.matsumana.armeria.config.ZipkinTracingFactory;
-import info.matsumana.armeria.thrift.HelloService;
+import info.matsumana.armeria.thrift.Hello1Service;
+import info.matsumana.armeria.thrift.Hello2Service;
+import info.matsumana.armeria.thrift.Hello3Service;
 
 @Component
 public class HelloController {
 
-    private final ApiServerSetting apiServerSetting;
-    private final Tracing tracing;
+    private final Hello1Service.Iface hello1Service;
+    private final Hello2Service.Iface hello2Service;
+    private final Hello3Service.Iface hello3Service;
 
-    HelloController(ApiServerSetting apiServerSetting, ZipkinTracingFactory tracingFactory) {
-        this.apiServerSetting = apiServerSetting;
-        tracing = tracingFactory.create("frontend");
+    HelloController(Hello1Service.Iface hello1Service,
+                    Hello2Service.Iface hello2Service,
+                    Hello3Service.Iface hello3Service) {
+        this.hello1Service = hello1Service;
+        this.hello2Service = hello2Service;
+        this.hello3Service = hello3Service;
     }
 
     @Get("/hello/:name")
     public HttpResponse hello(@Param String name) throws TException {
-        {
-            final HelloService.Iface helloService = new ClientBuilder(
-                    String.format("tbinary+h2c://%s/thrift/hello", apiServerSetting.getBackend1()))
-                    .decorator(HttpRequest.class, HttpResponse.class,
-                               HttpTracingClient.newDecorator(tracing, "backend1"))
-                    .build(HelloService.Iface.class);
-            final String ret1 = helloService.hello(name);
-        }
-
-        {
-            final HelloService.Iface helloService = new ClientBuilder(
-                    String.format("tbinary+h2c://%s/thrift/hello", apiServerSetting.getBackend2()))
-                    .decorator(HttpRequest.class, HttpResponse.class,
-                               HttpTracingClient.newDecorator(tracing, "backend2"))
-                    .build(HelloService.Iface.class);
-            final String ret2 = helloService.hello(name);
-        }
-
-        {
-            final HelloService.Iface helloService = new ClientBuilder(
-                    String.format("tbinary+h2c://%s/thrift/hello", apiServerSetting.getBackend3()))
-                    .decorator(HttpRequest.class, HttpResponse.class,
-                               HttpTracingClient.newDecorator(tracing, "backend3"))
-                    .build(HelloService.Iface.class);
-            final String ret3 = helloService.hello(name);
-        }
+        final String ret1 = hello1Service.hello(name);
+        final String ret2 = hello2Service.hello(name);
+        final String ret3 = hello3Service.hello(name);
 
         return HttpResponse.of("Hello, " + name);
     }

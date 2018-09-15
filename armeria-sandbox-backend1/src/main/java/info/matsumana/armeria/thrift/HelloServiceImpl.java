@@ -4,7 +4,7 @@ import org.apache.thrift.TException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HelloServiceImpl implements HelloService.Iface {
+public class HelloServiceImpl implements Hello1Service.Iface {
 
     @Override
     public String hello(String name) throws TException {

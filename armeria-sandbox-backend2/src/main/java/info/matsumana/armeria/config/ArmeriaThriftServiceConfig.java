@@ -12,7 +12,7 @@ import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.ThriftServiceRegistrationBean;
 
 import brave.Tracing;
-import info.matsumana.armeria.thrift.HelloService;
+import info.matsumana.armeria.thrift.Hello2Service;
 import info.matsumana.armeria.thrift.PingService;
 
 @Configuration
@@ -37,14 +37,14 @@ public class ArmeriaThriftServiceConfig {
     }
 
     @Bean
-    public ThriftServiceRegistrationBean helloService(HelloService.Iface service) {
+    public ThriftServiceRegistrationBean helloService(Hello2Service.Iface service) {
         return new ThriftServiceRegistrationBean()
-                .setPath("/thrift/hello")
+                .setPath("/thrift/hello2")
                 .setService(ThriftCallService.of(service)
                                              .decorate(THttpService.newDecorator())
                                              .decorate(LoggingService.newDecorator())
                                              .decorate(HttpTracingService.newDecorator(tracing)))
-                .setServiceName("HelloService")
-                .setExampleRequests(ImmutableList.of(new HelloService.hello_args("foo")));
+                .setServiceName("Hello2Service")
+                .setExampleRequests(ImmutableList.of(new Hello2Service.hello_args("foo")));
     }
 }

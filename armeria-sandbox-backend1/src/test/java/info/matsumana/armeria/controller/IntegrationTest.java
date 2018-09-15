@@ -16,7 +16,7 @@ import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
-import info.matsumana.armeria.thrift.HelloService;
+import info.matsumana.armeria.thrift.Hello1Service;
 
 @SpringJUnitConfig(TestContext.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
@@ -26,14 +26,14 @@ public class IntegrationTest {
     private Server server;
 
     private HttpClient client;
-    private HelloService.Iface helloService;
+    private Hello1Service.Iface helloService;
 
     @BeforeEach
     public void beforeEach() {
         final int port = server.activePort().get().localAddress().getPort();
         client = HttpClient.of("http://127.0.0.1:" + port);
-        helloService = new ClientBuilder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello", port))
-                .build(HelloService.Iface.class);
+        helloService = new ClientBuilder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello1", port))
+                .build(Hello1Service.Iface.class);
     }
 
     @Test
