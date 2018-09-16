@@ -1,6 +1,8 @@
 package info.matsumana.armeria.controller;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.linecorp.armeria.common.HttpResponse;
@@ -14,6 +16,7 @@ import info.matsumana.armeria.thrift.Hello3Service;
 @Component
 public class HelloController {
 
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private final Hello1Service.Iface hello1Service;
     private final Hello2Service.Iface hello2Service;
     private final Hello3Service.Iface hello3Service;
@@ -29,8 +32,13 @@ public class HelloController {
     @Get("/hello/:name")
     public HttpResponse hello(@Param String name) throws TException {
         final String ret1 = hello1Service.hello(name);
+        log.debug("ret1={}", ret1);
+
         final String ret2 = hello2Service.hello(name);
+        log.debug("ret2={}", ret2);
+
         final String ret3 = hello3Service.hello(name);
+        log.debug("ret3={}", ret3);
 
         return HttpResponse.of("Hello, " + name);
     }

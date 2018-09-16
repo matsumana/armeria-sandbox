@@ -5,6 +5,8 @@ api-servers:
   backend1:
   - host: 127.0.0.1
     port: 8081
+  - host: 127.0.0.1
+    port: 18081
   backend2:
   - host: 127.0.0.1
     port: 8082
@@ -14,3 +16,9 @@ api-servers:
   backend4:
   - host: 127.0.0.1
     port: 8084
+  - host: 127.0.0.1
+    port: 18084
+
+logging:
+  level:
+    info.matsumana.armeria: DEBUG

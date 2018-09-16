@@ -10,5 +10,11 @@ reload: rebuild-jar
 down:
 	docker-compose down
 
+force-down:
+	docker-compose down -t 0
+
 ps:
 	docker ps -a
+
+stats:
+	docker stats
