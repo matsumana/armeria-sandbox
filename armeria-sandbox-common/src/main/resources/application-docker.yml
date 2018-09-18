@@ -21,5 +21,4 @@ api-servers:
 
 logging:
   level:
-    ROOT: DEBUG
     info.matsumana.armeria: DEBUG
