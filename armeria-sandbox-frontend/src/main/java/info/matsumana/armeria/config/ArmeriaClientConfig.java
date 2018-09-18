@@ -1,7 +1,7 @@
 package info.matsumana.armeria.config;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.linecorp.armeria.client.endpoint.EndpointSelectionStrategy.WEIGHTED_ROUND_ROBIN;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.util.function.Function;
 
@@ -51,7 +51,7 @@ public class ArmeriaClientConfig {
                 new StaticEndpointGroup(apiServerSetting.getBackend1().stream()
                                                         .map(setting -> Endpoint.of(setting.getHost(),
                                                                                     setting.getPort()))
-                                                        .collect(toImmutableList()));
+                                                        .collect(toUnmodifiableList()));
         final HttpHealthCheckedEndpointGroup healthCheckedGroup =
                 new HttpHealthCheckedEndpointGroupBuilder(group, "/internal/healthcheck")
                         .build();
@@ -73,7 +73,7 @@ public class ArmeriaClientConfig {
                 new StaticEndpointGroup(apiServerSetting.getBackend2().stream()
                                                         .map(setting -> Endpoint.of(setting.getHost(),
                                                                                     setting.getPort()))
-                                                        .collect(toImmutableList()));
+                                                        .collect(toUnmodifiableList()));
         final HttpHealthCheckedEndpointGroup healthCheckedGroup =
                 new HttpHealthCheckedEndpointGroupBuilder(group, "/internal/healthcheck")
                         .build();
@@ -95,7 +95,7 @@ public class ArmeriaClientConfig {
                 new StaticEndpointGroup(apiServerSetting.getBackend3().stream()
                                                         .map(setting -> Endpoint.of(setting.getHost(),
                                                                                     setting.getPort()))
-                                                        .collect(toImmutableList()));
+                                                        .collect(toUnmodifiableList()));
         final HttpHealthCheckedEndpointGroup healthCheckedGroup =
                 new HttpHealthCheckedEndpointGroupBuilder(group, "/internal/healthcheck")
                         .build();
