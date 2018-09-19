@@ -7,6 +7,7 @@ buildscript {
         armeriaVersion = "0.71.1"
         thriftVersion = "0.11.0"
         retrofitVersion = "2.4.0"
+        rxJava2Jdk8InteropVersion = "0.3.2"
         junitVersion = "5.2.0"
     }
     repositories {
@@ -43,6 +44,9 @@ subprojects {
             mavenBom "com.linecorp.armeria:armeria-bom:${armeriaVersion}"
             mavenBom "io.zipkin.brave:brave-bom:${braveVersion}"
             mavenBom "org.junit:junit-bom:${junitVersion}"
+        }
+        dependencies {
+            dependency "com.github.akarnokd:rxjava2-jdk8-interop:${rxJava2Jdk8InteropVersion}"
         }
     }
 

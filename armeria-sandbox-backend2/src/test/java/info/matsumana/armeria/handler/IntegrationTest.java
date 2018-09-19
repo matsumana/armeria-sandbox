@@ -61,6 +61,6 @@ public class IntegrationTest {
         final ThriftCompletableFuture<String> future = new ThriftCompletableFuture<>();
         hello2Service.hello("foo", future);
         final String res = future.get();
-        assertThat(res).isEqualTo("Hello, foo");
+        assertThat(res).isEqualTo("[backend2] Hello, foo");
     }
 }

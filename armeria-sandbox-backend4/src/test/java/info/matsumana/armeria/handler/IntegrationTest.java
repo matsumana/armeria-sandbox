@@ -53,6 +53,6 @@ public class IntegrationTest {
     public void hello() throws Exception {
         final AggregatedHttpMessage res = client.get("/hello/bar").aggregate().join();
         assertThat(res.status()).isEqualTo(HttpStatus.OK);
-        assertThat(res.content().toStringUtf8()).isEqualTo("Hello, bar");
+        assertThat(res.content().toStringUtf8()).isEqualTo("[backend4] Hello, bar");
     }
 }

@@ -33,6 +33,6 @@ public class Hello3Handler implements Hello3Service.AsyncIface {
                   return null;
               });
 
-        resultHandler.onComplete("Hello, " + name);
+        resultHandler.onComplete("[backend3] Hello, " + name);
     }
 }
