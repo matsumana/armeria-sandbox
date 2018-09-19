@@ -28,6 +28,7 @@ services:
     mem_limit: 536870912  # 512M
     ports:
     - 8081:8081
+    - 18686:8686
 
   backend1b:
     depends_on:
@@ -39,6 +40,7 @@ services:
     mem_limit: 536870912  # 512M
     ports:
     - 18081:8081
+    - 18687:8686
 
   backend2a:
     depends_on:
@@ -50,6 +52,7 @@ services:
     mem_limit: 536870912  # 512M
     ports:
     - 8082:8082
+    - 28686:8686
 
   backend3a:
     depends_on:
@@ -63,6 +66,7 @@ services:
     mem_limit: 536870912  # 512M
     ports:
     - 8083:8083
+    - 38686:8686
 
   backend4a:
     depends_on:
@@ -74,6 +78,7 @@ services:
     mem_limit: 536870912  # 512M
     ports:
     - 8084:8084
+    - 48686:8686
 
   backend4b:
     depends_on:
@@ -85,6 +90,7 @@ services:
     mem_limit: 536870912  # 512M
     ports:
     - 18084:8084
+    - 48687:8686
 
   frontend:
     depends_on:
@@ -102,3 +108,4 @@ services:
     mem_limit: 536870912  # 512M
     ports:
     - 8080:8080
+    - 8686:8686
