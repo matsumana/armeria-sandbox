@@ -13,6 +13,7 @@ import com.linecorp.armeria.client.ClientBuilder;
 import com.linecorp.armeria.client.HttpClient;
 import com.linecorp.armeria.common.AggregatedHttpMessage;
 import com.linecorp.armeria.common.HttpStatus;
+import com.linecorp.armeria.common.thrift.ThriftCompletableFuture;
 import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
@@ -26,14 +27,14 @@ public class IntegrationTest {
     private Server server;
 
     private HttpClient client;
-    private Hello2Service.Iface helloService;
+    private Hello2Service.AsyncIface helloService;
 
     @BeforeEach
     public void beforeEach() {
         final int port = server.activePort().get().localAddress().getPort();
         client = HttpClient.of("http://127.0.0.1:" + port);
         helloService = new ClientBuilder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello2", port))
-                .build(Hello2Service.Iface.class);
+                .build(Hello2Service.AsyncIface.class);
     }
 
     @Test
@@ -57,7 +58,9 @@ public class IntegrationTest {
 
     @Test
     public void hello() throws Exception {
-        final String res = helloService.hello("foo");
+        final ThriftCompletableFuture<String> future = new ThriftCompletableFuture<>();
+        helloService.hello("foo", future);
+        final String res = future.get();
         assertThat(res).isEqualTo("Hello, foo");
     }
 }

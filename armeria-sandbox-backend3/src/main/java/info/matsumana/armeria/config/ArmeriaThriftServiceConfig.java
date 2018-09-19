@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 
 import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.thrift.THttpService;
-import com.linecorp.armeria.server.thrift.ThriftCallService;
 import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.ThriftServiceRegistrationBean;
 
@@ -25,25 +24,23 @@ public class ArmeriaThriftServiceConfig {
     }
 
     @Bean
-    public ThriftServiceRegistrationBean pingService(PingService.Iface service) {
+    public ThriftServiceRegistrationBean pingService(PingService.AsyncIface service) {
         return new ThriftServiceRegistrationBean()
                 .setPath("/thrift/ping")
-                .setService(ThriftCallService.of(service)
-                                             .decorate(THttpService.newDecorator())
-                                             .decorate(LoggingService.newDecorator())
-                                             .decorate(HttpTracingService.newDecorator(tracing)))
+                .setService(THttpService.of(service)
+                                        .decorate(LoggingService.newDecorator())
+                                        .decorate(HttpTracingService.newDecorator(tracing)))
                 .setServiceName("PingService")
                 .setExampleRequests(ImmutableList.of(new PingService.ping_args()));
     }
 
     @Bean
-    public ThriftServiceRegistrationBean helloService(Hello3Service.Iface service) {
+    public ThriftServiceRegistrationBean helloService(Hello3Service.AsyncIface service) {
         return new ThriftServiceRegistrationBean()
                 .setPath("/thrift/hello3")
-                .setService(ThriftCallService.of(service)
-                                             .decorate(THttpService.newDecorator())
-                                             .decorate(LoggingService.newDecorator())
-                                             .decorate(HttpTracingService.newDecorator(tracing)))
+                .setService(THttpService.of(service)
+                                        .decorate(LoggingService.newDecorator())
+                                        .decorate(HttpTracingService.newDecorator(tracing)))
                 .setServiceName("Hello3Service")
                 .setExampleRequests(ImmutableList.of(new Hello3Service.hello_args("foo")));
     }

@@ -46,7 +46,7 @@ public class ArmeriaClientConfig {
     }
 
     @Bean
-    Hello1Service.Iface hello1Service() {
+    Hello1Service.AsyncIface hello1Service() {
         final EndpointGroup group =
                 new StaticEndpointGroup(apiServerSetting.getBackend1().stream()
                                                         .map(setting -> Endpoint.of(setting.getHost(),
@@ -57,12 +57,12 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            newTracingDecorator("backend1"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator("frontend-cb-1"))
-                .build(Hello1Service.Iface.class);
+                           newCircuitBreakerDecorator())
+                .build(Hello1Service.AsyncIface.class);
     }
 
     @Bean
-    Hello2Service.Iface hello2Service() {
+    Hello2Service.AsyncIface hello2Service() {
         final EndpointGroup group =
                 new StaticEndpointGroup(apiServerSetting.getBackend2().stream()
                                                         .map(setting -> Endpoint.of(setting.getHost(),
@@ -73,12 +73,12 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            newTracingDecorator("backend2"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator("frontend-cb-2"))
-                .build(Hello2Service.Iface.class);
+                           newCircuitBreakerDecorator())
+                .build(Hello2Service.AsyncIface.class);
     }
 
     @Bean
-    Hello3Service.Iface hello3Service() {
+    Hello3Service.AsyncIface hello3Service() {
         final EndpointGroup group =
                 new StaticEndpointGroup(apiServerSetting.getBackend3().stream()
                                                         .map(setting -> Endpoint.of(setting.getHost(),
@@ -89,8 +89,8 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            newTracingDecorator("backend3"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator("frontend-cb-3"))
-                .build(Hello3Service.Iface.class);
+                           newCircuitBreakerDecorator())
+                .build(Hello3Service.AsyncIface.class);
     }
 
     private void registerEndpointGroup(EndpointGroup group, String groupName) {
@@ -107,11 +107,10 @@ public class ArmeriaClientConfig {
         return HttpTracingClient.newDecorator(tracing, serviceName);
     }
 
-    private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerDecorator(
-            String circuitBreakerName) {
+    private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerDecorator() {
         return CircuitBreakerRpcClient.newPerHostDecorator(
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
-                key -> new CircuitBreakerBuilder(circuitBreakerName)
+                key -> new CircuitBreakerBuilder("frontend-cb")
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
 //                        .failureRateThreshold(0.1)
                         .build(),
