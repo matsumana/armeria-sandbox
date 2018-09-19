@@ -23,7 +23,7 @@ $ docker-compose stop zipkin
 #### dispose
 
 ```
-$ docker-compose down zipkin
+$ docker-compose down
 ```
 
 ### How to build the apps
