@@ -1,4 +1,4 @@
-package info.matsumana.armeria.thrift;
+package info.matsumana.armeria.handler;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -9,15 +9,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import info.matsumana.armeria.retrofit.HelloClient;
+import info.matsumana.armeria.thrift.Hello3Service;
 import retrofit2.Retrofit;
 
 @Component
-public class HelloServiceImpl implements Hello3Service.AsyncIface {
+public class Hello3Handler implements Hello3Service.AsyncIface {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final Retrofit retrofit;
 
-    HelloServiceImpl(Retrofit retrofit) {
+    Hello3Handler(Retrofit retrofit) {
         this.retrofit = retrofit;
     }
 

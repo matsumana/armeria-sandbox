@@ -27,13 +27,13 @@ public class IntegrationTest {
     private Server server;
 
     private HttpClient client;
-    private Hello1Service.AsyncIface helloService;
+    private Hello1Service.AsyncIface hello1Service;
 
     @BeforeEach
     public void beforeEach() {
         final int port = server.activePort().get().localAddress().getPort();
         client = HttpClient.of("http://127.0.0.1:" + port);
-        helloService = new ClientBuilder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello1", port))
+        hello1Service = new ClientBuilder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello1", port))
                 .build(Hello1Service.AsyncIface.class);
     }
 
@@ -59,7 +59,7 @@ public class IntegrationTest {
     @Test
     public void hello() throws Exception {
         final ThriftCompletableFuture<String> future = new ThriftCompletableFuture<>();
-        helloService.hello("foo", future);
+        hello1Service.hello("foo", future);
         final String res = future.get();
         assertThat(res).isEqualTo("Hello, foo");
     }

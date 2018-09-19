@@ -35,7 +35,7 @@ public class ArmeriaThriftServiceConfig {
     }
 
     @Bean
-    public ThriftServiceRegistrationBean helloService(Hello2Service.AsyncIface service) {
+    public ThriftServiceRegistrationBean hello2Service(Hello2Service.AsyncIface service) {
         return new ThriftServiceRegistrationBean()
                 .setPath("/thrift/hello2")
                 .setService(THttpService.of(service)
