@@ -10,13 +10,13 @@ reload: rebuild-jar
 stop:
 	docker-compose stop
 
-force-stop:
+stop-immediately:
 	docker-compose stop -t 0
 
 down:
 	docker-compose down
 
-force-down:
+down-immediately:
 	docker-compose down -t 0
 
 ps:
