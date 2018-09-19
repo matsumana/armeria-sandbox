@@ -8,8 +8,8 @@ import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.AnnotatedServiceRegistrationBean;
 
 import brave.Tracing;
-import info.matsumana.armeria.controller.HelloController;
-import info.matsumana.armeria.controller.RootController;
+import info.matsumana.armeria.handler.HelloHandler;
+import info.matsumana.armeria.handler.RootHandler;
 
 @Configuration
 public class ArmeriaHttpServiceConfig {
@@ -21,19 +21,19 @@ public class ArmeriaHttpServiceConfig {
     }
 
     @Bean
-    public AnnotatedServiceRegistrationBean rootControllerRegistrationBean(RootController controller) {
+    public AnnotatedServiceRegistrationBean rootHandlerRegistrationBean(RootHandler handler) {
         return new AnnotatedServiceRegistrationBean()
-                .setServiceName("rootController")
-                .setService(controller)
+                .setServiceName("rootHandler")
+                .setService(handler)
                 .setDecorators(LoggingService.newDecorator(),
                                HttpTracingService.newDecorator(tracing));
     }
 
     @Bean
-    public AnnotatedServiceRegistrationBean helloControllerRegistrationBean(HelloController controller) {
+    public AnnotatedServiceRegistrationBean helloHandlerRegistrationBean(HelloHandler handler) {
         return new AnnotatedServiceRegistrationBean()
-                .setServiceName("helloController")
-                .setService(controller)
+                .setServiceName("helloHandler")
+                .setService(handler)
                 .setDecorators(LoggingService.newDecorator(),
                                HttpTracingService.newDecorator(tracing));
     }

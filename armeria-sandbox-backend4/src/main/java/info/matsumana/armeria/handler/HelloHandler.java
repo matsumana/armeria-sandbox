@@ -1,4 +1,4 @@
-package info.matsumana.armeria.controller;
+package info.matsumana.armeria.handler;
 
 import org.springframework.stereotype.Component;
 
@@ -7,7 +7,7 @@ import com.linecorp.armeria.server.annotation.Get;
 import com.linecorp.armeria.server.annotation.Param;
 
 @Component
-public class HelloController {
+public class HelloHandler {
 
     @Get("/hello/:name")
     public HttpResponse hello(@Param String name) {

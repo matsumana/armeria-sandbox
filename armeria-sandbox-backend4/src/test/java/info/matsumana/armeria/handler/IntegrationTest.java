@@ -1,4 +1,4 @@
-package info.matsumana.armeria.controller;
+package info.matsumana.armeria.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,15 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.linecorp.armeria.client.ClientBuilder;
 import com.linecorp.armeria.client.HttpClient;
 import com.linecorp.armeria.common.AggregatedHttpMessage;
 import com.linecorp.armeria.common.HttpStatus;
-import com.linecorp.armeria.common.thrift.ThriftCompletableFuture;
 import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
-import info.matsumana.armeria.thrift.Hello1Service;
 
 @SpringJUnitConfig(TestContext.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
@@ -27,14 +24,10 @@ public class IntegrationTest {
     private Server server;
 
     private HttpClient client;
-    private Hello1Service.AsyncIface helloService;
 
     @BeforeEach
     public void beforeEach() {
-        final int port = server.activePort().get().localAddress().getPort();
-        client = HttpClient.of("http://127.0.0.1:" + port);
-        helloService = new ClientBuilder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello1", port))
-                .build(Hello1Service.AsyncIface.class);
+        client = HttpClient.of("http://127.0.0.1:" + server.activePort().get().localAddress().getPort());
     }
 
     @Test
@@ -58,9 +51,8 @@ public class IntegrationTest {
 
     @Test
     public void hello() throws Exception {
-        final ThriftCompletableFuture<String> future = new ThriftCompletableFuture<>();
-        helloService.hello("foo", future);
-        final String res = future.get();
-        assertThat(res).isEqualTo("Hello, foo");
+        final AggregatedHttpMessage res = client.get("/hello/bar").aggregate().join();
+        assertThat(res.status()).isEqualTo(HttpStatus.OK);
+        assertThat(res.content().toStringUtf8()).isEqualTo("Hello, bar");
     }
 }

@@ -1,4 +1,4 @@
-package info.matsumana.armeria.controller;
+package info.matsumana.armeria.handler;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -15,16 +15,16 @@ import info.matsumana.armeria.thrift.Hello2Service;
 import info.matsumana.armeria.thrift.Hello3Service;
 
 @Component
-public class HelloController {
+public class HelloHandler {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final Hello1Service.AsyncIface hello1Service;
     private final Hello2Service.AsyncIface hello2Service;
     private final Hello3Service.AsyncIface hello3Service;
 
-    HelloController(Hello1Service.AsyncIface hello1Service,
-                    Hello2Service.AsyncIface hello2Service,
-                    Hello3Service.AsyncIface hello3Service) {
+    HelloHandler(Hello1Service.AsyncIface hello1Service,
+                 Hello2Service.AsyncIface hello2Service,
+                 Hello3Service.AsyncIface hello3Service) {
         this.hello1Service = hello1Service;
         this.hello2Service = hello2Service;
         this.hello3Service = hello3Service;
