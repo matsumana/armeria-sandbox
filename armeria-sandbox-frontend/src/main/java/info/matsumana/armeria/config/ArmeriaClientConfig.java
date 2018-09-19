@@ -52,13 +52,7 @@ public class ArmeriaClientConfig {
                                                         .map(setting -> Endpoint.of(setting.getHost(),
                                                                                     setting.getPort()))
                                                         .collect(toUnmodifiableList()));
-        final HttpHealthCheckedEndpointGroup healthCheckedGroup =
-                new HttpHealthCheckedEndpointGroupBuilder(group, "/internal/healthcheck")
-                        .build();
-        if (EndpointGroupRegistry.register("backend1", healthCheckedGroup, WEIGHTED_ROUND_ROBIN)) {
-            healthCheckedGroup.newMeterBinder("backend1").bindTo(meterRegistry);
-        }
-
+        registerEndpointGroup(group, "backend1");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello1", "backend1"))
                 .decorator(HttpRequest.class, HttpResponse.class,
                            newTracingDecorator("backend1"))
@@ -74,13 +68,7 @@ public class ArmeriaClientConfig {
                                                         .map(setting -> Endpoint.of(setting.getHost(),
                                                                                     setting.getPort()))
                                                         .collect(toUnmodifiableList()));
-        final HttpHealthCheckedEndpointGroup healthCheckedGroup =
-                new HttpHealthCheckedEndpointGroupBuilder(group, "/internal/healthcheck")
-                        .build();
-        if (EndpointGroupRegistry.register("backend2", healthCheckedGroup, WEIGHTED_ROUND_ROBIN)) {
-            healthCheckedGroup.newMeterBinder("backend2").bindTo(meterRegistry);
-        }
-
+        registerEndpointGroup(group, "backend2");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello2", "backend2"))
                 .decorator(HttpRequest.class, HttpResponse.class,
                            newTracingDecorator("backend2"))
@@ -96,19 +84,22 @@ public class ArmeriaClientConfig {
                                                         .map(setting -> Endpoint.of(setting.getHost(),
                                                                                     setting.getPort()))
                                                         .collect(toUnmodifiableList()));
-        final HttpHealthCheckedEndpointGroup healthCheckedGroup =
-                new HttpHealthCheckedEndpointGroupBuilder(group, "/internal/healthcheck")
-                        .build();
-        if (EndpointGroupRegistry.register("backend3", healthCheckedGroup, WEIGHTED_ROUND_ROBIN)) {
-            healthCheckedGroup.newMeterBinder("backend3").bindTo(meterRegistry);
-        }
-
+        registerEndpointGroup(group, "backend3");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello3", "backend3"))
                 .decorator(HttpRequest.class, HttpResponse.class,
                            newTracingDecorator("backend3"))
                 .decorator(RpcRequest.class, RpcResponse.class,
                            newCircuitBreakerDecorator("frontend-cb-3"))
                 .build(Hello3Service.Iface.class);
+    }
+
+    private void registerEndpointGroup(EndpointGroup group, String groupName) {
+        final HttpHealthCheckedEndpointGroup healthCheckedGroup =
+                new HttpHealthCheckedEndpointGroupBuilder(group, "/internal/healthcheck")
+                        .build();
+        if (EndpointGroupRegistry.register(groupName, healthCheckedGroup, WEIGHTED_ROUND_ROBIN)) {
+            healthCheckedGroup.newMeterBinder(groupName).bindTo(meterRegistry);
+        }
     }
 
     private Function<Client<HttpRequest, HttpResponse>, HttpTracingClient> newTracingDecorator(
