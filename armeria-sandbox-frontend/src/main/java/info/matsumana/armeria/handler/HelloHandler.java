@@ -1,5 +1,6 @@
 package info.matsumana.armeria.handler;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -8,7 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import com.linecorp.armeria.common.HttpResponse;
+import com.linecorp.armeria.common.HttpStatus;
+import com.linecorp.armeria.common.MediaType;
 import com.linecorp.armeria.common.thrift.ThriftCompletableFuture;
 import com.linecorp.armeria.server.annotation.Get;
 import com.linecorp.armeria.server.annotation.Param;
@@ -17,6 +22,8 @@ import hu.akarnokd.rxjava2.interop.SingleInterop;
 import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.Hello2Service;
 import info.matsumana.armeria.thrift.Hello3Service;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.binder.jvm.ExecutorServiceMetrics;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
@@ -37,9 +44,17 @@ public class HelloHandler {
     }
 
     @Get("/hello/:name")
-    public HttpResponse hello(@Param String name) throws TException {
-        final ExecutorService threadPool = Executors.newFixedThreadPool(50);
+    public CompletableFuture<HttpResponse> hello(@Param String name) throws TException {
+        final ExecutorService threadPool =
+                Executors.newFixedThreadPool(50,
+                                             new ThreadFactoryBuilder()
+                                                     .setNameFormat("rxjava-executor-%d")
+                                                     .build());
+        final ExecutorService monitoredThreadPool = ExecutorServiceMetrics.monitor(Metrics.globalRegistry,
+                                                                                   threadPool,
+                                                                                   "rxjavaExecutor");
 
+        // Convert to Single
         final ThriftCompletableFuture<String> future1 = new ThriftCompletableFuture<>();
         hello1Service.hello(name, future1);
         final Single<String> single1 = SingleInterop.fromFuture(future1);
@@ -52,28 +67,26 @@ public class HelloHandler {
         hello3Service.hello(name, future3);
         final Single<String> single3 = SingleInterop.fromFuture(future3);
 
-        single1
-                .map(res -> {
-                    log.debug("hello1Service res={}", res);
-                    return res;
-                })
-                .observeOn(Schedulers.from(threadPool))
-                .zipWith(single2,
-                         (res, res2) -> {
-                             log.debug("hello2Service res={}", res2);
-                             return res + ", " + res2;
-                         })
-                .observeOn(Schedulers.from(threadPool))
-                .zipWith(single3,
-                         (res, res2) -> {
-                             log.debug("hello3Service res={}", res2);
-                             return res + ", " + res2;
-                         })
-                .subscribe(res -> log.debug("res={}", res),
-                           throwable -> log.error("cause is", throwable));
+        // Convert to Single<HttpResponse>
+        final Single<HttpResponse> singleResponse = single1
+                .doOnSuccess(res -> log.debug("hello1Service res={}", res))
+                //
+                .observeOn(Schedulers.from(monitoredThreadPool))
+                .zipWith(single2, (res, res2) -> res + " & " + res2)
+                .doOnSuccess(res -> log.debug("hello2Service res={}", res))
+                //
+                .observeOn(Schedulers.from(monitoredThreadPool))
+                .zipWith(single3, (res, res2) -> res + " & " + res2)
+                .doOnSuccess(res -> log.debug("hello3Service res={}", res))
+                //
+                .map(HttpResponse::of);
 
-        log.debug("Exit HelloHandler#hello");
+        // Convert to CompletableFuture
+        final CompletableFuture<HttpResponse> futureResponse = new CompletableFuture<>();
+        singleResponse.subscribe(futureResponse::complete, futureResponse::completeExceptionally);
 
-        return HttpResponse.of("[frontend] Hello, " + name);
+        return futureResponse
+                .exceptionally(e -> HttpResponse
+                        .of(HttpStatus.INTERNAL_SERVER_ERROR, MediaType.JSON_UTF_8, e.toString()));
     }
 }
