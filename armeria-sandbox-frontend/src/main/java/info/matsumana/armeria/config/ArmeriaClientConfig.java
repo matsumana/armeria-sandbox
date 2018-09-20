@@ -57,7 +57,7 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            HttpTracingClient.newDecorator(tracing, "backend1"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator())
+                           newCircuitBreakerDecorator("frontend-cb-1"))
                 .build(Hello1Service.AsyncIface.class);
     }
 
@@ -73,7 +73,7 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            HttpTracingClient.newDecorator(tracing, "backend2"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator())
+                           newCircuitBreakerDecorator("frontend-cb-2"))
                 .build(Hello2Service.AsyncIface.class);
     }
 
@@ -89,7 +89,7 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            HttpTracingClient.newDecorator(tracing, "backend3"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator())
+                           newCircuitBreakerDecorator("frontend-cb-3"))
                 .build(Hello3Service.AsyncIface.class);
     }
 
@@ -102,10 +102,11 @@ public class ArmeriaClientConfig {
         }
     }
 
-    private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerDecorator() {
+    private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerDecorator(
+            String circuitBreakerName) {
         return CircuitBreakerRpcClient.newPerHostDecorator(
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
-                key -> new CircuitBreakerBuilder("frontend-cb")
+                key -> new CircuitBreakerBuilder(circuitBreakerName)
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
 //                        .failureRateThreshold(0.1)
                         .build(),
