@@ -6,8 +6,8 @@ project(":armeria-sandbox-backend3") {
         compile "org.springframework.boot:spring-boot-starter-validation"
         compile "com.linecorp.armeria:armeria-thrift"
         compile "com.linecorp.armeria:armeria-retrofit2"
-        compile "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
-//        compile "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
-        compile "com.squareup.retrofit2:adapter-java8:${retrofitVersion}"
+        compile "com.squareup.retrofit2:converter-scalars"
+//        compile "com.squareup.retrofit2:converter-jackson"
+        compile "com.squareup.retrofit2:adapter-java8"
     }
 }

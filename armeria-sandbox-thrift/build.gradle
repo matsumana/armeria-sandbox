@@ -3,7 +3,7 @@ project(":armeria-sandbox-thrift") {
     apply plugin: "org.jruyi.thrift"
 
     dependencies {
-        compile "org.apache.thrift:libthrift:${thriftVersion}"
+        compile "org.apache.thrift:libthrift"
         compile "javax.annotation:javax.annotation-api"
     }
 
