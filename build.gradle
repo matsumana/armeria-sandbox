@@ -4,10 +4,11 @@ buildscript {
 
         springBootVersion = "2.0.5.RELEASE"
         braveVersion = "5.2.0"
-        armeriaVersion = "0.71.1"
+        armeriaVersion = "0.72.0"
         thriftVersion = "0.11.0"
         retrofitVersion = "2.4.0"
         rxJava2Jdk8InteropVersion = "0.3.2"
+
         junitVersion = "5.2.0"
     }
     repositories {
