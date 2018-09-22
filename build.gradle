@@ -9,7 +9,7 @@ buildscript {
         retrofitVersion = "2.4.0"
         rxJava2Jdk8InteropVersion = "0.3.2"
 
-        junitVersion = "5.2.0"
+        junitVersion = "5.3.1"
     }
     repositories {
         mavenCentral()
