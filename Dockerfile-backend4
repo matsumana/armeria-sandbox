@@ -4,7 +4,21 @@ WORKDIR /root
 
 ADD ./armeria-sandbox-backend4/build/libs/armeria-sandbox-backend4-*.jar ./armeria-sandbox-backend4.jar
 
-ENTRYPOINT java -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=8686 -Dcom.sun.management.jmxremote.port=8686 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Xms128m -Xmx128m -jar ./armeria-sandbox-backend4.jar --spring.profiles.active=docker
+ENTRYPOINT java \
+-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
+\
+-Djava.rmi.server.hostname=127.0.0.1 \
+-Dcom.sun.management.jmxremote.rmi.port=8686 \
+-Dcom.sun.management.jmxremote.port=8686 \
+-Dcom.sun.management.jmxremote.ssl=false \
+-Dcom.sun.management.jmxremote.authenticate=false \
+\
+-Xms128m -Xmx128m \
+\
+-jar ./armeria-sandbox-backend4.jar \
+\
+--spring.profiles.active=docker
 
 EXPOSE 8084
+EXPOSE 5005
 EXPOSE 8686

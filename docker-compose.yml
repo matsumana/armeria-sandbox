@@ -29,6 +29,7 @@ services:
     ports:
     - 8081:8081
     - 18686:8686
+    - 15005:5005
 
   backend1b:
     depends_on:
@@ -41,6 +42,7 @@ services:
     ports:
     - 18081:8081
     - 18687:8686
+    - 15006:5005
 
   backend2a:
     depends_on:
@@ -53,6 +55,7 @@ services:
     ports:
     - 8082:8082
     - 28686:8686
+    - 25005:5005
 
   backend3a:
     depends_on:
@@ -67,6 +70,7 @@ services:
     ports:
     - 8083:8083
     - 38686:8686
+    - 35005:5005
 
   backend4a:
     depends_on:
@@ -79,6 +83,7 @@ services:
     ports:
     - 8084:8084
     - 48686:8686
+    - 45005:5005
 
   backend4b:
     depends_on:
@@ -91,6 +96,7 @@ services:
     ports:
     - 18084:8084
     - 48687:8686
+    - 45006:5005
 
   frontend:
     depends_on:
@@ -109,3 +115,4 @@ services:
     ports:
     - 8080:8080
     - 8686:8686
+    - 5005:5005
