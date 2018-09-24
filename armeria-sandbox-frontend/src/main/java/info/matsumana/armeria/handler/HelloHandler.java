@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import com.linecorp.armeria.client.circuitbreaker.FailFastException;
 import com.linecorp.armeria.common.HttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.common.MediaType;
@@ -70,14 +71,35 @@ public class HelloHandler {
         // Convert to Single<HttpResponse>
         final Single<HttpResponse> singleResponse = single1
                 .doOnSuccess(res -> log.debug("hello1Service res={}", res))
+                .onErrorReturn(e -> {
+                    if (e instanceof FailFastException) {
+                        // fallback
+                        return "[backend1 - fallback] Hello, ???";
+                    }
+                    throw new RuntimeException(e);
+                })
                 //
                 .observeOn(Schedulers.from(monitoredThreadPool))
                 .zipWith(single2, (res, res2) -> res + " & " + res2)
                 .doOnSuccess(res -> log.debug("hello2Service res={}", res))
+                .onErrorReturn(e -> {
+                    if (e instanceof FailFastException) {
+                        // fallback
+                        return "[backend2 - fallback] Hello, ???";
+                    }
+                    throw new RuntimeException(e);
+                })
                 //
                 .observeOn(Schedulers.from(monitoredThreadPool))
                 .zipWith(single3, (res, res2) -> res + " & " + res2)
                 .doOnSuccess(res -> log.debug("hello3Service res={}", res))
+                .onErrorReturn(e -> {
+                    if (e instanceof FailFastException) {
+                        // fallback
+                        return "[backend3 - fallback] Hello, ???";
+                    }
+                    throw new RuntimeException(e);
+                })
                 //
                 .map(HttpResponse::of);
 
