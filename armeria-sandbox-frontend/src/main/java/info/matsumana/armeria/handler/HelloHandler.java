@@ -108,7 +108,8 @@ public class HelloHandler {
         singleResponse.subscribe(futureResponse::complete, futureResponse::completeExceptionally);
 
         return futureResponse
-                .exceptionally(e -> HttpResponse
-                        .of(HttpStatus.INTERNAL_SERVER_ERROR, MediaType.JSON_UTF_8, e.toString()));
+                .exceptionally(e -> HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR,
+                                                    MediaType.JSON_UTF_8,
+                                                    e.toString()));
     }
 }
