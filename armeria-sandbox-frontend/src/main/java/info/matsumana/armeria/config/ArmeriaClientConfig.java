@@ -106,7 +106,7 @@ public class ArmeriaClientConfig {
             String circuitBreakerName) {
         return CircuitBreakerRpcClient.newPerHostDecorator(
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
-                key -> new CircuitBreakerBuilder(circuitBreakerName)
+                key -> new CircuitBreakerBuilder(circuitBreakerName + '_' + key)
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
 //                        .failureRateThreshold(0.1)
                         .build(),
