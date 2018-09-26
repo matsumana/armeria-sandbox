@@ -72,7 +72,7 @@ public class ArmeriaClientConfig {
 
     private Function<Client<HttpRequest, HttpResponse>, CircuitBreakerHttpClient> newCircuitBreakerDecorator() {
         return CircuitBreakerHttpClient.newPerHostDecorator(
-//        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
+//        return CircuitBreakerHttpClient.newPerHostAndMethodDecorator(
                 groupName -> new CircuitBreakerBuilder("backend3" + '_' + groupName)
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
 //                        .failureRateThreshold(0.1)
