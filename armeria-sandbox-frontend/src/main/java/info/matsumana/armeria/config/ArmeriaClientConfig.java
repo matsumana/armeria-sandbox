@@ -57,7 +57,7 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            HttpTracingClient.newDecorator(tracing, "backend1"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator("frontend-cb-1"))
+                           newCircuitBreakerDecorator())
                 .build(Hello1Service.AsyncIface.class);
     }
 
@@ -73,7 +73,7 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            HttpTracingClient.newDecorator(tracing, "backend2"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator("frontend-cb-2"))
+                           newCircuitBreakerDecorator())
                 .build(Hello2Service.AsyncIface.class);
     }
 
@@ -89,7 +89,7 @@ public class ArmeriaClientConfig {
                 .decorator(HttpRequest.class, HttpResponse.class,
                            HttpTracingClient.newDecorator(tracing, "backend3"))
                 .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator("frontend-cb-3"))
+                           newCircuitBreakerDecorator())
                 .build(Hello3Service.AsyncIface.class);
     }
 
@@ -102,11 +102,10 @@ public class ArmeriaClientConfig {
         }
     }
 
-    private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerDecorator(
-            String circuitBreakerName) {
+    private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerDecorator() {
         return CircuitBreakerRpcClient.newPerHostDecorator(
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
-                key -> new CircuitBreakerBuilder(circuitBreakerName + '_' + key)
+                groupName -> new CircuitBreakerBuilder("frontend" + '_' + groupName)
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
 //                        .failureRateThreshold(0.1)
                         .build(),

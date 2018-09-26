@@ -66,15 +66,14 @@ public class ArmeriaClientConfig {
                         .decorator(HttpRequest.class, HttpResponse.class,
                                    HttpTracingClient.newDecorator(tracing, "backend4"))
                         .decorator(HttpRequest.class, HttpResponse.class,
-                                   newCircuitBreakerDecorator("backend3-cb")))
+                                   newCircuitBreakerDecorator()))
                 .build();
     }
 
-    private Function<Client<HttpRequest, HttpResponse>, CircuitBreakerHttpClient> newCircuitBreakerDecorator(
-            String circuitBreakerName) {
+    private Function<Client<HttpRequest, HttpResponse>, CircuitBreakerHttpClient> newCircuitBreakerDecorator() {
         return CircuitBreakerHttpClient.newPerHostDecorator(
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
-                key -> new CircuitBreakerBuilder(circuitBreakerName + '_' + key)
+                groupName -> new CircuitBreakerBuilder("backend3" + '_' + groupName)
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
 //                        .failureRateThreshold(0.1)
                         .build(),
