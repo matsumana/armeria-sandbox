@@ -107,7 +107,7 @@ public class ArmeriaClientConfig {
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
                 groupName -> new CircuitBreakerBuilder("frontend" + '_' + groupName)
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
-//                        .failureRateThreshold(0.1)
+                        .failureRateThreshold(0.1)  // TODO need tuning
                         .build(),
                 response -> response.completionFuture()
                                     .handle((res, cause) -> cause == null));

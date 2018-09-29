@@ -11,6 +11,7 @@ import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.ThriftServiceRegistrationBean;
 
 import brave.Tracing;
+import info.matsumana.armeria.thrift.FailService;
 import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.PingService;
 
@@ -32,6 +33,17 @@ public class ArmeriaThriftServiceConfig {
                                         .decorate(HttpTracingService.newDecorator(tracing)))
                 .setServiceName("PingService")
                 .setExampleRequests(ImmutableList.of(new PingService.ping_args()));
+    }
+
+    @Bean
+    public ThriftServiceRegistrationBean failService(FailService.AsyncIface service) {
+        return new ThriftServiceRegistrationBean()
+                .setPath("/thrift/fail")
+                .setService(THttpService.of(service)
+                                        .decorate(LoggingService.newDecorator())
+                                        .decorate(HttpTracingService.newDecorator(tracing)))
+                .setServiceName("FailService")
+                .setExampleRequests(ImmutableList.of(new FailService.fail_args()));
     }
 
     @Bean
