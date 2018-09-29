@@ -1,13 +1,13 @@
 // Thrift server
 project(":armeria-sandbox-backend3") {
     dependencies {
-        compile project(":armeria-sandbox-thrift")
-        compile project(":armeria-sandbox-common")
-        compile "org.springframework.boot:spring-boot-starter-validation"
-        compile "com.linecorp.armeria:armeria-thrift"
-        compile "com.linecorp.armeria:armeria-retrofit2"
-        compile "com.squareup.retrofit2:converter-scalars"
-//        compile "com.squareup.retrofit2:converter-jackson"
-        compile "com.squareup.retrofit2:adapter-java8"
+        implementation project(":armeria-sandbox-thrift")
+        implementation project(":armeria-sandbox-common")
+        implementation "org.springframework.boot:spring-boot-starter-validation"
+        implementation "com.linecorp.armeria:armeria-thrift"
+        implementation "com.linecorp.armeria:armeria-retrofit2"
+        implementation "com.squareup.retrofit2:converter-scalars"
+//        implementation "com.squareup.retrofit2:converter-jackson"
+        implementation "com.squareup.retrofit2:adapter-java8"
     }
 }

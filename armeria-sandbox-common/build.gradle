@@ -1,11 +1,11 @@
 project(":armeria-sandbox-common") {
     dependencies {
-        compile "com.linecorp.armeria:armeria"
-        compile "com.linecorp.armeria:armeria-spring-boot-starter"
-        compile "com.linecorp.armeria:armeria-rxjava"
-        compile "com.linecorp.armeria:armeria-zipkin"
-        compile "com.github.akarnokd:rxjava2-jdk8-interop"
-        compile "io.zipkin.reporter2:zipkin-sender-urlconnection"
+        api "com.linecorp.armeria:armeria"
+        api "com.linecorp.armeria:armeria-spring-boot-starter"
+        api "com.linecorp.armeria:armeria-rxjava"
+        api "com.linecorp.armeria:armeria-zipkin"
+        api "com.github.akarnokd:rxjava2-jdk8-interop"
+        api "io.zipkin.reporter2:zipkin-sender-urlconnection"
     }
 
     bootJar {
