@@ -71,6 +71,7 @@ public class HelloHandler {
         // Convert to Single<HttpResponse>
         final Single<HttpResponse> singleResponse = single1
                 .doOnSuccess(res -> log.debug("hello1Service res={}", res))
+                .doOnError(e -> log.debug("hello1Service exception", e))
                 .onErrorReturn(e -> {
                     if (e instanceof FailFastException) {
                         // fallback
@@ -82,6 +83,7 @@ public class HelloHandler {
                 .observeOn(Schedulers.from(monitoredThreadPool))
                 .zipWith(single2, (res, res2) -> res + " & " + res2)
                 .doOnSuccess(res -> log.debug("hello2Service res={}", res))
+                .doOnError(e -> log.debug("hello2Service exception", e))
                 .onErrorReturn(e -> {
                     if (e instanceof FailFastException) {
                         // fallback
@@ -93,6 +95,7 @@ public class HelloHandler {
                 .observeOn(Schedulers.from(monitoredThreadPool))
                 .zipWith(single3, (res, res2) -> res + " & " + res2)
                 .doOnSuccess(res -> log.debug("hello3Service res={}", res))
+                .doOnError(e -> log.debug("hello3Service exception", e))
                 .onErrorReturn(e -> {
                     if (e instanceof FailFastException) {
                         // fallback
