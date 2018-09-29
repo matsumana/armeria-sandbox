@@ -49,6 +49,11 @@ subprojects {
             mavenBom "org.junit:junit-bom:${junitVersion}"
         }
         dependencies {
+            // To override version which Armeria use
+            dependency "org.springframework.boot:spring-boot-starter:${springBootVersion}"
+            dependency "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+            dependency "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+
             dependency "org.apache.thrift:libthrift:${thriftVersion}"
             dependency "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
             dependency "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
