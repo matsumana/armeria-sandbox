@@ -1,3 +1,7 @@
+// for Jigsaw
+javaModule.name = "info.matsumana.armeria.common"
+javaModule.hacks.patches("com.google.code.findbugs:jsr305", "javax.annotation:javax.annotation-api")
+
 project(":armeria-sandbox-common") {
     dependencies {
         api "com.linecorp.armeria:armeria"
@@ -6,6 +10,9 @@ project(":armeria-sandbox-common") {
         api "com.linecorp.armeria:armeria-zipkin"
         api "com.github.akarnokd:rxjava2-jdk8-interop"
         api "io.zipkin.reporter2:zipkin-sender-urlconnection"
+
+        // for Jigsaw
+        patch "com.google.code.findbugs:jsr305"
     }
 
     bootJar {

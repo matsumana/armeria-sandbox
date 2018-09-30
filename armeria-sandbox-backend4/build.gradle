@@ -1,7 +1,18 @@
 // REST server
+
+// for Jigsaw
+javaModule.hacks.patches("com.google.code.findbugs:jsr305", "javax.annotation:javax.annotation-api")
+javaModule.hacks.patches("org.hamcrest:hamcrest-core", "org.hamcrest:hamcrest-library")
+javaModule.hacks.patches("org.skyscreamer:jsonassert", "com.vaadin.external.google:android-json")
+
 project(":armeria-sandbox-backend4") {
     dependencies {
         implementation project(":armeria-sandbox-common")
         implementation "org.springframework.boot:spring-boot-starter-validation"
+
+        // for Jigsaw
+        patch "com.google.code.findbugs:jsr305"
+        patch "org.hamcrest:hamcrest-core"
+        patch "org.skyscreamer:jsonassert"
     }
 }

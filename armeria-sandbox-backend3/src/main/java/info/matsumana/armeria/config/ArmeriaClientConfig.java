@@ -24,6 +24,8 @@ import com.linecorp.armeria.common.HttpRequest;
 import com.linecorp.armeria.common.HttpResponse;
 
 import brave.Tracing;
+import info.matsumana.armeria.common.config.ApiServerSetting;
+import info.matsumana.armeria.common.config.ZipkinTracingFactory;
 import io.micrometer.core.instrument.MeterRegistry;
 import retrofit2.Retrofit;
 import retrofit2.adapter.java8.Java8CallAdapterFactory;

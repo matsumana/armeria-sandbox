@@ -26,6 +26,8 @@ import com.linecorp.armeria.common.RpcRequest;
 import com.linecorp.armeria.common.RpcResponse;
 
 import brave.Tracing;
+import info.matsumana.armeria.common.config.ApiServerSetting;
+import info.matsumana.armeria.common.config.ZipkinTracingFactory;
 import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.Hello2Service;
 import info.matsumana.armeria.thrift.Hello3Service;

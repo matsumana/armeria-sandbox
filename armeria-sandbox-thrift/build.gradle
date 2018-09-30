@@ -1,4 +1,8 @@
 // Thrift IDL
+
+// for Jigsaw
+javaModule.name = "info.matsumana.armeria.thrift"
+
 project(":armeria-sandbox-thrift") {
     apply plugin: "org.jruyi.thrift"
 

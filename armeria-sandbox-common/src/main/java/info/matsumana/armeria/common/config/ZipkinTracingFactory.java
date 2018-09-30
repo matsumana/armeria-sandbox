@@ -1,4 +1,4 @@
-package info.matsumana.armeria.config;
+package info.matsumana.armeria.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

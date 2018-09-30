@@ -1,6 +1,7 @@
 buildscript {
     ext {
         thriftGradlePluginVersion = "0.4.0"
+        chainsawVersion = "0.3.1"
 
         springBootVersion = "2.1.0.M4"
         braveVersion = "5.2.0"
@@ -20,6 +21,7 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "gradle.plugin.org.jruyi.gradle:thrift-gradle-plugin:${thriftGradlePluginVersion}"
+        classpath "gradle.plugin.com.zyxist:chainsaw:${chainsawVersion}"
     }
 }
 
@@ -29,6 +31,7 @@ subprojects {
     apply plugin: "eclipse"
     apply plugin: "org.springframework.boot"
     apply plugin: "io.spring.dependency-management"
+    apply plugin: "com.zyxist.chainsaw"
 
     group = "info.matsumana.armeria"
     version = "0.1.1-SNAPSHOT"

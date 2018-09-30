@@ -1,4 +1,4 @@
-package info.matsumana.armeria.config;
+package info.matsumana.armeria.common.config;
 
 import java.util.List;
 

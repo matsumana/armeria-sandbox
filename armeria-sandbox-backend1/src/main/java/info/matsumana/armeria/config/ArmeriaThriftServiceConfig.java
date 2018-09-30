@@ -11,6 +11,7 @@ import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.ThriftServiceRegistrationBean;
 
 import brave.Tracing;
+import info.matsumana.armeria.common.config.ZipkinTracingFactory;
 import info.matsumana.armeria.thrift.FailService;
 import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.PingService;

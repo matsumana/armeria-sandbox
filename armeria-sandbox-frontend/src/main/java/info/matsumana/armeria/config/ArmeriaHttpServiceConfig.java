@@ -8,6 +8,7 @@ import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.AnnotatedServiceRegistrationBean;
 
 import brave.Tracing;
+import info.matsumana.armeria.common.config.ZipkinTracingFactory;
 import info.matsumana.armeria.handler.HelloHandler;
 import info.matsumana.armeria.handler.RootHandler;
 
