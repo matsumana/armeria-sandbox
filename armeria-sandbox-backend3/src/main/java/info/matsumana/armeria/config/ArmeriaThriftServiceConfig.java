@@ -1,9 +1,9 @@
 package info.matsumana.armeria.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.google.common.collect.ImmutableList;
 
 import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.thrift.THttpService;
@@ -31,7 +31,7 @@ public class ArmeriaThriftServiceConfig {
                                         .decorate(LoggingService.newDecorator())
                                         .decorate(HttpTracingService.newDecorator(tracing)))
                 .setServiceName("PingService")
-                .setExampleRequests(ImmutableList.of(new PingService.ping_args()));
+                .setExampleRequests(List.of(new PingService.ping_args()));
     }
 
     @Bean
@@ -42,6 +42,6 @@ public class ArmeriaThriftServiceConfig {
                                         .decorate(LoggingService.newDecorator())
                                         .decorate(HttpTracingService.newDecorator(tracing)))
                 .setServiceName("Hello3Service")
-                .setExampleRequests(ImmutableList.of(new Hello3Service.hello_args("foo")));
+                .setExampleRequests(List.of(new Hello3Service.hello_args("foo")));
     }
 }
