@@ -2,7 +2,7 @@ FROM openjdk:11-ea-28-slim
 
 WORKDIR /root
 
-ADD ./armeria-sandbox-frontend/build/libs/armeria-sandbox-frontend-*.jar ./armeria-sandbox-frontend.jar
+ADD ./armeria-sandbox-frontend/build/libs/armeria-sandbox-frontend-*.jar ./app.jar
 
 ENTRYPOINT java \
     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
@@ -15,7 +15,7 @@ ENTRYPOINT java \
     \
     -Xms128m -Xmx128m \
     \
-    -jar ./armeria-sandbox-frontend.jar \
+    -jar ./app.jar \
     \
     --spring.profiles.active=docker
 
