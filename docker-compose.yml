@@ -105,8 +105,6 @@ services:
     - backend1b
     - backend2a
     - backend3a
-    - backend4a
-    - backend4b
     build:
       context: .
       dockerfile: Dockerfile-frontend
