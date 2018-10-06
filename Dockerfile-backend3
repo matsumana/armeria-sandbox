@@ -15,7 +15,7 @@ ENTRYPOINT java \
     \
     -Xms128m -Xmx128m \
     \
-    -jar ./app.jar \
+    -jar /root/app.jar \
     \
     --spring.profiles.active=docker
 
