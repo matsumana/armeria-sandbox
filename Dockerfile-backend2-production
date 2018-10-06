@@ -1,9 +1,4 @@
-FROM centos:7.5.1804 as builder
-
-WORKDIR /tmp
-RUN curl -L -O https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz && \
-    tar xvf openjdk-11_linux-x64_bin.tar.gz
-ENV PATH=/tmp/jdk-11/bin:${PATH}
+FROM matsumana/debian9-openjdk11 as builder
 
 WORKDIR /root
 ADD ./armeria-sandbox-backend2/build/libs/armeria-sandbox-backend2-*.jar ./app.jar
@@ -15,7 +10,7 @@ RUN jlink \
 
 
 
-FROM centos:7.5.1804
+FROM matsumana/debian9-openjdk11
 
 WORKDIR /root
 COPY --from=builder /root/app.jar ./app.jar
