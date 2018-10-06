@@ -10,7 +10,7 @@ RUN jlink \
 
 
 
-FROM matsumana/debian9-openjdk11
+FROM debian:9.5-slim
 
 WORKDIR /root
 COPY --from=builder /root/app.jar ./app.jar
