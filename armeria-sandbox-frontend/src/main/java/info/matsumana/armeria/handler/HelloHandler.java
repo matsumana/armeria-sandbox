@@ -112,7 +112,7 @@ public class HelloHandler {
 
         return futureResponse
                 .exceptionally(e -> HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR,
-                                                    MediaType.JSON_UTF_8,
+                                                    MediaType.PLAIN_TEXT_UTF_8,
                                                     e.toString()));
     }
 }

@@ -40,7 +40,7 @@ public class ArmeriaClientConfig {
                         ZipkinTracingFactory tracingFactory) {
         this.apiServerSetting = apiServerSetting;
         this.meterRegistry = meterRegistry;
-        tracing = tracingFactory.create("frontend");
+        tracing = tracingFactory.create("backend3");
     }
 
     @Bean
