@@ -1,20 +1,16 @@
 FROM matsumana/debian9-openjdk11 as builder
 
-WORKDIR /root
-ADD ./build/libs/*.jar ./app.jar
 RUN jlink \
     --compress=2 \
-    --module-path=/usr/lib/jvm/jdk-11/jmods \
     --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported \
-    --output=jre
+    --output=/tmp/jre
 
 
 
 FROM debian:9.5-slim
 
-WORKDIR /root
-COPY --from=builder /root/app.jar ./app.jar
-COPY --from=builder /root/jre ./jre
+COPY --from=builder /tmp/jre /root/jre
+ADD ./build/libs/*.jar /root/app.jar
 
 ENTRYPOINT /root/jre/bin/java \
     -Djava.rmi.server.hostname=127.0.0.1 \
