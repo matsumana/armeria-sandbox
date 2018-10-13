@@ -4,7 +4,7 @@ WORKDIR /root
 ADD ./build/libs/*.jar ./app.jar
 RUN jlink \
     --compress=2 \
-    --module-path=/tmp/jdk-11/jmods \
+    --module-path=/usr/lib/jvm/jdk-11/jmods \
     --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported \
     --output=jre
 
