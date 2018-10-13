@@ -2,7 +2,7 @@ FROM matsumana/debian9-openjdk11
 
 WORKDIR /root
 
-ADD ./armeria-sandbox-backend1/build/libs/armeria-sandbox-backend1-*.jar ./app.jar
+ADD ./build/libs/*.jar ./app.jar
 
 ENTRYPOINT java \
     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
@@ -19,6 +19,6 @@ ENTRYPOINT java \
     \
     --spring.profiles.active=docker
 
-EXPOSE 8081
+EXPOSE 8080
 EXPOSE 5005
 EXPOSE 8686

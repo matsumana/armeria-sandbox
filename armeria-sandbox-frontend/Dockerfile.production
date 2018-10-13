@@ -1,7 +1,7 @@
 FROM matsumana/debian9-openjdk11 as builder
 
 WORKDIR /root
-ADD ./armeria-sandbox-backend1/build/libs/armeria-sandbox-backend1-*.jar ./app.jar
+ADD ./build/libs/*.jar ./app.jar
 RUN jlink \
     --compress=2 \
     --module-path=/tmp/jdk-11/jmods \
@@ -29,5 +29,5 @@ ENTRYPOINT /root/jre/bin/java \
     \
     --spring.profiles.active=docker
 
-EXPOSE 8081
+EXPOSE 8080
 EXPOSE 8686

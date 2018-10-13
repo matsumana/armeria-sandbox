@@ -22,8 +22,8 @@ services:
     depends_on:
     - zipkin
     build:
-      context: .
-      dockerfile: Dockerfile-backend1-dev
+      context: ./armeria-sandbox-backend1
+      dockerfile: Dockerfile
     cpu_quota: 30000      # 30%
     mem_limit: 536870912  # 512M
     ports:
@@ -35,8 +35,8 @@ services:
     depends_on:
     - zipkin
     build:
-      context: .
-      dockerfile: Dockerfile-backend1-dev
+      context: ./armeria-sandbox-backend1
+      dockerfile: Dockerfile
     cpu_quota: 30000      # 30%
     mem_limit: 536870912  # 512M
     ports:
@@ -48,8 +48,8 @@ services:
     depends_on:
     - zipkin
     build:
-      context: .
-      dockerfile: Dockerfile-backend2-dev
+      context: ./armeria-sandbox-backend2
+      dockerfile: Dockerfile
     cpu_quota: 30000      # 30%
     mem_limit: 536870912  # 512M
     ports:
@@ -63,8 +63,8 @@ services:
     - backend4a
     - backend4b
     build:
-      context: .
-      dockerfile: Dockerfile-backend3-dev
+      context: ./armeria-sandbox-backend3
+      dockerfile: Dockerfile
     cpu_quota: 30000      # 30%
     mem_limit: 536870912  # 512M
     ports:
@@ -76,8 +76,8 @@ services:
     depends_on:
     - zipkin
     build:
-      context: .
-      dockerfile: Dockerfile-backend4-dev
+      context: ./armeria-sandbox-backend4
+      dockerfile: Dockerfile
     cpu_quota: 30000      # 30%
     mem_limit: 536870912  # 512M
     ports:
@@ -89,8 +89,8 @@ services:
     depends_on:
     - zipkin
     build:
-      context: .
-      dockerfile: Dockerfile-backend4-dev
+      context: ./armeria-sandbox-backend4
+      dockerfile: Dockerfile
     cpu_quota: 30000      # 30%
     mem_limit: 536870912  # 512M
     ports:
@@ -106,8 +106,8 @@ services:
     - backend2a
     - backend3a
     build:
-      context: .
-      dockerfile: Dockerfile-frontend-dev
+      context: ./armeria-sandbox-frontend
+      dockerfile: Dockerfile
     cpu_quota: 30000      # 30%
     mem_limit: 536870912  # 512M
     ports:

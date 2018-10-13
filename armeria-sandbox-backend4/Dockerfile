@@ -2,7 +2,7 @@ FROM matsumana/debian9-openjdk11
 
 WORKDIR /root
 
-ADD ./armeria-sandbox-backend4/build/libs/armeria-sandbox-backend4-*.jar ./app.jar
+ADD ./build/libs/*.jar ./app.jar
 
 ENTRYPOINT java \
     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
