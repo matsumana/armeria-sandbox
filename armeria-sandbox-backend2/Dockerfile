@@ -1,8 +1,6 @@
 FROM matsumana/debian9-openjdk11
 
-WORKDIR /root
-
-ADD ./build/libs/*.jar ./app.jar
+ADD ./build/libs/*.jar /root/app.jar
 
 ENTRYPOINT java \
     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
