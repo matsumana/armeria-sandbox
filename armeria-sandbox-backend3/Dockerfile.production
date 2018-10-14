@@ -2,7 +2,7 @@ FROM matsumana/debian9-openjdk11 as builder
 
 RUN jlink \
     --compress=2 \
-    --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported \
+    --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported,jdk.jfr,jdk.management.jfr \
     --output=/tmp/jre
 
 
@@ -18,6 +18,8 @@ ENTRYPOINT /root/jre/bin/java \
     -Dcom.sun.management.jmxremote.port=8686 \
     -Dcom.sun.management.jmxremote.ssl=false \
     -Dcom.sun.management.jmxremote.authenticate=false \
+    \
+    -XX:StartFlightRecording=dumponexit=true,filename=/root/flight_recording_$(date +"%Y-%m-%d_%H-%M-%S").jfr,delay=2m,maxsize=512m \
     \
     -Xms128m -Xmx128m \
     \
