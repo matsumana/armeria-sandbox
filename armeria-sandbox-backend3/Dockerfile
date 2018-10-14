@@ -11,6 +11,8 @@ ENTRYPOINT java \
     -Dcom.sun.management.jmxremote.ssl=false \
     -Dcom.sun.management.jmxremote.authenticate=false \
     \
+    -XX:StartFlightRecording=dumponexit=true,filename=/root/flight_recording_$(date +"%Y-%m-%d_%H-%M-%S").jfr,delay=2m,maxsize=512m,settings=profile,path-to-gc-roots=true \
+    \
     -Xms128m -Xmx128m \
     \
     -jar /root/app.jar \
