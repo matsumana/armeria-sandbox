@@ -2,7 +2,8 @@ FROM matsumana/debian9-openjdk11 as builder
 
 RUN jlink \
     --compress=2 \
-    --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported,jdk.jfr,jdk.management.jfr \
+    --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported \
+    --bind-services \
     --output=/tmp/jre
 
 
