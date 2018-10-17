@@ -2,7 +2,7 @@ buildscript {
     ext {
         thriftGradlePluginVersion = "0.4.0"
 
-        springBootVersion = "2.1.0.M4"
+        springBootVersion = "2.1.0.RC1"
         braveVersion = "5.2.0"
         armeriaVersion = "0.72.0"
         thriftVersion = "0.11.0"
