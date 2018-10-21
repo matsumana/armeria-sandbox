@@ -14,3 +14,9 @@ build/
 *.ipr
 *.iws
 out/
+
+# Visual Studio Code
+.classpath
+.project
+.settings
+armeria-sandbox-*/bin
