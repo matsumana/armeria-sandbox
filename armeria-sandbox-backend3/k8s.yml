@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend3
+  labels:
+    app: backend3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend3
+  template:
+    metadata:
+      labels:
+        app: backend3
+    spec:
+      containers:
+      - name: backend3
+        image: localhost:5000/backend3
+        ports:
+        - containerPort: 8083
+        - containerPort: 8686
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: backend3
+spec:
+  type: NodePort
+  selector:
+    app: backend3
+  ports:
+  - name: app
+    protocol: TCP
+    targetPort: 8083
+    port: 8083
+    nodePort: 31300
+  - name: jmx
+    protocol: TCP
+    targetPort: 8686
+    port: 8686
+    nodePort: 31301

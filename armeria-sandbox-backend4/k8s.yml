@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend4
+  labels:
+    app: backend4
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend4
+  template:
+    metadata:
+      labels:
+        app: backend4
+    spec:
+      containers:
+      - name: backend4
+        image: localhost:5000/backend4
+        ports:
+        - containerPort: 8084
+        - containerPort: 8686
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: backend4
+spec:
+  type: NodePort
+  selector:
+    app: backend4
+  ports:
+  - name: app
+    protocol: TCP
+    targetPort: 8084
+    port: 8084
+    nodePort: 31400
+  - name: jmx
+    protocol: TCP
+    targetPort: 8686
+    port: 8686
+    nodePort: 31401

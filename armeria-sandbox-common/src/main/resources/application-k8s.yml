@@ -1,0 +1,20 @@
+zipkin:
+  endpoint: http://zipkin:9411/api/v2/spans
+
+api-servers:
+  backend1:
+  - host: backend1
+    port: 8081
+  backend2:
+  - host: backend2
+    port: 8082
+  backend3:
+  - host: backend3
+    port: 8083
+  backend4:
+  - host: backend4
+    port: 8084
+
+logging:
+  level:
+    info.matsumana.armeria: DEBUG
