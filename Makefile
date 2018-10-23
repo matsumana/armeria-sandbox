@@ -55,6 +55,7 @@ k8s-rollout:
 	kubectl rollout status deployment/frontend
 
 k8s-create:
+	kubectl create -f ./k8s/prometheus.yml
 	kubectl create -f ./k8s/zipkin.yml
 	kubectl create -f ./armeria-sandbox-backend1/k8s.yml
 	kubectl create -f ./armeria-sandbox-backend2/k8s.yml
@@ -63,12 +64,13 @@ k8s-create:
 	kubectl create -f ./armeria-sandbox-frontend/k8s.yml
 
 k8s-delete:
-	kubectl delete -f ./k8s/zipkin.yml
-	kubectl delete -f ./armeria-sandbox-backend1/k8s.yml
-	kubectl delete -f ./armeria-sandbox-backend2/k8s.yml
-	kubectl delete -f ./armeria-sandbox-backend3/k8s.yml
-	kubectl delete -f ./armeria-sandbox-backend4/k8s.yml
 	kubectl delete -f ./armeria-sandbox-frontend/k8s.yml
+	kubectl delete -f ./armeria-sandbox-backend4/k8s.yml
+	kubectl delete -f ./armeria-sandbox-backend3/k8s.yml
+	kubectl delete -f ./armeria-sandbox-backend2/k8s.yml
+	kubectl delete -f ./armeria-sandbox-backend1/k8s.yml
+	kubectl delete -f ./k8s/zipkin.yml
+	kubectl delete -f ./k8s/prometheus.yml
 
 k8s-info:
 	kubectl get deployment

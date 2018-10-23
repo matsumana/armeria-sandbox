@@ -14,6 +14,10 @@ spec:
     metadata:
       labels:
         app: backend3
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8083'
+        prometheus.io/path: /internal/metrics
     spec:
       containers:
       - name: backend3
