@@ -6,8 +6,10 @@ ENTRYPOINT java \
     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
     \
     -Djava.rmi.server.hostname=127.0.0.1 \
+    -Dcom.sun.management.jmxremote \
     -Dcom.sun.management.jmxremote.rmi.port=8686 \
     -Dcom.sun.management.jmxremote.port=8686 \
+    -Dcom.sun.management.jmxremote.local.only=false \
     -Dcom.sun.management.jmxremote.ssl=false \
     -Dcom.sun.management.jmxremote.authenticate=false \
     \

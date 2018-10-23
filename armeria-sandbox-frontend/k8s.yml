@@ -37,8 +37,3 @@ spec:
     targetPort: 8080
     port: 8080
     nodePort: 31000
-  - name: jmx
-    protocol: TCP
-    targetPort: 8686
-    port: 8686
-    nodePort: 31001
