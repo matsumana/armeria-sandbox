@@ -70,7 +70,7 @@ k8s-delete:
 	kubectl delete -f ./armeria-sandbox-frontend/k8s.yml
 	kubectl delete -f ./k8s/k8s-zipkin.yml
 
-k8s-get-info:
+k8s-info:
 	kubectl get deployment
 	echo
 	kubectl get svc
