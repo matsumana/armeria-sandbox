@@ -1,31 +1,31 @@
 rebuild-jar:
 	./gradlew --no-daemon clean build
 
-up:
+docker-compose-up:
 	docker-compose up -d
 
-reload: rebuild-jar
+docker-compose-build: rebuild-jar
 	docker-compose up -d --build
 
-stop:
+docker-compose-stop:
 	docker-compose stop
 
-stop-immediately:
+docker-compose-stop-immediately:
 	docker-compose stop -t 0
 
-down:
+docker-compose-down:
 	docker-compose down
 
-down-immediately:
+docker-compose-down-immediately:
 	docker-compose down -t 0
 
-ps:
+docker-ps:
 	docker ps -a
 
-stats:
+docker-stats:
 	docker stats
 
-prune-images:
+docker-image-prune:
 	docker image prune
 
 docker-build-k8s: rebuild-jar
@@ -55,20 +55,20 @@ k8s-rollout:
 	kubectl rollout status deployment/frontend
 
 k8s-create:
+	kubectl create -f ./k8s/zipkin.yml
 	kubectl create -f ./armeria-sandbox-backend1/k8s.yml
 	kubectl create -f ./armeria-sandbox-backend2/k8s.yml
 	kubectl create -f ./armeria-sandbox-backend3/k8s.yml
 	kubectl create -f ./armeria-sandbox-backend4/k8s.yml
 	kubectl create -f ./armeria-sandbox-frontend/k8s.yml
-	kubectl create -f ./k8s/k8s-zipkin.yml
 
 k8s-delete:
+	kubectl delete -f ./k8s/zipkin.yml
 	kubectl delete -f ./armeria-sandbox-backend1/k8s.yml
 	kubectl delete -f ./armeria-sandbox-backend2/k8s.yml
 	kubectl delete -f ./armeria-sandbox-backend3/k8s.yml
 	kubectl delete -f ./armeria-sandbox-backend4/k8s.yml
 	kubectl delete -f ./armeria-sandbox-frontend/k8s.yml
-	kubectl delete -f ./k8s/k8s-zipkin.yml
 
 k8s-info:
 	kubectl get deployment
