@@ -1,7 +1,6 @@
 package info.matsumana.armeria.config;
 
 import static com.linecorp.armeria.client.endpoint.EndpointSelectionStrategy.WEIGHTED_ROUND_ROBIN;
-import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.util.function.Function;
 
@@ -10,13 +9,11 @@ import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.client.Client;
 import com.linecorp.armeria.client.ClientBuilder;
-import com.linecorp.armeria.client.Endpoint;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerBuilder;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRpcClient;
 import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.EndpointGroupRegistry;
-import com.linecorp.armeria.client.endpoint.StaticEndpointGroup;
 import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroup;
 import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroupBuilder;
 import com.linecorp.armeria.client.tracing.HttpTracingClient;
@@ -26,6 +23,7 @@ import com.linecorp.armeria.common.RpcRequest;
 import com.linecorp.armeria.common.RpcResponse;
 
 import brave.Tracing;
+import info.matsumana.armeria.helper.EndpointGroupHelper;
 import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.Hello2Service;
 import info.matsumana.armeria.thrift.Hello3Service;
@@ -36,22 +34,21 @@ public class ArmeriaClientConfig {
 
     private final ApiServerSetting apiServerSetting;
     private final MeterRegistry meterRegistry;
+    private final EndpointGroupHelper endpointGroupHelper;
     private final Tracing tracing;
 
     ArmeriaClientConfig(ApiServerSetting apiServerSetting, MeterRegistry meterRegistry,
-                        ZipkinTracingFactory tracingFactory) {
+                        ZipkinTracingFactory tracingFactory, EndpointGroupHelper endpointGroupHelper) {
         this.apiServerSetting = apiServerSetting;
         this.meterRegistry = meterRegistry;
+        this.endpointGroupHelper = endpointGroupHelper;
         tracing = tracingFactory.create("frontend");
     }
 
     @Bean
     Hello1Service.AsyncIface hello1Service() {
-        final EndpointGroup group =
-                new StaticEndpointGroup(apiServerSetting.getBackend1().stream()
-                                                        .map(setting -> Endpoint.of(setting.getHost(),
-                                                                                    setting.getPort()))
-                                                        .collect(toUnmodifiableList()));
+        final EndpointGroup group = endpointGroupHelper.newEndpointGroup("/backend1.json",
+                                                                         apiServerSetting.getBackend1());
         registerEndpointGroup(group, "backend1");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello1", "backend1"))
                 .decorator(HttpRequest.class, HttpResponse.class,
@@ -63,11 +60,8 @@ public class ArmeriaClientConfig {
 
     @Bean
     Hello2Service.AsyncIface hello2Service() {
-        final EndpointGroup group =
-                new StaticEndpointGroup(apiServerSetting.getBackend2().stream()
-                                                        .map(setting -> Endpoint.of(setting.getHost(),
-                                                                                    setting.getPort()))
-                                                        .collect(toUnmodifiableList()));
+        final EndpointGroup group = endpointGroupHelper.newEndpointGroup("/backend2.json",
+                                                                         apiServerSetting.getBackend2());
         registerEndpointGroup(group, "backend2");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello2", "backend2"))
                 .decorator(HttpRequest.class, HttpResponse.class,
@@ -79,11 +73,8 @@ public class ArmeriaClientConfig {
 
     @Bean
     Hello3Service.AsyncIface hello3Service() {
-        final EndpointGroup group =
-                new StaticEndpointGroup(apiServerSetting.getBackend3().stream()
-                                                        .map(setting -> Endpoint.of(setting.getHost(),
-                                                                                    setting.getPort()))
-                                                        .collect(toUnmodifiableList()));
+        final EndpointGroup group = endpointGroupHelper.newEndpointGroup("/backend3.json",
+                                                                         apiServerSetting.getBackend3());
         registerEndpointGroup(group, "backend3");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello3", "backend3"))
                 .decorator(HttpRequest.class, HttpResponse.class,

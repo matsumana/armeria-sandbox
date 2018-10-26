@@ -9,7 +9,7 @@ project(":armeria-sandbox-thrift") {
 
     compileThrift {
         // TODO Put thrift binary in this repo and refer it
-        thriftExecutable "/usr/local/bin/thrift"
+        thriftExecutable "/usr/local/Cellar/thrift@0.9/0.9.3/bin/thrift"
     }
 
     bootJar {

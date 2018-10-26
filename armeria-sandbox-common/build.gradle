@@ -6,6 +6,10 @@ project(":armeria-sandbox-common") {
         api "com.linecorp.armeria:armeria-zipkin"
         api "com.github.akarnokd:rxjava2-jdk8-interop"
         api "io.zipkin.reporter2:zipkin-sender-urlconnection"
+        api("com.linecorp.centraldogma:centraldogma-client-armeria-legacy") {
+            exclude module: "armeria-shaded"
+            exclude module: "armeria-thrift0.9-shaded"
+        }
     }
 
     bootJar {

@@ -12,13 +12,13 @@ public class FailHandler implements FailService.AsyncIface {
     private boolean fail;
 
     @Override
-    public void fail(AsyncMethodCallback<String> resultHandler) throws TException {
+    public void fail(AsyncMethodCallback resultHandler) throws TException {
         fail = true;
         resultHandler.onComplete("failed");
     }
 
     @Override
-    public void recover(AsyncMethodCallback<String> resultHandler) throws TException {
+    public void recover(AsyncMethodCallback resultHandler) throws TException {
         fail = false;
         resultHandler.onComplete("recovered");
     }

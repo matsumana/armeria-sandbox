@@ -10,7 +10,7 @@ import info.matsumana.armeria.thrift.PingService;
 public class PingHandler implements PingService.AsyncIface {
 
     @Override
-    public void ping(AsyncMethodCallback<String> resultHandler) throws TException {
+    public void ping(AsyncMethodCallback resultHandler) throws TException {
         resultHandler.onComplete("pong");
     }
 }

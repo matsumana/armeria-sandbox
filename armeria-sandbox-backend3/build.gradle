@@ -4,7 +4,7 @@ project(":armeria-sandbox-backend3") {
         implementation project(":armeria-sandbox-thrift")
         implementation project(":armeria-sandbox-common")
         implementation "org.springframework.boot:spring-boot-starter-validation"
-        implementation "com.linecorp.armeria:armeria-thrift"
+        implementation "com.linecorp.armeria:armeria-thrift0.9"  // Central Dogma depends on Thrift0.9
         implementation "com.linecorp.armeria:armeria-retrofit2"
         implementation "com.squareup.retrofit2:converter-scalars"
 //        implementation "com.squareup.retrofit2:converter-jackson"
