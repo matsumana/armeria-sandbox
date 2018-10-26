@@ -23,12 +23,19 @@ spec:
       - name: backend2
         image: localhost:5000/backend2
         env:
+        - name: JAVA_OPTS
+          value: >-
+            -Djava.rmi.server.hostname=127.0.0.1
+            -Dcom.sun.management.jmxremote
+            -Dcom.sun.management.jmxremote.rmi.port=8686
+            -Dcom.sun.management.jmxremote.port=8686
+            -Dcom.sun.management.jmxremote.local.only=false
+            -Dcom.sun.management.jmxremote.ssl=false
+            -Dcom.sun.management.jmxremote.authenticate=false
+            -XX:StartFlightRecording=name=on_startup,filename=/root/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m
+            -Xms128m -Xmx128m
         - name: SPRING_PROFILES_ACTIVE
           value: k8s
-        - name: CENTRALDOGMA_SERVER_HOST
-          value: centraldogma.default.svc.cluster.local
-        - name: CENTRALDOGMA_SERVER_PORT
-          value: "36462"
         ports:
         - containerPort: 8082
         - containerPort: 8686
