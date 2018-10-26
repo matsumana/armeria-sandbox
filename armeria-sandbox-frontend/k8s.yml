@@ -15,13 +15,20 @@ spec:
       labels:
         app: frontend
       annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '8080'
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
         prometheus.io/path: /internal/metrics
     spec:
       containers:
       - name: frontend
         image: localhost:5000/frontend
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: k8s
+        - name: CENTRALDOGMA_SERVER_HOST
+          value: centraldogma.default.svc.cluster.local
+        - name: CENTRALDOGMA_SERVER_PORT
+          value: "36462"
         ports:
         - containerPort: 8080
         - containerPort: 8686

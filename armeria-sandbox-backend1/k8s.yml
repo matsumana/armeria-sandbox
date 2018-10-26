@@ -15,8 +15,8 @@ spec:
       labels:
         app: backend1
       annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/port: '8081'
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8081"
         prometheus.io/path: /internal/metrics
     spec:
       containers:

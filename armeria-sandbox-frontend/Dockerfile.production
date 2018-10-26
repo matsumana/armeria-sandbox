@@ -26,11 +26,7 @@ ENTRYPOINT /root/jre/bin/java \
     \
     -Xms128m -Xmx128m \
     \
-    -jar /root/app.jar \
-    \
-    --spring.profiles.active=k8s \
-    --centraldogma.server.host=centraldogma.default.svc.cluster.local \
-    --centraldogma.server.port=36462
+    -jar /root/app.jar
 
 EXPOSE 8080
 EXPOSE 8686
