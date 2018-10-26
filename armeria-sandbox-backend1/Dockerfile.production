@@ -26,9 +26,7 @@ ENTRYPOINT /root/jre/bin/java \
     \
     -Xms128m -Xmx128m \
     \
-    -jar /root/app.jar \
-    \
-    --spring.profiles.active=k8s
+    -jar /root/app.jar
 
 EXPOSE 8081
 EXPOSE 8686
