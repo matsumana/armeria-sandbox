@@ -1,4 +1,6 @@
 // Thrift IDL
+apply plugin: 'com.google.osdetector'
+
 project(":armeria-sandbox-thrift") {
     apply plugin: "org.jruyi.thrift"
 
@@ -8,8 +10,7 @@ project(":armeria-sandbox-thrift") {
     }
 
     compileThrift {
-        // TODO Put thrift binary in this repo and refer it
-        thriftExecutable "/usr/local/Cellar/thrift@0.9/0.9.3/bin/thrift"
+        thriftExecutable "${rootProject.projectDir}/lib/thrift/${thriftVersion}/thrift.${project.osdetector.classifier}"
     }
 
     bootJar {

@@ -1,11 +1,13 @@
 buildscript {
     ext {
         thriftGradlePluginVersion = "0.4.0"
+        osdetectorGradlePluginVersion = "1.6.0"
 
         springBootVersion = "2.1.0.RC1"
         braveVersion = "5.3.3"
         armeriaVersion = "0.72.0"
-        thriftVersion = "0.9.3"  // Central Dogma depends on Thrift0.9
+        thriftVersion = "0.9"                     // Central Dogma depends on Thrift0.9
+        thriftFullVersion = thriftVersion + ".3"  // Central Dogma depends on Thrift0.9
         retrofitVersion = "2.4.0"
         rxJava2Jdk8InteropVersion = "0.3.2"
         centraldogmaVersion = "0.31.0"
@@ -21,6 +23,7 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "gradle.plugin.org.jruyi.gradle:thrift-gradle-plugin:${thriftGradlePluginVersion}"
+        classpath "com.google.gradle:osdetector-gradle-plugin:${osdetectorGradlePluginVersion}"
     }
 }
 
@@ -56,7 +59,7 @@ subprojects {
             dependency "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
             dependency "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 
-            dependency "org.apache.thrift:libthrift:${thriftVersion}"
+            dependency "org.apache.thrift:libthrift:${thriftFullVersion}"
             dependency "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
             dependency "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
             dependency "com.squareup.retrofit2:adapter-java8:${retrofitVersion}"
