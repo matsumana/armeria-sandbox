@@ -30,10 +30,19 @@ public class ApiServerSetting {
         }
     }
 
+    private List<EndpointSetting> kubernetes;
     private List<EndpointSetting> backend1;
     private List<EndpointSetting> backend2;
     private List<EndpointSetting> backend3;
     private List<EndpointSetting> backend4;
+
+    public List<EndpointSetting> getKubernetes() {
+        return kubernetes;
+    }
+
+    public void setKubernetes(List<EndpointSetting> kubernetes) {
+        this.kubernetes = kubernetes;
+    }
 
     public List<EndpointSetting> getBackend1() {
         return backend1;

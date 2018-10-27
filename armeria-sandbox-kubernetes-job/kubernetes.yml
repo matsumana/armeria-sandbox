@@ -2,26 +2,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend4
+  name: job
   labels:
-    app: backend4
+    app: job
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: backend4
+      app: job
   template:
     metadata:
       labels:
-        app: backend4
+        app: job
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "8084"
+        prometheus.io/port: "18080"
         prometheus.io/path: /internal/metrics
     spec:
       containers:
-      - name: backend4
-        image: localhost:5000/backend4
+      - name: job
+        image: localhost:5000/job
         env:
         - name: JAVA_OPTS
           value: >-
@@ -34,24 +34,31 @@ spec:
             -Dcom.sun.management.jmxremote.authenticate=false
             -XX:StartFlightRecording=name=on_startup,filename=/root/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m
             -Xms128m -Xmx128m
-        - name: SPRING_PROFILES_ACTIVE
-          value: k8s
+        args:
+        - --spring.profiles.active=kubernetes
+        - --logging.level.info.matsumana.armeria=DEBUG
+        - --zipkin.endpoint=http://zipkin:9411/api/v2/spans
+        - --centraldogma.server.host=centraldogma.default.svc.cluster.local
+        - --centraldogma.server.port=36462
+        - --api-servers.kubernetes[0].host=kubernetes.default.svc.cluster.local
+        - --api-servers.kubernetes[0].port=443
+        - --kubernetes.namespace=default
         ports:
-        - containerPort: 8084
+        - containerPort: 18080
         - containerPort: 8686
 
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: backend4
+  name: job
 spec:
   type: NodePort
   selector:
-    app: backend4
+    app: job
   ports:
   - name: app
     protocol: TCP
-    targetPort: 8084
-    port: 8084
-    nodePort: 31400
+    targetPort: 18080
+    port: 18080
+    nodePort: 32000

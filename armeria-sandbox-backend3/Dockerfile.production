@@ -16,7 +16,8 @@ ADD ./build/libs/*.jar /root/app.jar
 ENTRYPOINT /root/jre/bin/java \
     $JAVA_OPTS \
     \
-    -jar /root/app.jar
+    -jar /root/app.jar \
+    "$0" "$@"
 
 EXPOSE 8083
 EXPOSE 8686

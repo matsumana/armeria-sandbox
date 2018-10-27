@@ -28,14 +28,16 @@ docker-stats:
 docker-image-prune:
 	docker image prune
 
-docker-build-k8s: gradlew-clean-build
+docker-build-kubernetes: gradlew-clean-build
+	docker build -t localhost:5000/job      -f ./armeria-sandbox-kubernetes-job/Dockerfile.production  ./armeria-sandbox-kubernetes-job
 	docker build -t localhost:5000/frontend -f ./armeria-sandbox-frontend/Dockerfile.production ./armeria-sandbox-frontend
 	docker build -t localhost:5000/backend1 -f ./armeria-sandbox-backend1/Dockerfile.production ./armeria-sandbox-backend1
 	docker build -t localhost:5000/backend2 -f ./armeria-sandbox-backend2/Dockerfile.production ./armeria-sandbox-backend2
 	docker build -t localhost:5000/backend3 -f ./armeria-sandbox-backend3/Dockerfile.production ./armeria-sandbox-backend3
 	docker build -t localhost:5000/backend4 -f ./armeria-sandbox-backend4/Dockerfile.production ./armeria-sandbox-backend4
 
-docker-push: docker-build-k8s
+docker-push: docker-build-kubernetes
+	docker push localhost:5000/job
 	docker push localhost:5000/frontend
 	docker push localhost:5000/backend1
 	docker push localhost:5000/backend2
@@ -43,6 +45,8 @@ docker-push: docker-build-k8s
 	docker push localhost:5000/backend4
 
 kubectl-rollout: docker-push
+	kubectl set image deployment/job job=localhost:5000/job:latest
+	kubectl rollout status deployment/job
 	kubectl set image deployment/backend1 backend1=localhost:5000/backend1:latest
 	kubectl rollout status deployment/backend1
 	kubectl set image deployment/backend2 backend2=localhost:5000/backend2:latest
@@ -55,28 +59,30 @@ kubectl-rollout: docker-push
 	kubectl rollout status deployment/frontend
 
 kubectl-create-depends:
-	kubectl create -f ./k8s/centraldogma.yml
-	kubectl create -f ./k8s/zipkin.yml
-	kubectl create -f ./k8s/prometheus.yml
+	kubectl create -f ./kubernetes/centraldogma.yml
+	kubectl create -f ./kubernetes/zipkin.yml
+	kubectl create -f ./kubernetes/prometheus.yml
 
 kubectl-delete-depends:
-	kubectl delete -f ./k8s/centraldogma.yml
-	kubectl delete -f ./k8s/zipkin.yml
-	kubectl delete -f ./k8s/prometheus.yml
+	kubectl delete -f ./kubernetes/centraldogma.yml
+	kubectl delete -f ./kubernetes/zipkin.yml
+	kubectl delete -f ./kubernetes/prometheus.yml
 
 kubectl-create-apps:
-	kubectl create -f ./armeria-sandbox-backend1/k8s.yml
-	kubectl create -f ./armeria-sandbox-backend2/k8s.yml
-	kubectl create -f ./armeria-sandbox-backend3/k8s.yml
-	kubectl create -f ./armeria-sandbox-backend4/k8s.yml
-	kubectl create -f ./armeria-sandbox-frontend/k8s.yml
+	kubectl create -f ./armeria-sandbox-kubernetes-job/kubernetes.yml
+	kubectl create -f ./armeria-sandbox-backend1/kubernetes.yml
+	kubectl create -f ./armeria-sandbox-backend2/kubernetes.yml
+	kubectl create -f ./armeria-sandbox-backend3/kubernetes.yml
+	kubectl create -f ./armeria-sandbox-backend4/kubernetes.yml
+	kubectl create -f ./armeria-sandbox-frontend/kubernetes.yml
 
 kubectl-delete-apps:
-	kubectl delete -f ./armeria-sandbox-backend1/k8s.yml
-	kubectl delete -f ./armeria-sandbox-backend2/k8s.yml
-	kubectl delete -f ./armeria-sandbox-backend3/k8s.yml
-	kubectl delete -f ./armeria-sandbox-backend4/k8s.yml
-	kubectl delete -f ./armeria-sandbox-frontend/k8s.yml
+	kubectl delete -f ./armeria-sandbox-kubernetes-job/kubernetes.yml
+	kubectl delete -f ./armeria-sandbox-backend1/kubernetes.yml
+	kubectl delete -f ./armeria-sandbox-backend2/kubernetes.yml
+	kubectl delete -f ./armeria-sandbox-backend3/kubernetes.yml
+	kubectl delete -f ./armeria-sandbox-backend4/kubernetes.yml
+	kubectl delete -f ./armeria-sandbox-frontend/kubernetes.yml
 
 kubectl-get:
 	kubectl get deployment -o wide

@@ -1,6 +1,0 @@
-zipkin:
-  endpoint: http://zipkin:9411/api/v2/spans
-
-logging:
-  level:
-    info.matsumana.armeria: DEBUG

@@ -1,4 +1,4 @@
-package info.matsumana.armeria.kubernetes.bean;
+package info.matsumana.armeria.bean.kubernetes;
 
 import java.io.Serializable;
 import java.util.List;

@@ -2,8 +2,6 @@ package info.matsumana.armeria.helper;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -15,11 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
 import com.linecorp.armeria.client.Endpoint;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.StaticEndpointGroup;
@@ -28,26 +21,21 @@ import com.linecorp.centraldogma.client.Watcher;
 import com.linecorp.centraldogma.client.armeria.CentralDogmaEndpointGroup;
 import com.linecorp.centraldogma.common.Query;
 
+import info.matsumana.armeria.bean.kubernetes.Container;
+import info.matsumana.armeria.bean.kubernetes.ContainerPort;
+import info.matsumana.armeria.bean.kubernetes.Pod;
 import info.matsumana.armeria.config.ApiServerSetting.EndpointSetting;
-import info.matsumana.armeria.kubernetes.bean.Container;
-import info.matsumana.armeria.kubernetes.bean.ContainerPort;
-import info.matsumana.armeria.kubernetes.bean.Pod;
-import info.matsumana.armeria.kubernetes.bean.PodList;
 
 @Component
 public class EndpointGroupHelper {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private static final String CENTRAL_DOGMA_PROJECT = "armeriaSandbox";
-    private static final String CENTRAL_DOGMA_REPOSITORY = "apiServers";
+    public static final String CENTRAL_DOGMA_PROJECT = "armeriaSandbox";
+    public static final String CENTRAL_DOGMA_REPOSITORY = "apiServers";
     private static final int JMX_PORT = 8686;
 
     private final CentralDogma centralDogma;
-
-    private final ObjectReader objectReader = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .readerFor(new TypeReference<PodList>() {});
 
     public EndpointGroupHelper(@Nullable CentralDogma centralDogma) {
         this.centralDogma = centralDogma;
@@ -67,20 +55,19 @@ public class EndpointGroupHelper {
                        .fileWatcher(CENTRAL_DOGMA_PROJECT, CENTRAL_DOGMA_REPOSITORY,
                                     Query.ofJsonPath(centralDogmaFile),
                                     jsonNode -> {
-                                        try {
-                                            final List<Endpoint> endpoints =
-                                                    objectReader.<PodList>readValue(jsonNode.toString())
-                                                            .getItems().stream()
-                                                            .map(toEndpoint())
-                                                            .collect(toUnmodifiableList());
+                                        final List<Endpoint> endpoints =
+                                                KubernetesModelHelper.deserializePodList(jsonNode)
+                                                                     .getItems().stream()
+                                                                     .filter(pod -> "Running"
+                                                                             .equals(pod.getStatus()
+                                                                                        .getPhase()))
+                                                                     .map(toEndpoint())
+                                                                     .collect(toUnmodifiableList());
 
-                                            log.info("centralDogmaFile = {}, endpoints = {}",
-                                                     centralDogmaFile, endpoints);
+                                        log.info("centralDogmaFile = {}, endpoints = {}",
+                                                 centralDogmaFile, endpoints);
 
-                                            return endpoints;
-                                        } catch (IOException e) {
-                                            throw new UncheckedIOException(e);
-                                        }
+                                        return endpoints;
                                     });
 
         final CentralDogmaEndpointGroup<List<Endpoint>> group = CentralDogmaEndpointGroup

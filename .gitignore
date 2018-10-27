@@ -16,7 +16,8 @@ build/
 out/
 
 # Visual Studio Code
-.classpath
-.project
-.settings
-armeria-sandbox-*/bin
+/*/.classpath
+/*/.project
+/*/.settings/
+/*/bin/
+/.vscode/

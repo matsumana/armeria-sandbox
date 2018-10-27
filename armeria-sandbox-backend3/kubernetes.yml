@@ -2,26 +2,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: backend3
   labels:
-    app: frontend
+    app: backend3
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: backend3
   template:
     metadata:
       labels:
-        app: frontend
+        app: backend3
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "8080"
+        prometheus.io/port: "8083"
         prometheus.io/path: /internal/metrics
     spec:
       containers:
-      - name: frontend
-        image: localhost:5000/frontend
+      - name: backend3
+        image: localhost:5000/backend3
         env:
         - name: JAVA_OPTS
           value: >-
@@ -34,28 +34,28 @@ spec:
             -Dcom.sun.management.jmxremote.authenticate=false
             -XX:StartFlightRecording=name=on_startup,filename=/root/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m
             -Xms128m -Xmx128m
-        - name: SPRING_PROFILES_ACTIVE
-          value: k8s
-        - name: CENTRALDOGMA_SERVER_HOST
-          value: centraldogma.default.svc.cluster.local
-        - name: CENTRALDOGMA_SERVER_PORT
-          value: "36462"
+        args:
+        - --spring.profiles.active=kubernetes
+        - --logging.level.info.matsumana.armeria=DEBUG
+        - --zipkin.endpoint=http://zipkin:9411/api/v2/spans
+        - --centraldogma.server.host=centraldogma.default.svc.cluster.local
+        - --centraldogma.server.port=36462
         ports:
-        - containerPort: 8080
+        - containerPort: 8083
         - containerPort: 8686
 
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: frontend
+  name: backend3
 spec:
   type: NodePort
   selector:
-    app: frontend
+    app: backend3
   ports:
   - name: app
     protocol: TCP
-    targetPort: 8080
-    port: 8080
-    nodePort: 31000
+    targetPort: 8083
+    port: 8083
+    nodePort: 31300
