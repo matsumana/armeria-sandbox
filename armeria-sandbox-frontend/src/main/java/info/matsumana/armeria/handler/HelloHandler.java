@@ -32,6 +32,7 @@ import io.reactivex.schedulers.Schedulers;
 public class HelloHandler {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
     private final Hello1Service.AsyncIface hello1Service;
     private final Hello2Service.AsyncIface hello2Service;
     private final Hello3Service.AsyncIface hello3Service;

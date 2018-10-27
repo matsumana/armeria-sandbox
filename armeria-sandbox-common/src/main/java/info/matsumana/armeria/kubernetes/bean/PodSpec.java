@@ -3,7 +3,10 @@ package info.matsumana.armeria.kubernetes.bean;
 import java.io.Serializable;
 import java.util.List;
 
-public class Spec implements Serializable {
+/**
+ * https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#podspec-v1-core
+ */
+public class PodSpec implements Serializable {
 
     private static final long serialVersionUID = -8830069108680404673L;
 

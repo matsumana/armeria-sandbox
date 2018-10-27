@@ -2,7 +2,10 @@ package info.matsumana.armeria.kubernetes.bean;
 
 import java.io.Serializable;
 
-public class Port implements Serializable {
+/**
+ * https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#containerport-v1-core
+ */
+public class ContainerPort implements Serializable {
 
     private static final long serialVersionUID = 2181440603377735893L;
 

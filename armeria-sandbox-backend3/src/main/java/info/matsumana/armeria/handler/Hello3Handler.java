@@ -15,6 +15,7 @@ import retrofit2.Retrofit;
 public class Hello3Handler implements Hello3Service.AsyncIface {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
     private final Retrofit retrofit;
 
     Hello3Handler(Retrofit retrofit) {

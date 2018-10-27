@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -28,12 +30,14 @@ import com.linecorp.centraldogma.common.Query;
 
 import info.matsumana.armeria.config.ApiServerSetting.EndpointSetting;
 import info.matsumana.armeria.kubernetes.bean.Container;
+import info.matsumana.armeria.kubernetes.bean.ContainerPort;
 import info.matsumana.armeria.kubernetes.bean.Pod;
 import info.matsumana.armeria.kubernetes.bean.PodList;
-import info.matsumana.armeria.kubernetes.bean.Port;
 
 @Component
 public class EndpointGroupHelper {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private static final String CENTRAL_DOGMA_PROJECT = "armeriaSandbox";
     private static final String CENTRAL_DOGMA_REPOSITORY = "apiServers";
@@ -49,31 +53,38 @@ public class EndpointGroupHelper {
         this.centralDogma = centralDogma;
     }
 
-    public EndpointGroup newEndpointGroup(String path, List<EndpointSetting> staticList) {
+    public EndpointGroup newEndpointGroup(String centralDogmaFile, List<EndpointSetting> staticList) {
         if (centralDogma == null) {
             return newStaticEndpointGroup(staticList);
         } else {
-            return newCentralDogmaEndpointGroup(path);
+            return newCentralDogmaEndpointGroup(centralDogmaFile);
         }
     }
 
-    private EndpointGroup newCentralDogmaEndpointGroup(String path) {
+    private EndpointGroup newCentralDogmaEndpointGroup(String centralDogmaFile) {
         final Watcher<List<Endpoint>> watcher =
                 Objects.requireNonNull(centralDogma)
-                       .fileWatcher(CENTRAL_DOGMA_PROJECT, CENTRAL_DOGMA_REPOSITORY, Query.ofJsonPath(path),
+                       .fileWatcher(CENTRAL_DOGMA_PROJECT, CENTRAL_DOGMA_REPOSITORY,
+                                    Query.ofJsonPath(centralDogmaFile),
                                     jsonNode -> {
                                         try {
-                                            return objectReader.<PodList>readValue(jsonNode.toString())
-                                                    .getItems().stream()
-                                                    .map(toEndpoint())
-                                                    .collect(toUnmodifiableList());
+                                            final List<Endpoint> endpoints =
+                                                    objectReader.<PodList>readValue(jsonNode.toString())
+                                                            .getItems().stream()
+                                                            .map(toEndpoint())
+                                                            .collect(toUnmodifiableList());
+
+                                            log.info("centralDogmaFile = {}, endpoints = {}",
+                                                     centralDogmaFile, endpoints);
+
+                                            return endpoints;
                                         } catch (IOException e) {
                                             throw new UncheckedIOException(e);
                                         }
                                     });
 
         final CentralDogmaEndpointGroup<List<Endpoint>> group = CentralDogmaEndpointGroup
-                .ofWatcher(watcher, list -> list);
+                .ofWatcher(watcher, endpoints -> endpoints);
 
         try {
             group.awaitInitialEndpoints(30, TimeUnit.SECONDS);
@@ -98,7 +109,7 @@ public class EndpointGroupHelper {
     private static Function<Container, Integer> toPort() {
         return container -> container.getPorts().stream()
                                      .filter(port -> port.getContainerPort() != JMX_PORT)
-                                     .map(Port::getContainerPort)
+                                     .map(ContainerPort::getContainerPort)
                                      .findFirst()  // I expect 1 pod has only 1 port except JMX port
                                      .orElseThrow(() -> new RuntimeException("port not found"));
     }

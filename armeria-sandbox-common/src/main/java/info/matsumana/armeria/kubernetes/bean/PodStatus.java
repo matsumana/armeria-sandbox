@@ -2,7 +2,10 @@ package info.matsumana.armeria.kubernetes.bean;
 
 import java.io.Serializable;
 
-public class Status implements Serializable {
+/**
+ * https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#podstatus-v1-core
+ */
+public class PodStatus implements Serializable {
 
     private static final long serialVersionUID = -7789580934211557531L;
 

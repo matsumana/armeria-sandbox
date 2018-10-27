@@ -21,7 +21,7 @@ buildscript {
         maven { url "https://repo.spring.io/milestone" }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
         classpath "gradle.plugin.org.jruyi.gradle:thrift-gradle-plugin:${thriftGradlePluginVersion}"
         classpath "com.google.gradle:osdetector-gradle-plugin:${osdetectorGradlePluginVersion}"
     }

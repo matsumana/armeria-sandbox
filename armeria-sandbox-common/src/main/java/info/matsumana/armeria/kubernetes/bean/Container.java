@@ -3,17 +3,20 @@ package info.matsumana.armeria.kubernetes.bean;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#container-v1-core
+ */
 public class Container implements Serializable {
 
     private static final long serialVersionUID = 3462160600267066856L;
 
-    private List<Port> ports;
+    private List<ContainerPort> ports;
 
-    public List<Port> getPorts() {
+    public List<ContainerPort> getPorts() {
         return ports;
     }
 
-    public void setPorts(List<Port> ports) {
+    public void setPorts(List<ContainerPort> ports) {
         this.ports = ports;
     }
 }
