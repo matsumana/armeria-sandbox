@@ -23,7 +23,7 @@ public class PodInfoCollector {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public static final String LABEL_SELECTOR = "app=%s";
+    public static final String LABEL_SELECTOR = "app=armeria-sandbox-%s";
 
     private final String namespace;
     private final CentralDogma centralDogma;
