@@ -29,7 +29,7 @@ docker-image-prune:
 	docker image prune
 
 docker-build-kubernetes: gradlew-clean-build
-	docker build -t localhost:5000/armeria-sandbox-job -f ./armeria-sandbox-job-kubernetes/Dockerfile.production ./armeria-sandbox-job-kubernetes
+	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.production ./armeria-sandbox-job-kubernetes
 	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.production ./armeria-sandbox-frontend
 	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.production ./armeria-sandbox-backend1
 	docker build -t localhost:5000/armeria-sandbox-backend2 -f ./armeria-sandbox-backend2/Dockerfile.production ./armeria-sandbox-backend2
@@ -37,7 +37,7 @@ docker-build-kubernetes: gradlew-clean-build
 	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.production ./armeria-sandbox-backend4
 
 docker-push: docker-build-kubernetes
-	docker push localhost:5000/armeria-sandbox-job
+	docker push localhost:5000/armeria-sandbox-job-kubernetes
 	docker push localhost:5000/armeria-sandbox-frontend
 	docker push localhost:5000/armeria-sandbox-backend1
 	docker push localhost:5000/armeria-sandbox-backend2
@@ -45,8 +45,8 @@ docker-push: docker-build-kubernetes
 	docker push localhost:5000/armeria-sandbox-backend4
 
 kubectl-rollout: docker-push
-	kubectl set image deployment/armeria-sandbox-job armeria-sandbox-job=localhost:5000/armeria-sandbox-job:latest
-	kubectl rollout status deployment/armeria-sandbox-job
+	kubectl set image deployment/armeria-sandbox-job-kubernetes armeria-sandbox-job-kubernetes=localhost:5000/armeria-sandbox-job-kubernetes:latest
+	kubectl rollout status deployment/armeria-sandbox-job-kubernetes
 	kubectl set image deployment/armeria-sandbox-backend1 armeria-sandbox-backend1=localhost:5000/armeria-sandbox-backend1:latest
 	kubectl rollout status deployment/armeria-sandbox-backend1
 	kubectl set image deployment/armeria-sandbox-backend2 armeria-sandbox-backend2=localhost:5000/armeria-sandbox-backend2:latest

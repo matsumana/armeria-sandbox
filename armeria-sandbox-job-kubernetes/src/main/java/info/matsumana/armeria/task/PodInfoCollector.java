@@ -23,16 +23,20 @@ public class PodInfoCollector {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    public static final String AUTHORIZATION_HEADER = "Bearer %s";
     public static final String LABEL_SELECTOR = "app=armeria-sandbox-%s";
 
     private final String namespace;
+    private final String token;
     private final CentralDogma centralDogma;
     private final KubernetesClient client;
 
     public PodInfoCollector(@Value("${kubernetes.namespace}") String namespace,
+                            @Value("${kubernetes.token:}") String token,
                             CentralDogma centralDogma, Retrofit retrofit) {
-        this.centralDogma = centralDogma;
         this.namespace = namespace;
+        this.token = token;
+        this.centralDogma = centralDogma;
         client = retrofit.create(KubernetesClient.class);
     }
 
@@ -64,7 +68,9 @@ public class PodInfoCollector {
     }
 
     private String getPodInfo(String app) {
-        return client.pods(namespace, String.format(LABEL_SELECTOR, app))
+        return client.pods(namespace,
+                           String.format(AUTHORIZATION_HEADER, token),
+                           String.format(LABEL_SELECTOR, app))
                      .join();
     }
 }
