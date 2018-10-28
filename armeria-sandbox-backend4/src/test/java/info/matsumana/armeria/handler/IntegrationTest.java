@@ -17,7 +17,8 @@ import com.linecorp.armeria.server.Server;
 import info.matsumana.armeria.TestContext;
 
 @SpringJUnitConfig(TestContext.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE,
+        properties = "centraldogma.server.host=")
 public class IntegrationTest {
 
     @Autowired

@@ -2,26 +2,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend3
+  name: armeria-sandbox-backend3
   labels:
-    app: backend3
+    app: armeria-sandbox-backend3
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend3
+      app: armeria-sandbox-backend3
   template:
     metadata:
       labels:
-        app: backend3
+        app: armeria-sandbox-backend3
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8083"
         prometheus.io/path: /internal/metrics
     spec:
       containers:
-      - name: backend3
-        image: localhost:5000/backend3
+      - name: armeria-sandbox-backend3
+        image: localhost:5000/armeria-sandbox-backend3
         env:
         - name: JAVA_OPTS
           value: >-
@@ -48,11 +48,11 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: backend3
+  name: armeria-sandbox-backend3
 spec:
   type: NodePort
   selector:
-    app: backend3
+    app: armeria-sandbox-backend3
   ports:
   - name: app
     protocol: TCP

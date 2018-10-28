@@ -2,26 +2,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: armeria-sandbox-frontend
   labels:
-    app: frontend
+    app: armeria-sandbox-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: armeria-sandbox-frontend
   template:
     metadata:
       labels:
-        app: frontend
+        app: armeria-sandbox-frontend
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
         prometheus.io/path: /internal/metrics
     spec:
       containers:
-      - name: frontend
-        image: localhost:5000/frontend
+      - name: armeria-sandbox-frontend
+        image: localhost:5000/armeria-sandbox-frontend
         env:
         - name: JAVA_OPTS
           value: >-
@@ -48,11 +48,11 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: frontend
+  name: armeria-sandbox-frontend
 spec:
   type: NodePort
   selector:
-    app: frontend
+    app: armeria-sandbox-frontend
   ports:
   - name: app
     protocol: TCP

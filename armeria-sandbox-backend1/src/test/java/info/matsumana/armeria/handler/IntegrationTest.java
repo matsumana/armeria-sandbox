@@ -20,7 +20,8 @@ import info.matsumana.armeria.TestContext;
 import info.matsumana.armeria.thrift.Hello1Service;
 
 @SpringJUnitConfig(TestContext.class)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = WebEnvironment.NONE,
+        properties = "centraldogma.server.host=")
 public class IntegrationTest {
 
     @Autowired

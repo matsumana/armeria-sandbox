@@ -36,15 +36,14 @@ public class PodInfoCollector {
         client = retrofit.create(KubernetesClient.class);
     }
 
-    @Scheduled(initialDelay = 30_000, fixedDelay = 3_000)
+    @Scheduled(initialDelay = 10_000, fixedDelay = 5_000)
     void updatePodIp() {
         Arrays.asList("backend1", "backend2", "backend3", "backend4", "frontend")
               .forEach(this::saveToCentralDogma);
     }
 
     private void saveToCentralDogma(String app) {
-        final String json = client.pods(namespace, String.format(LABEL_SELECTOR, app))
-                                  .join();
+        final String json = getPodInfo(app);
 
         log.debug("json = {}", json);
 
@@ -62,5 +61,10 @@ public class PodInfoCollector {
                           String.format("Updated by %s", getClass().getName()),
                           Change.ofTextUpsert(String.format("/%s.json", app), treeShakedJson));
 
+    }
+
+    private String getPodInfo(String app) {
+        return client.pods(namespace, String.format(LABEL_SELECTOR, app))
+                     .join();
     }
 }

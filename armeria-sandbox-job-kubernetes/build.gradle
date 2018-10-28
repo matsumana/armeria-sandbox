@@ -1,5 +1,5 @@
 // Thrift server
-project(":armeria-sandbox-kubernetes-job") {
+project(":armeria-sandbox-job-kubernetes") {
     dependencies {
         implementation project(":armeria-sandbox-thrift")
         implementation project(":armeria-sandbox-common")

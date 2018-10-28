@@ -18,6 +18,19 @@ api-servers:
     port: 8084
   - host: 127.0.0.1
     port: 18084
+  # via `kubectl proxy`
+  kubernetes:
+  - host: 127.0.0.1
+    port: 8001
+    scheme: http
+
+centraldogma:
+  server:
+    host: 127.0.0.1
+    port: 30002
+
+kubernetes:
+  namespace: default
 
 logging:
   level:
