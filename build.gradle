@@ -4,12 +4,12 @@ buildscript {
         osdetectorGradlePluginVersion = "1.6.0"
 
         springBootVersion = "2.1.0.RC1"
-        braveVersion = "5.3.3"
-        armeriaVersion = "0.72.0"
+        armeriaVersion = "0.74.1"
         thriftVersion = "0.9"                     // Central Dogma depends on Thrift0.9
         thriftFullVersion = thriftVersion + ".3"  // Central Dogma depends on Thrift0.9
         retrofitVersion = "2.4.0"
         rxJava2Jdk8InteropVersion = "0.3.2"
+        braveVersion = "5.4.3"
         centraldogmaVersion = "0.31.0"
 
         junitVersion = "5.3.1"
