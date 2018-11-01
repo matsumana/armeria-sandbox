@@ -3,7 +3,7 @@ buildscript {
         thriftGradlePluginVersion = "0.4.0"
         osdetectorGradlePluginVersion = "1.6.0"
 
-        springBootVersion = "2.1.0.RC1"
+        springBootVersion = "2.1.0.RELEASE"
         armeriaVersion = "0.74.1"
         thriftVersion = "0.9"                     // Central Dogma depends on Thrift0.9
         thriftFullVersion = thriftVersion + ".3"  // Central Dogma depends on Thrift0.9
@@ -17,8 +17,6 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/milestone" }
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
@@ -43,8 +41,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/milestone" }
     }
 
     dependencyManagement {
