@@ -20,7 +20,7 @@ api-servers:
     port: 18084
   # via `kubectl proxy`
   kubernetes:
-  - host: 127.0.0.1
+    host: 127.0.0.1
     port: 8001
     scheme: http
 

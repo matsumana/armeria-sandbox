@@ -1,9 +1,8 @@
 package info.matsumana.armeria.config;
 
 import static com.linecorp.armeria.client.endpoint.EndpointSelectionStrategy.WEIGHTED_ROUND_ROBIN;
-import static java.util.stream.Collectors.toUnmodifiableList;
 
-import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,7 @@ import com.linecorp.armeria.client.Endpoint;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.EndpointGroupRegistry;
 import com.linecorp.armeria.client.endpoint.StaticEndpointGroup;
+import com.linecorp.armeria.client.endpoint.dns.DnsAddressEndpointGroupBuilder;
 import com.linecorp.armeria.client.retrofit2.ArmeriaRetrofitBuilder;
 
 import info.matsumana.armeria.config.ApiServerSetting.EndpointSetting;
@@ -22,6 +22,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 @Configuration
 public class ArmeriaClientConfig {
 
+    // TODO IPv6
+    private static final Pattern IPV4_REGEX =
+            Pattern.compile("^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$");
+
     private final ApiServerSetting apiServerSetting;
 
     ArmeriaClientConfig(ApiServerSetting apiServerSetting) {
@@ -30,22 +34,31 @@ public class ArmeriaClientConfig {
 
     @Bean
     Retrofit retrofit() {
-        final List<EndpointSetting> kubernetesEndpoints = apiServerSetting.getKubernetes();
-        if (kubernetesEndpoints.stream().distinct().count() != 1) {
-            throw new IllegalArgumentException("scheme setting error");
+        final EndpointSetting endpointSetting = apiServerSetting.getKubernetes();
+        final String host = endpointSetting.getHost();
+        final int port = endpointSetting.getPort();
+
+        // In Kubernetes, we can't resolve server by host name with StaticEndpointGroup.
+        // The route cause is in Netty's setting.
+        // Therefore an exception occur as the following.
+        //
+        // io.netty.resolver.dns.DnsResolveContext$SearchDomainUnknownHostException:
+        //   Search domain query failed. Original hostname: 'kubernetes.default.svc.cluster.local' failed to resolve 'kubernetes.default.svc.cluster.local.default.svc.cluster.local svc.cluster.local cluster.local' after 2 queries
+        //
+        // see also: https://github.com/netty/netty/issues/6559
+        final EndpointGroup group;
+        if (IPV4_REGEX.matcher(host).matches()) {
+            group = new StaticEndpointGroup(Endpoint.of(endpointSetting.getHost(),
+                                                        endpointSetting.getPort()));
+        } else {
+            group = new DnsAddressEndpointGroupBuilder(host)
+                    .port(port)
+                    .build();
         }
 
-        final EndpointGroup group =
-                new StaticEndpointGroup(kubernetesEndpoints.stream()
-                                                           .map(setting -> Endpoint.of(setting.getHost(),
-                                                                                       setting.getPort()))
-                                                           .collect(toUnmodifiableList()));
         EndpointGroupRegistry.register("job-kubernetes", group, WEIGHTED_ROUND_ROBIN);
 
-        final String scheme = kubernetesEndpoints.stream()
-                                                 .map(EndpointSetting::getScheme)
-                                                 .findFirst()
-                                                 .orElse("http");
+        final String scheme = endpointSetting.getScheme();
 
         return new ArmeriaRetrofitBuilder()
                 .baseUrl(String.format("%s://group:%s/", scheme, "job-kubernetes"))

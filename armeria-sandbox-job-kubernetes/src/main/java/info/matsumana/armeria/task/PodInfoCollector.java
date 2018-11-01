@@ -23,8 +23,9 @@ public class PodInfoCollector {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public static final String AUTHORIZATION_HEADER = "Bearer %s";
-    public static final String LABEL_SELECTOR = "app=armeria-sandbox-%s";
+    public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
+    public static final String AUTHORIZATION_HEADER_VALUE = "Bearer %s";
+    private static final String LABEL_SELECTOR = "app=armeria-sandbox-%s";
 
     private final String namespace;
     private final String token;
@@ -69,7 +70,7 @@ public class PodInfoCollector {
 
     private String getPodInfo(String app) {
         return client.pods(namespace,
-                           String.format(AUTHORIZATION_HEADER, token),
+                           String.format(AUTHORIZATION_HEADER_VALUE, token),
                            String.format(LABEL_SELECTOR, app))
                      .join();
     }
