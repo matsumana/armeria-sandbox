@@ -2,6 +2,8 @@ package info.matsumana.armeria.config;
 
 import static com.linecorp.armeria.client.endpoint.EndpointSelectionStrategy.WEIGHTED_ROUND_ROBIN;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,10 @@ import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.EndpointGroupRegistry;
 import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroup;
 import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroupBuilder;
+import com.linecorp.armeria.client.logging.LoggingClient;
+import com.linecorp.armeria.client.retry.Backoff;
+import com.linecorp.armeria.client.retry.RetryStrategy;
+import com.linecorp.armeria.client.retry.RetryingRpcClient;
 import com.linecorp.armeria.client.tracing.HttpTracingClient;
 import com.linecorp.armeria.common.HttpRequest;
 import com.linecorp.armeria.common.HttpResponse;
@@ -55,6 +61,10 @@ public class ArmeriaClientConfig {
                            HttpTracingClient.newDecorator(tracing, "backend1"))
                 .decorator(RpcRequest.class, RpcResponse.class,
                            newCircuitBreakerDecorator())
+                .decorator(RpcRequest.class, RpcResponse.class,
+                           RetryingRpcClient.newDecorator(newRetryStrategy()))
+                .decorator(HttpRequest.class, HttpResponse.class,
+                           LoggingClient.newDecorator())
                 .build(Hello1Service.AsyncIface.class);
     }
 
@@ -68,6 +78,10 @@ public class ArmeriaClientConfig {
                            HttpTracingClient.newDecorator(tracing, "backend2"))
                 .decorator(RpcRequest.class, RpcResponse.class,
                            newCircuitBreakerDecorator())
+                .decorator(RpcRequest.class, RpcResponse.class,
+                           RetryingRpcClient.newDecorator(newRetryStrategy()))
+                .decorator(HttpRequest.class, HttpResponse.class,
+                           LoggingClient.newDecorator())
                 .build(Hello2Service.AsyncIface.class);
     }
 
@@ -81,6 +95,10 @@ public class ArmeriaClientConfig {
                            HttpTracingClient.newDecorator(tracing, "backend3"))
                 .decorator(RpcRequest.class, RpcResponse.class,
                            newCircuitBreakerDecorator())
+                .decorator(RpcRequest.class, RpcResponse.class,
+                           RetryingRpcClient.newDecorator(newRetryStrategy()))
+                .decorator(HttpRequest.class, HttpResponse.class,
+                           LoggingClient.newDecorator())
                 .build(Hello3Service.AsyncIface.class);
     }
 
@@ -102,5 +120,20 @@ public class ArmeriaClientConfig {
                         .build(),
                 response -> response.completionFuture()
                                     .handle((res, cause) -> cause == null));
+    }
+
+    private static RetryStrategy<RpcRequest, RpcResponse> newRetryStrategy() {
+        return new RetryStrategy<>() {
+            final Backoff backoff = RetryStrategy.defaultBackoff;
+
+            @Override
+            public CompletionStage<Backoff> shouldRetry(RpcRequest request, RpcResponse response) {
+                if (response.cause() == null) {
+                    return CompletableFuture.completedFuture(null);
+                } else {
+                    return CompletableFuture.completedFuture(backoff);
+                }
+            }
+        };
     }
 }

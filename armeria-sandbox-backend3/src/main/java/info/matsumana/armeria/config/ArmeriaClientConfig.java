@@ -15,7 +15,10 @@ import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.EndpointGroupRegistry;
 import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroup;
 import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroupBuilder;
+import com.linecorp.armeria.client.logging.LoggingClient;
 import com.linecorp.armeria.client.retrofit2.ArmeriaRetrofitBuilder;
+import com.linecorp.armeria.client.retry.RetryStrategy;
+import com.linecorp.armeria.client.retry.RetryingHttpClient;
 import com.linecorp.armeria.client.tracing.HttpTracingClient;
 import com.linecorp.armeria.common.HttpRequest;
 import com.linecorp.armeria.common.HttpResponse;
@@ -63,7 +66,11 @@ public class ArmeriaClientConfig {
                         .decorator(HttpRequest.class, HttpResponse.class,
                                    HttpTracingClient.newDecorator(tracing, "backend4"))
                         .decorator(HttpRequest.class, HttpResponse.class,
-                                   newCircuitBreakerDecorator()))
+                                   newCircuitBreakerDecorator())
+                        .decorator(HttpRequest.class, HttpResponse.class,
+                                   RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus()))
+                        .decorator(HttpRequest.class, HttpResponse.class,
+                                   LoggingClient.newDecorator()))
                 .build();
     }
 
