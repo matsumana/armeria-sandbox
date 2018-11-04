@@ -1,9 +1,9 @@
 package info.matsumana.armeria.helper;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
@@ -50,25 +50,25 @@ public class EndpointGroupHelper {
     }
 
     private EndpointGroup newCentralDogmaEndpointGroup(String centralDogmaFile) {
-        final Watcher<List<Endpoint>> watcher =
-                Objects.requireNonNull(centralDogma)
-                       .fileWatcher(CENTRAL_DOGMA_PROJECT, CENTRAL_DOGMA_REPOSITORY,
-                                    Query.ofJsonPath(centralDogmaFile),
-                                    jsonNode -> {
-                                        final List<Endpoint> endpoints =
-                                                KubernetesModelHelper.deserializePodList(jsonNode)
-                                                                     .getItems().stream()
-                                                                     .filter(pod -> "Running"
-                                                                             .equals(pod.getStatus()
-                                                                                        .getPhase()))
-                                                                     .map(toEndpoint())
-                                                                     .collect(toUnmodifiableList());
+        requireNonNull(centralDogma, "centralDogma");
 
-                                        log.info("centralDogmaFile = {}, endpoints = {}",
-                                                 centralDogmaFile, endpoints);
+        final Watcher<List<Endpoint>> watcher = centralDogma
+                .fileWatcher(CENTRAL_DOGMA_PROJECT, CENTRAL_DOGMA_REPOSITORY,
+                             Query.ofJsonPath(centralDogmaFile),
+                             jsonNode -> {
+                                 final List<Endpoint> endpoints =
+                                         KubernetesModelHelper.deserializePodList(jsonNode)
+                                                              .getItems().stream()
+                                                              .filter(pod -> "Running".equals(pod.getStatus()
+                                                                                                 .getPhase()))
+                                                              .map(toEndpoint())
+                                                              .collect(toUnmodifiableList());
 
-                                        return endpoints;
-                                    });
+                                 log.info("centralDogmaFile = {}, endpoints = {}",
+                                          centralDogmaFile, endpoints);
+
+                                 return endpoints;
+                             });
 
         final CentralDogmaEndpointGroup<List<Endpoint>> group = CentralDogmaEndpointGroup
                 .ofWatcher(watcher, endpoints -> endpoints);
