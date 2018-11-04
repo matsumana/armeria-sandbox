@@ -4,6 +4,5 @@ project(":armeria-sandbox-backend1") {
         implementation project(":armeria-sandbox-thrift")
         implementation project(":armeria-sandbox-common")
         implementation "org.springframework.boot:spring-boot-starter-validation"
-        implementation "com.linecorp.armeria:armeria-thrift0.9"  // Central Dogma depends on Thrift0.9
     }
 }

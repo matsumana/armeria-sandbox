@@ -1,5 +1,5 @@
 zipkin:
-  endpoint: http://zipkin:9411/api/v2/spans
+  endpoint: http://zipkin.default.svc.cluster.local:9411/api/v2/spans
 
 api-servers:
   backend1:

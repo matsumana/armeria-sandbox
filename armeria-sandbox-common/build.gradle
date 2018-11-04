@@ -2,6 +2,7 @@ project(":armeria-sandbox-common") {
     dependencies {
         api "com.linecorp.armeria:armeria"
         api "com.linecorp.armeria:armeria-spring-boot-starter"
+        api "com.linecorp.armeria:armeria-thrift0.9"  // Central Dogma depends on Thrift0.9
         api "com.linecorp.armeria:armeria-rxjava"
         api "com.linecorp.armeria:armeria-zipkin"
         api "com.github.akarnokd:rxjava2-jdk8-interop"

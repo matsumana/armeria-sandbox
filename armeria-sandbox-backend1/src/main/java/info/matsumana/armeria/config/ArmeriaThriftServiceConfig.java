@@ -7,10 +7,12 @@ import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.thrift.THttpService;
+import com.linecorp.armeria.server.throttling.ThrottlingHttpService;
 import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.ThriftServiceRegistrationBean;
 
 import brave.Tracing;
+import info.matsumana.armeria.helper.ThrottlingHelper;
 import info.matsumana.armeria.thrift.FailService;
 import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.PingService;
@@ -19,9 +21,11 @@ import info.matsumana.armeria.thrift.PingService;
 public class ArmeriaThriftServiceConfig {
 
     private final Tracing tracing;
+    private final ThrottlingHelper throttlingHelper;
 
-    ArmeriaThriftServiceConfig(ZipkinTracingFactory tracingFactory) {
+    ArmeriaThriftServiceConfig(ZipkinTracingFactory tracingFactory, ThrottlingHelper throttlingHelper) {
         tracing = tracingFactory.create("backend1");
+        this.throttlingHelper = throttlingHelper;
     }
 
     @Bean
@@ -52,7 +56,9 @@ public class ArmeriaThriftServiceConfig {
                 .setPath("/thrift/hello1")
                 .setService(THttpService.of(service)
                                         .decorate(LoggingService.newDecorator())
-                                        .decorate(HttpTracingService.newDecorator(tracing)))
+                                        .decorate(HttpTracingService.newDecorator(tracing))
+                                        .decorate(ThrottlingHttpService.newDecorator(
+                                                throttlingHelper.newThrottlingStrategy("backend1"))))
                 .setServiceName("Hello1Service")
                 .setExampleRequests(List.of(new Hello1Service.hello_args("foo")));
     }
