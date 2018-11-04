@@ -38,7 +38,7 @@ public class ArmeriaClientConfig {
         final String host = endpointSetting.getHost();
         final int port = endpointSetting.getPort();
 
-        // In Kubernetes, we can't resolve server by host name with StaticEndpointGroup.
+        // TODO In Kubernetes, we can't resolve server by host name with StaticEndpointGroup.
         // The route cause is in Netty's setting.
         // Therefore an exception occur as the following.
         //
