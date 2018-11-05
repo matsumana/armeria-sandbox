@@ -70,6 +70,26 @@ public class ThrottlingHelper {
         };
     }
 
+    /**
+     * throttling.json example
+     * {
+     *   "backend1": {
+     *     "ratio": 1
+     *   },
+     *   "backend2": {
+     *     "ratio": 1
+     *   },
+     *   "backend3": {
+     *     "ratio": 1
+     *   },
+     *   "backend4": {
+     *     "ratio": 1
+     *   },
+     *   "frontend": {
+     *     "ratio": 1
+     *   }
+     * }
+     */
     private void watchThrottlingSetting(CentralDogma centralDogma) {
         requireNonNull(centralDogma, "centralDogma");
 
