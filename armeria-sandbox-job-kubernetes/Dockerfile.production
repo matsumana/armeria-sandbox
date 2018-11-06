@@ -14,6 +14,9 @@ COPY --from=builder /tmp/jre /root/jre
 ADD ./build/libs/*.jar /root/app.jar
 ADD ./run_app.sh /root/run_app.sh
 
+ENV JAVA_HOME=/root/jre
+ENV PATH="$JAVA_HOME/bin:$PATH"
+
 ENTRYPOINT ["/root/run_app.sh"]
 
 EXPOSE 8080

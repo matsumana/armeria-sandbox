@@ -41,8 +41,9 @@ spec:
         - --centraldogma.server.host=centraldogma.default.svc.cluster.local
         - --centraldogma.server.port=36462
         ports:
-        - containerPort: 8080
-        - containerPort: 8686
+        - containerPort: 8080  # Application
+        - containerPort: 8686  # JMX
+        - containerPort: 5005  # Java debugger
 
 ---
 kind: Service

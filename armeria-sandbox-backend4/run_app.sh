@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/root/jre/bin/java ${JAVA_OPTS} -jar /root/app.jar "$@"
+java ${JAVA_OPTS_DEV} ${JAVA_OPTS} -jar /root/app.jar "$@"

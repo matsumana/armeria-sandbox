@@ -1,0 +1,12 @@
+FROM matsumana/debian9-openjdk11
+
+ADD ./build/libs/*.jar /root/app.jar
+ADD ./run_app.sh /root/run_app.sh
+
+ENV JAVA_OPTS_DEV="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+ENTRYPOINT ["/root/run_app.sh"]
+
+EXPOSE 8080
+EXPOSE 8686
+EXPOSE 5005

@@ -16,7 +16,7 @@ spec:
         app: armeria-sandbox-job-kubernetes
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "18080"
+        prometheus.io/port: "8080"
         prometheus.io/path: /internal/metrics
     spec:
       containers:
@@ -45,8 +45,9 @@ spec:
         - --api-servers.kubernetes.scheme=https
         - --kubernetes.namespace=default
         ports:
-        - containerPort: 18080
-        - containerPort: 8686
+        - containerPort: 8080  # Application
+        - containerPort: 8686  # JMX
+        - containerPort: 5005  # Java debugger
 
 ---
 kind: Service
@@ -60,6 +61,6 @@ spec:
   ports:
   - name: app
     protocol: TCP
-    targetPort: 18080
-    port: 18080
+    targetPort: 8080
+    port: 8080
     nodePort: 32000
