@@ -33,6 +33,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 @Configuration
 public class ArmeriaClientConfig {
 
+    private static final int MAX_TOTAL_ATTEMPTS = 3;
+
     private final ApiServerSetting apiServerSetting;
     private final MeterRegistry meterRegistry;
     private final EndpointGroupHelper endpointGroupHelper;
@@ -64,13 +66,14 @@ public class ArmeriaClientConfig {
                 .addCallAdapterFactory(Java8CallAdapterFactory.create())
                 .withClientOptions((uri, optionsBuilder) -> optionsBuilder
                         .decorator(HttpRequest.class, HttpResponse.class,
-                                   HttpTracingClient.newDecorator(tracing, "backend4"))
-                        .decorator(HttpRequest.class, HttpResponse.class,
                                    newCircuitBreakerDecorator())
                         .decorator(HttpRequest.class, HttpResponse.class,
-                                   RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus()))
+                                   HttpTracingClient.newDecorator(tracing, "backend4"))
                         .decorator(HttpRequest.class, HttpResponse.class,
-                                   LoggingClient.newDecorator()))
+                                   LoggingClient.newDecorator())
+                        .decorator(HttpRequest.class, HttpResponse.class,
+                                   RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
+                                                                   MAX_TOTAL_ATTEMPTS)))
                 .build();
     }
 

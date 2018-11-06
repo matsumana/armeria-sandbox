@@ -33,8 +33,8 @@ public class ArmeriaThriftServiceConfig {
         return new ThriftServiceRegistrationBean()
                 .setPath("/thrift/ping")
                 .setService(THttpService.of(service)
-                                        .decorate(LoggingService.newDecorator())
-                                        .decorate(HttpTracingService.newDecorator(tracing)))
+                                        .decorate(HttpTracingService.newDecorator(tracing))
+                                        .decorate(LoggingService.newDecorator()))
                 .setServiceName("PingService")
                 .setExampleRequests(List.of(new PingService.ping_args()));
     }
@@ -44,8 +44,8 @@ public class ArmeriaThriftServiceConfig {
         return new ThriftServiceRegistrationBean()
                 .setPath("/thrift/fail")
                 .setService(THttpService.of(service)
-                                        .decorate(LoggingService.newDecorator())
-                                        .decorate(HttpTracingService.newDecorator(tracing)))
+                                        .decorate(HttpTracingService.newDecorator(tracing))
+                                        .decorate(LoggingService.newDecorator()))
                 .setServiceName("FailService")
                 .setExampleRequests(List.of(new FailService.fail_args()));
     }
@@ -55,10 +55,10 @@ public class ArmeriaThriftServiceConfig {
         return new ThriftServiceRegistrationBean()
                 .setPath("/thrift/hello1")
                 .setService(THttpService.of(service)
-                                        .decorate(LoggingService.newDecorator())
-                                        .decorate(HttpTracingService.newDecorator(tracing))
                                         .decorate(ThrottlingHttpService.newDecorator(
-                                                throttlingHelper.newThrottlingStrategy("backend1"))))
+                                                throttlingHelper.newThrottlingStrategy("backend1")))
+                                        .decorate(HttpTracingService.newDecorator(tracing))
+                                        .decorate(LoggingService.newDecorator()))
                 .setServiceName("Hello1Service")
                 .setExampleRequests(List.of(new Hello1Service.hello_args("foo")));
     }

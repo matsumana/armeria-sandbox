@@ -38,6 +38,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 @Configuration
 public class ArmeriaClientConfig {
 
+    private static final int MAX_TOTAL_ATTEMPTS = 3;
+
     private final ApiServerSetting apiServerSetting;
     private final MeterRegistry meterRegistry;
     private final EndpointGroupHelper endpointGroupHelper;
@@ -57,14 +59,14 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend1());
         registerEndpointGroup(group, "backend1");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello1", "backend1"))
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           HttpTracingClient.newDecorator(tracing, "backend1"))
                 .decorator(RpcRequest.class, RpcResponse.class,
                            newCircuitBreakerDecorator())
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           RetryingRpcClient.newDecorator(newRetryStrategy()))
+                .decorator(HttpRequest.class, HttpResponse.class,
+                           HttpTracingClient.newDecorator(tracing, "backend1"))
                 .decorator(HttpRequest.class, HttpResponse.class,
                            LoggingClient.newDecorator())
+                .decorator(RpcRequest.class, RpcResponse.class,
+                           RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
                 .build(Hello1Service.AsyncIface.class);
     }
 
@@ -74,14 +76,14 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend2());
         registerEndpointGroup(group, "backend2");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello2", "backend2"))
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           HttpTracingClient.newDecorator(tracing, "backend2"))
                 .decorator(RpcRequest.class, RpcResponse.class,
                            newCircuitBreakerDecorator())
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           RetryingRpcClient.newDecorator(newRetryStrategy()))
+                .decorator(HttpRequest.class, HttpResponse.class,
+                           HttpTracingClient.newDecorator(tracing, "backend2"))
                 .decorator(HttpRequest.class, HttpResponse.class,
                            LoggingClient.newDecorator())
+                .decorator(RpcRequest.class, RpcResponse.class,
+                           RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
                 .build(Hello2Service.AsyncIface.class);
     }
 
@@ -91,14 +93,14 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend3());
         registerEndpointGroup(group, "backend3");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello3", "backend3"))
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           HttpTracingClient.newDecorator(tracing, "backend3"))
                 .decorator(RpcRequest.class, RpcResponse.class,
                            newCircuitBreakerDecorator())
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           RetryingRpcClient.newDecorator(newRetryStrategy()))
+                .decorator(HttpRequest.class, HttpResponse.class,
+                           HttpTracingClient.newDecorator(tracing, "backend3"))
                 .decorator(HttpRequest.class, HttpResponse.class,
                            LoggingClient.newDecorator())
+                .decorator(RpcRequest.class, RpcResponse.class,
+                           RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
                 .build(Hello3Service.AsyncIface.class);
     }
 

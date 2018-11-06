@@ -29,8 +29,8 @@ public class ArmeriaHttpServiceConfig {
         return new AnnotatedServiceRegistrationBean()
                 .setServiceName("rootHandler")
                 .setService(handler)
-                .setDecorators(LoggingService.newDecorator(),
-                               HttpTracingService.newDecorator(tracing));
+                .setDecorators(HttpTracingService.newDecorator(tracing),
+                               LoggingService.newDecorator());
     }
 
     @Bean
@@ -38,9 +38,9 @@ public class ArmeriaHttpServiceConfig {
         return new AnnotatedServiceRegistrationBean()
                 .setServiceName("helloHandler")
                 .setService(handler)
-                .setDecorators(LoggingService.newDecorator(),
+                .setDecorators(ThrottlingHttpService
+                                       .newDecorator(throttlingHelper.newThrottlingStrategy("frontend")),
                                HttpTracingService.newDecorator(tracing),
-                               ThrottlingHttpService
-                                       .newDecorator(throttlingHelper.newThrottlingStrategy("frontend")));
+                               LoggingService.newDecorator());
     }
 }

@@ -32,8 +32,8 @@ public class ArmeriaThriftServiceConfig {
         return new ThriftServiceRegistrationBean()
                 .setPath("/thrift/ping")
                 .setService(THttpService.of(service)
-                                        .decorate(LoggingService.newDecorator())
-                                        .decorate(HttpTracingService.newDecorator(tracing)))
+                                        .decorate(HttpTracingService.newDecorator(tracing))
+                                        .decorate(LoggingService.newDecorator()))
                 .setServiceName("PingService")
                 .setExampleRequests(List.of(new PingService.ping_args()));
     }
@@ -43,10 +43,10 @@ public class ArmeriaThriftServiceConfig {
         return new ThriftServiceRegistrationBean()
                 .setPath("/thrift/hello2")
                 .setService(THttpService.of(service)
-                                        .decorate(LoggingService.newDecorator())
-                                        .decorate(HttpTracingService.newDecorator(tracing))
                                         .decorate(ThrottlingHttpService.newDecorator(
-                                                throttlingHelper.newThrottlingStrategy("backend2"))))
+                                                throttlingHelper.newThrottlingStrategy("backend2")))
+                                        .decorate(HttpTracingService.newDecorator(tracing))
+                                        .decorate(LoggingService.newDecorator()))
                 .setServiceName("Hello2Service")
                 .setExampleRequests(List.of(new Hello2Service.hello_args("foo")));
     }
