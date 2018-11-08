@@ -2,6 +2,11 @@
 
 ## How to deploy this app on Kubernetes
 
+This application can be started easily on Kubernetes.  
+Only `Docker for Mac with Kubernetes` is tested for now.
+
+ref: [Get started with Docker for Mac - Kubernetes](https://docs.docker.com/docker-for-mac/#kubernetes)
+
 ### preparation
 
 #### launch local Docker registry
