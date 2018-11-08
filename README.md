@@ -57,8 +57,6 @@ $ make docker-build-kubernetes-production
 $ make docker-push
 ```
 
-<br>
-
 #### deploy the app
 
 ```
