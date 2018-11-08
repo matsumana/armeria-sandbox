@@ -4,24 +4,6 @@ gradlew-clean-build:
 build-with-docker:
 	docker run --rm -v "$(HOME)"/.gradle:/root/.gradle -v "$(PWD)":/root/armeria-sandbox -w /root/armeria-sandbox matsumana/debian9-openjdk11 bash -c "./gradlew --no-daemon clean build"
 
-docker-compose-up:
-	docker-compose up -d
-
-docker-compose-build: gradlew-clean-build
-	docker-compose up -d --build
-
-docker-compose-stop:
-	docker-compose stop
-
-docker-compose-stop-immediately:
-	docker-compose stop -t 0
-
-docker-compose-down:
-	docker-compose down
-
-docker-compose-down-immediately:
-	docker-compose down -t 0
-
 docker-ps:
 	docker ps -a
 
@@ -31,7 +13,15 @@ docker-stats:
 docker-image-prune:
 	docker image prune
 
-docker-build-kubernetes: gradlew-clean-build
+docker-build-kubernetes-dev:
+	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.dev ./armeria-sandbox-job-kubernetes
+	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.dev ./armeria-sandbox-frontend
+	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.dev ./armeria-sandbox-backend1
+	docker build -t localhost:5000/armeria-sandbox-backend2 -f ./armeria-sandbox-backend2/Dockerfile.dev ./armeria-sandbox-backend2
+	docker build -t localhost:5000/armeria-sandbox-backend3 -f ./armeria-sandbox-backend3/Dockerfile.dev ./armeria-sandbox-backend3
+	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.dev ./armeria-sandbox-backend4
+
+docker-build-kubernetes-production:
 	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.production ./armeria-sandbox-job-kubernetes
 	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.production ./armeria-sandbox-frontend
 	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.production ./armeria-sandbox-backend1
@@ -39,7 +29,7 @@ docker-build-kubernetes: gradlew-clean-build
 	docker build -t localhost:5000/armeria-sandbox-backend3 -f ./armeria-sandbox-backend3/Dockerfile.production ./armeria-sandbox-backend3
 	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.production ./armeria-sandbox-backend4
 
-docker-push: docker-build-kubernetes
+docker-push:
 	docker push localhost:5000/armeria-sandbox-job-kubernetes
 	docker push localhost:5000/armeria-sandbox-frontend
 	docker push localhost:5000/armeria-sandbox-backend1
@@ -70,6 +60,12 @@ kubectl-delete-depends:
 	kubectl delete -f ./kubernetes/centraldogma.yml
 	kubectl delete -f ./kubernetes/zipkin.yml
 	kubectl delete -f ./kubernetes/prometheus.yml
+
+kubectl-create-depends-data:
+	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod | grep '^centraldogma-' | awk '{print $$1}'))
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "/opt/centraldogma/bin/dogma.linux-amd64 --connect=localhost:36462 new armeriaSandbox"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "/opt/centraldogma/bin/dogma.linux-amd64 --connect=localhost:36462 new armeriaSandbox/apiServers"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "echo '{\"backend1\": {\"ratio\": 1}, \"backend2\": {\"ratio\": 1}, \"backend3\": {\"ratio\": 1}, \"backend4\": {\"ratio\": 1}, \"frontend\": {\"ratio\": 1}}' > /tmp/throttling.json && /opt/centraldogma/bin/dogma.linux-amd64 --connect=localhost:36462 put armeriaSandbox/apiServers /tmp/throttling.json -m 'Add initial throttling.json'"
 
 kubectl-create-apps:
 	kubectl create -f ./armeria-sandbox-job-kubernetes/kubernetes.yml

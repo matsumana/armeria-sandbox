@@ -1,118 +1,90 @@
 # armeria-sandbox
 
+## How to deploy this app on Kubernetes
+
+### preparation
+
+#### launch local Docker registry
+
+```
+$ docker run -d -p 5000:5000 --name registry registry:2.6
+```
+
+#### launch dependency Docker containers
+
+```
+$ make kubectl-create-depends
+```
+
+#### generate initial project, repository data in Central Dogma
+
+```
+$ make kubectl-create-depends-data
+```
+
+<br>
 <br>
 
-## How to run in local
-
-### How to run dependent containers
-
-The following the apps depend on Zipkin.
+#### build the app
 
 ```
-$ docker-compose up -d zipkin
+$ ./gradlew --no-daemon clean build
 ```
 
-### How to stop dependent containers
-
-#### stop
+or
 
 ```
-$ docker-compose stop zipkin
+$ make build-with-docker
 ```
 
-#### dispose
+#### build Docker images
 
 ```
-$ docker-compose down
+$ make docker-build-kubernetes-dev
 ```
 
-### How to build the apps
+or
 
 ```
-$ ./gradlew clean build
+$ make docker-build-kubernetes-production
 ```
 
-### How to run the apps
-
-This repo includes 5 apps.
-
-#### Backend 1
+#### push Docker images to local Docker registry
 
 ```
-$ java -jar ./armeria-sandbox-backend1/build/libs/armeria-sandbox-backend1-*.jar
-```
-
-#### Backend 2
-
-```
-$ java -jar ./armeria-sandbox-backend1/build/libs/armeria-sandbox-backend2-*.jar
-```
-
-#### Backend 3
-
-```
-$ java -jar ./armeria-sandbox-backend1/build/libs/armeria-sandbox-backend3-*.jar
-```
-
-#### Backend 4
-
-```
-$ java -jar ./armeria-sandbox-backend1/build/libs/armeria-sandbox-backend4-*.jar
-```
-
-#### Frontend
-
-```
-$ java -jar ./armeria-sandbox-frontend/build/libs/armeria-sandbox-frontend-*.jar
+$ make docker-push
 ```
 
 <br>
 
----
-
-## How to run with Docker Compose
-
-### How to build the apps
+### deploy the app
 
 ```
-$ ./gradlew clean build
+$ make kubectl-create-apps
 ```
 
-### How to run the apps
+<br>
+<br>
+
+## How to dispose
 
 ```
-$ make up
+$ make kubectl-delete-apps
+$ make kubectl-delete-depends
+$ docker stop registry
+$ docker rm registry
 ```
 
-### How to reload the apps
-
-This command recreates the apps after that recreate containers.
-
-```
-$ make reload
-```
-
-### How to stop containers
-
-#### stop
-
-```
-$ make stop
-```
-
-#### dispose
-
-```
-$ make down
-```
-
+<br>
 <br>
 
 ---
 
 ## URLs
 
-- [Zipkin](http://localhost:9411/zipkin/)
-- [Prometheus' scraping targets](http://localhost:9090/targets)
-- [Armeria's CircuitBreaker metrics](http://localhost:9090/graph?g0.range_input=1h&g0.expr=armeria_client_circuitBreaker_requests&g0.tab=0&g1.range_input=1h&g1.expr=irate(armeria_client_circuitBreaker_transitions_total%5B1m%5D)&g1.tab=0&g2.range_input=1h&g2.expr=irate(armeria_client_circuitBreaker_rejectedRequests_total%5B1m%5D)&g2.tab=0)
-- [Armeria's Client EndpointGroup metrics](http://localhost:9090/graph?g0.range_input=1h&g0.expr=armeria_client_endpointGroup_count&g0.tab=0&g1.range_input=1h&g1.expr=armeria_client_endpointGroup_healthy&g1.tab=0)
+- [Prometheus' scraping targets](http://localhost:30000/targets)
+- [Armeria's CircuitBreaker metrics](http://localhost:30000/graph?g0.range_input=1h&g0.expr=armeria_client_circuitBreaker_requests&g0.tab=0&g1.range_input=1h&g1.expr=irate(armeria_client_circuitBreaker_transitions_total%5B1m%5D)&g1.tab=0&g2.range_input=1h&g2.expr=irate(armeria_client_circuitBreaker_rejectedRequests_total%5B1m%5D)&g2.tab=0)
+- [Armeria's Client EndpointGroup metrics](http://localhost:30000/graph?g0.range_input=1h&g0.expr=armeria_client_endpointGroup_count&g0.tab=0&g1.range_input=1h&g1.expr=armeria_client_endpointGroup_healthy&g1.tab=0)
+- [Zipkin](http://localhost:30001/zipkin/)
+- [Central Dogma](http://localhost:30002/#/)
+- [App frontend](http://localhost:31000/hello/foo)
