@@ -10,7 +10,7 @@
 $ docker run -d -p 5000:5000 --name registry registry:2.6
 ```
 
-#### launch dependency Docker containers
+#### launch dependent Docker containers
 
 ```
 $ make kubectl-create-depends
@@ -24,6 +24,8 @@ $ make kubectl-create-depends-data
 
 <br>
 <br>
+
+### deploy to Kubernetes
 
 #### build the app
 
@@ -57,7 +59,7 @@ $ make docker-push
 
 <br>
 
-### deploy the app
+#### deploy the app
 
 ```
 $ make kubectl-create-apps
