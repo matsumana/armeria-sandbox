@@ -63,9 +63,9 @@ kubectl-delete-depends:
 
 kubectl-create-depends-data:
 	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod | grep '^centraldogma-' | awk '{print $$1}'))
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "/opt/centraldogma/bin/dogma.linux-amd64 --connect=localhost:36462 new armeriaSandbox"
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "/opt/centraldogma/bin/dogma.linux-amd64 --connect=localhost:36462 new armeriaSandbox/apiServers"
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "echo '{\"backend1\": {\"ratio\": 1}, \"backend2\": {\"ratio\": 1}, \"backend3\": {\"ratio\": 1}, \"backend4\": {\"ratio\": 1}, \"frontend\": {\"ratio\": 1}}' > /tmp/throttling.json && /opt/centraldogma/bin/dogma.linux-amd64 --connect=localhost:36462 put armeriaSandbox/apiServers /tmp/throttling.json -m 'Add initial throttling.json'"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "/opt/centraldogma/bin/dogma --connect=localhost:36462 new armeriaSandbox"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "/opt/centraldogma/bin/dogma --connect=localhost:36462 new armeriaSandbox/apiServers"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "echo '{\"backend1\": {\"ratio\": 1}, \"backend2\": {\"ratio\": 1}, \"backend3\": {\"ratio\": 1}, \"backend4\": {\"ratio\": 1}, \"frontend\": {\"ratio\": 1}}' > /tmp/throttling.json && /opt/centraldogma/bin/dogma --connect=localhost:36462 put armeriaSandbox/apiServers /tmp/throttling.json -m 'Add initial throttling.json'"
 
 kubectl-create-apps:
 	kubectl create -f ./armeria-sandbox-job-kubernetes/kubernetes.yml

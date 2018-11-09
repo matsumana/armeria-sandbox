@@ -10,7 +10,7 @@ buildscript {
         retrofitVersion = "2.4.0"
         rxJava2Jdk8InteropVersion = "0.3.2"
         braveVersion = "5.4.3"
-        centraldogmaVersion = "0.31.0"
+        centraldogmaVersion = "0.32.1"
 
         junitVersion = "5.3.1"
     }
