@@ -65,7 +65,11 @@ public class ThrottlingHelper {
 
                 log.debug("Throttling ratio: name={}, ratio={}", serviceName, ratio);
 
-                return completedFuture(secureRandom.nextDouble() < ratio);
+                if (ratio < 1) {
+                    return completedFuture(secureRandom.nextDouble() < ratio);
+                } else {
+                    return completedFuture(true);
+                }
             }
         };
     }
