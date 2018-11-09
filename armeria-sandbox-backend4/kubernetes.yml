@@ -32,6 +32,7 @@ spec:
             -Dcom.sun.management.jmxremote.local.only=false
             -Dcom.sun.management.jmxremote.ssl=false
             -Dcom.sun.management.jmxremote.authenticate=false
+            -Djava.net.preferIPv4Stack=true
             -Xlog:gc*=debug:/root/gc_%t_%p.log:time,level,tags:filesize=1024m,filecount=5
             -XX:StartFlightRecording=name=on_startup,filename=/root/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m
             -Xms128m -Xmx128m
