@@ -46,6 +46,13 @@ spec:
         - containerPort: 8080  # Application
         - containerPort: 8686  # JMX
         - containerPort: 5005  # Java debugger
+#        resources:
+#          requests:
+#            memory: "128Mi"
+#            cpu: "250m"
+#          limits:
+#            memory: "256Mi"
+#            cpu: "250m"
 
 ---
 kind: Service
