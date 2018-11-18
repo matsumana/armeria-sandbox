@@ -108,7 +108,7 @@ $ docker rm registry
 
 ---
 
-## URLs which is provided by this app
+## URLs which are provided by this app
 
 - [Prometheus' scraping targets](http://localhost:30000/targets)
 - [Armeria's CircuitBreaker metrics](http://localhost:30000/graph?g0.range_input=1h&g0.expr=armeria_client_circuitBreaker_requests&g0.tab=0&g1.range_input=1h&g1.expr=irate(armeria_client_circuitBreaker_transitions_total%5B1m%5D)&g1.tab=0&g2.range_input=1h&g2.expr=irate(armeria_client_circuitBreaker_rejectedRequests_total%5B1m%5D)&g2.tab=0)
