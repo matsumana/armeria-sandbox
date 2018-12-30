@@ -16,7 +16,6 @@ import com.linecorp.armeria.client.retrofit2.ArmeriaRetrofitBuilder;
 
 import info.matsumana.armeria.config.ApiServerSetting.EndpointSetting;
 import retrofit2.Retrofit;
-import retrofit2.adapter.java8.Java8CallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 @Configuration
@@ -64,7 +63,6 @@ public class ArmeriaClientConfig {
                 .baseUrl(String.format("%s://group:%s/", scheme, "job-kubernetes"))
                 .addConverterFactory(ScalarsConverterFactory.create())
 //                .addConverterFactory(JacksonConverterFactory.create())
-                .addCallAdapterFactory(Java8CallAdapterFactory.create())
                 .build();
     }
 }

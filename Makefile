@@ -52,9 +52,9 @@ kubectl-rollout: docker-push
 	kubectl rollout status deployment/armeria-sandbox-frontend
 
 kubectl-create-depends:
-	kubectl create -f ./kubernetes/centraldogma.yml
-	kubectl create -f ./kubernetes/zipkin.yml
-	kubectl create -f ./kubernetes/prometheus.yml
+	kubectl apply -f ./kubernetes/centraldogma.yml
+	kubectl apply -f ./kubernetes/zipkin.yml
+	kubectl apply -f ./kubernetes/prometheus.yml
 
 kubectl-delete-depends:
 	kubectl delete -f ./kubernetes/centraldogma.yml
@@ -63,17 +63,17 @@ kubectl-delete-depends:
 
 kubectl-create-depends-data:
 	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod | grep '^centraldogma-' | awk '{print $$1}'))
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "/opt/centraldogma/bin/dogma --connect=localhost:36462 new armeriaSandbox"
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "/opt/centraldogma/bin/dogma --connect=localhost:36462 new armeriaSandbox/apiServers"
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "echo '{\"backend1\": {\"ratio\": 1}, \"backend2\": {\"ratio\": 1}, \"backend3\": {\"ratio\": 1}, \"backend4\": {\"ratio\": 1}, \"frontend\": {\"ratio\": 1}}' > /tmp/throttling.json && /opt/centraldogma/bin/dogma --connect=localhost:36462 put armeriaSandbox/apiServers /tmp/throttling.json -m 'Add initial throttling.json'"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "dogma --connect=localhost:36462 new armeriaSandbox"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "dogma --connect=localhost:36462 new armeriaSandbox/apiServers"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "echo '{\"backend1\": {\"ratio\": 1}, \"backend2\": {\"ratio\": 1}, \"backend3\": {\"ratio\": 1}, \"backend4\": {\"ratio\": 1}, \"frontend\": {\"ratio\": 1}}' > /tmp/throttling.json && dogma --connect=localhost:36462 put armeriaSandbox/apiServers /tmp/throttling.json -m 'Add initial throttling.json'"
 
 kubectl-create-apps:
-	kubectl create -f ./armeria-sandbox-job-kubernetes/kubernetes.yml
-	kubectl create -f ./armeria-sandbox-backend1/kubernetes.yml
-	kubectl create -f ./armeria-sandbox-backend2/kubernetes.yml
-	kubectl create -f ./armeria-sandbox-backend3/kubernetes.yml
-	kubectl create -f ./armeria-sandbox-backend4/kubernetes.yml
-	kubectl create -f ./armeria-sandbox-frontend/kubernetes.yml
+	kubectl apply -f ./armeria-sandbox-job-kubernetes/kubernetes.yml
+	kubectl apply -f ./armeria-sandbox-backend1/kubernetes.yml
+	kubectl apply -f ./armeria-sandbox-backend2/kubernetes.yml
+	kubectl apply -f ./armeria-sandbox-backend3/kubernetes.yml
+	kubectl apply -f ./armeria-sandbox-backend4/kubernetes.yml
+	kubectl apply -f ./armeria-sandbox-frontend/kubernetes.yml
 
 kubectl-delete-apps:
 	kubectl delete -f ./armeria-sandbox-job-kubernetes/kubernetes.yml

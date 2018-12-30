@@ -3,14 +3,14 @@ buildscript {
         thriftGradlePluginVersion = "0.4.0"
         osdetectorGradlePluginVersion = "1.6.0"
 
-        springBootVersion = "2.1.0.RELEASE"
-        armeriaVersion = "0.75.0"
+        springBootVersion = "2.1.1.RELEASE"
+        armeriaVersion = "0.78.1"
         thriftVersion = "0.9"                     // Central Dogma depends on Thrift0.9
         thriftFullVersion = thriftVersion + ".3"  // Central Dogma depends on Thrift0.9
-        retrofitVersion = "2.4.0"
+        retrofitVersion = "2.5.0"
         rxJava2Jdk8InteropVersion = "0.3.4"
-        braveVersion = "5.5.0"
-        centraldogmaVersion = "0.32.1"
+        braveVersion = "5.6.0"
+        centraldogmaVersion = "0.34.0"
 
         junitVersion = "5.3.1"
     }
@@ -58,7 +58,6 @@ subprojects {
             dependency "org.apache.thrift:libthrift:${thriftFullVersion}"
             dependency "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
             dependency "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
-            dependency "com.squareup.retrofit2:adapter-java8:${retrofitVersion}"
             dependency "com.github.akarnokd:rxjava2-jdk8-interop:${rxJava2Jdk8InteropVersion}"
             dependency "com.linecorp.centraldogma:centraldogma-client-armeria-legacy:${centraldogmaVersion}"
         }

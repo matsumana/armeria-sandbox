@@ -2,12 +2,14 @@ package info.matsumana.armeria.config;
 
 import static com.linecorp.armeria.client.endpoint.EndpointSelectionStrategy.WEIGHTED_ROUND_ROBIN;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.client.Client;
+import com.linecorp.armeria.client.UnprocessedRequestException;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerBuilder;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerHttpClient;
 import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
@@ -22,12 +24,13 @@ import com.linecorp.armeria.client.retry.RetryingHttpClient;
 import com.linecorp.armeria.client.tracing.HttpTracingClient;
 import com.linecorp.armeria.common.HttpRequest;
 import com.linecorp.armeria.common.HttpResponse;
+import com.linecorp.armeria.common.HttpStatus;
+import com.linecorp.armeria.common.HttpStatusClass;
 
 import brave.Tracing;
 import info.matsumana.armeria.helper.EndpointGroupHelper;
 import io.micrometer.core.instrument.MeterRegistry;
 import retrofit2.Retrofit;
-import retrofit2.adapter.java8.Java8CallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 @Configuration
@@ -63,16 +66,11 @@ public class ArmeriaClientConfig {
                 .baseUrl(String.format("http://group:%s/", "backend4"))
                 .addConverterFactory(ScalarsConverterFactory.create())
 //                .addConverterFactory(JacksonConverterFactory.create())
-                .addCallAdapterFactory(Java8CallAdapterFactory.create())
                 .withClientOptions((uri, optionsBuilder) -> optionsBuilder
-                        .decorator(HttpRequest.class, HttpResponse.class,
-                                   newCircuitBreakerDecorator())
-                        .decorator(HttpRequest.class, HttpResponse.class,
-                                   HttpTracingClient.newDecorator(tracing, "backend4"))
-                        .decorator(HttpRequest.class, HttpResponse.class,
-                                   LoggingClient.newDecorator())
-                        .decorator(HttpRequest.class, HttpResponse.class,
-                                   RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
+                        .decorator(newCircuitBreakerDecorator())
+                        .decorator(HttpTracingClient.newDecorator(tracing, "backend4"))
+                        .decorator(LoggingClient.newDecorator())
+                        .decorator(RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
                                                                    MAX_TOTAL_ATTEMPTS)))
                 .build();
     }
@@ -84,7 +82,31 @@ public class ArmeriaClientConfig {
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
                         .failureRateThreshold(0.1)  // TODO need tuning
                         .build(),
-                response -> response.completionFuture()
-                                    .handle((res, cause) -> cause == null));
+                (ctx, cause) -> {
+                    if (cause != null) {
+                        if (cause instanceof UnprocessedRequestException) {
+                            // Neither a success nor a failure because the request has not been handled by the server.
+                            return CompletableFuture.completedFuture(null);
+                        }
+                        // A failure if an Exception is raised.
+                        return CompletableFuture.completedFuture(false);
+                    }
+
+                    final HttpStatus status = ctx.log().responseHeaders().status();
+                    if (status != null) {
+                        // A failure if the response is 5xx.
+                        if (status.codeClass() == HttpStatusClass.SERVER_ERROR) {
+                            return CompletableFuture.completedFuture(false);
+                        }
+
+                        // A success if the response is 2xx.
+                        if (status.codeClass() == HttpStatusClass.SUCCESS) {
+                            return CompletableFuture.completedFuture(true);
+                        }
+                    }
+
+                    // Neither a success nor a failure. Do not take this response into account.
+                    return CompletableFuture.completedFuture(null);
+                });
     }
 }

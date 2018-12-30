@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.Nullable;
 
-import com.google.common.base.Strings;
-
 import com.linecorp.centraldogma.client.CentralDogma;
 import com.linecorp.centraldogma.client.armeria.legacy.LegacyCentralDogmaBuilder;
 
@@ -19,7 +17,7 @@ public class CentralDogmaConfig {
     @Nullable
     CentralDogma centralDogma(@Value("${centraldogma.server.host:}") String host,
                               @Value("${centraldogma.server.port:0}") int port) throws UnknownHostException {
-        if (Strings.isNullOrEmpty(host)) {
+        if (host == null || host.isEmpty()) {
             return null;
         } else {
             LegacyCentralDogmaBuilder builder = new LegacyCentralDogmaBuilder();

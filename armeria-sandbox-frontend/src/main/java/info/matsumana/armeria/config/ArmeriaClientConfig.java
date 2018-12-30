@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.client.Client;
 import com.linecorp.armeria.client.ClientBuilder;
+import com.linecorp.armeria.client.ClientRequestContext;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerBuilder;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRpcClient;
 import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
@@ -20,11 +21,9 @@ import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpoin
 import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroupBuilder;
 import com.linecorp.armeria.client.logging.LoggingClient;
 import com.linecorp.armeria.client.retry.Backoff;
-import com.linecorp.armeria.client.retry.RetryStrategy;
+import com.linecorp.armeria.client.retry.RetryStrategyWithContent;
 import com.linecorp.armeria.client.retry.RetryingRpcClient;
 import com.linecorp.armeria.client.tracing.HttpTracingClient;
-import com.linecorp.armeria.common.HttpRequest;
-import com.linecorp.armeria.common.HttpResponse;
 import com.linecorp.armeria.common.RpcRequest;
 import com.linecorp.armeria.common.RpcResponse;
 
@@ -59,14 +58,10 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend1());
         registerEndpointGroup(group, "backend1");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello1", "backend1"))
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator())
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           HttpTracingClient.newDecorator(tracing, "backend1"))
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           LoggingClient.newDecorator())
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                .rpcDecorator(newCircuitBreakerDecorator())
+                .decorator(HttpTracingClient.newDecorator(tracing, "backend1"))
+                .decorator(LoggingClient.newDecorator())
+                .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
                 .build(Hello1Service.AsyncIface.class);
     }
 
@@ -76,14 +71,10 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend2());
         registerEndpointGroup(group, "backend2");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello2", "backend2"))
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator())
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           HttpTracingClient.newDecorator(tracing, "backend2"))
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           LoggingClient.newDecorator())
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                .rpcDecorator(newCircuitBreakerDecorator())
+                .decorator(HttpTracingClient.newDecorator(tracing, "backend2"))
+                .decorator(LoggingClient.newDecorator())
+                .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
                 .build(Hello2Service.AsyncIface.class);
     }
 
@@ -93,14 +84,10 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend3());
         registerEndpointGroup(group, "backend3");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello3", "backend3"))
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           newCircuitBreakerDecorator())
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           HttpTracingClient.newDecorator(tracing, "backend3"))
-                .decorator(HttpRequest.class, HttpResponse.class,
-                           LoggingClient.newDecorator())
-                .decorator(RpcRequest.class, RpcResponse.class,
-                           RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                .rpcDecorator(newCircuitBreakerDecorator())
+                .decorator(HttpTracingClient.newDecorator(tracing, "backend3"))
+                .decorator(LoggingClient.newDecorator())
+                .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
                 .build(Hello3Service.AsyncIface.class);
     }
 
@@ -120,16 +107,16 @@ public class ArmeriaClientConfig {
                         .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
                         .failureRateThreshold(0.1)  // TODO need tuning
                         .build(),
-                response -> response.completionFuture()
-                                    .handle((res, cause) -> cause == null));
+                (ctx, response) -> response.completionFuture()
+                                           .handle((res, cause) -> cause == null));
     }
 
-    private static RetryStrategy<RpcRequest, RpcResponse> newRetryStrategy() {
-        return new RetryStrategy<>() {
-            final Backoff backoff = RetryStrategy.defaultBackoff;
+    private static RetryStrategyWithContent<RpcResponse> newRetryStrategy() {
+        return new RetryStrategyWithContent<>() {
+            final Backoff backoff = Backoff.ofDefault();
 
             @Override
-            public CompletionStage<Backoff> shouldRetry(RpcRequest request, RpcResponse response) {
+            public CompletionStage<Backoff> shouldRetry(ClientRequestContext ctx, RpcResponse response) {
                 if (response.cause() == null) {
                     return CompletableFuture.completedFuture(null);
                 } else {
