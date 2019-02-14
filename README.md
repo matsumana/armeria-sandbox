@@ -59,11 +59,7 @@ $ make kubectl-create-depends-data
 
 ```
 $ ./gradlew --no-daemon clean build
-```
-
-or
-
-```
+# or
 $ make build-with-docker
 ```
 
@@ -71,11 +67,7 @@ $ make build-with-docker
 
 ```
 $ make docker-build-kubernetes-dev
-```
-
-or
-
-```
+# or
 $ make docker-build-kubernetes-production
 ```
 
