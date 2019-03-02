@@ -69,8 +69,8 @@ public class PodInfoCollector {
     }
 
     private String getPodInfo(String app) {
-        return client.pods(namespace,
-                           String.format(AUTHORIZATION_HEADER_VALUE, token),
+        return client.pods(String.format(AUTHORIZATION_HEADER_VALUE, token),
+                           namespace,
                            String.format(LABEL_SELECTOR, app))
                      .join();
     }

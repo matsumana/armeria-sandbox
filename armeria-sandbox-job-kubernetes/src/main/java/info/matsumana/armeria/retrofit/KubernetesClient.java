@@ -12,7 +12,7 @@ import retrofit2.http.Query;
 public interface KubernetesClient {
 
     @GET("/api/v1/namespaces/{namespace}/pods")
-    CompletableFuture<String> pods(@Path("namespace") String namespace,
-                                   @Header(AUTHORIZATION_HEADER_KEY) String authorization,
+    CompletableFuture<String> pods(@Header(AUTHORIZATION_HEADER_KEY) String authorization,
+                                   @Path("namespace") String namespace,
                                    @Query("labelSelector") String labelSelector);
 }
