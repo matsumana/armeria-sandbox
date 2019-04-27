@@ -10,7 +10,7 @@ import info.matsumana.armeria.thrift.Hello2Service;
 public class Hello2Handler implements Hello2Service.AsyncIface {
 
     @Override
-    public void hello(String name, AsyncMethodCallback resultHandler) throws TException {
+    public void hello(String name, AsyncMethodCallback<String> resultHandler) throws TException {
         resultHandler.onComplete("[backend2] Hello, " + name);
     }
 }

@@ -23,7 +23,7 @@ public class Hello3Handler implements Hello3Service.AsyncIface {
     }
 
     @Override
-    public void hello(String name, AsyncMethodCallback resultHandler) throws TException {
+    public void hello(String name, AsyncMethodCallback<String> resultHandler) throws TException {
         final HelloClient helloClient = retrofit.create(HelloClient.class);
         SingleInterop.fromFuture(helloClient.hello(name))
                      .doOnSuccess(res -> log.debug("Retrofit HelloClient res={}", res))

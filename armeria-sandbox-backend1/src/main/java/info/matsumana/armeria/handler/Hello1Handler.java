@@ -16,7 +16,7 @@ public class Hello1Handler implements Hello1Service.AsyncIface {
     }
 
     @Override
-    public void hello(String name, AsyncMethodCallback resultHandler) throws TException {
+    public void hello(String name, AsyncMethodCallback<String> resultHandler) throws TException {
         // Just test for Circuit Breaker
         testCircuitBreaker();
 
