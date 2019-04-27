@@ -17,7 +17,7 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9411"
-        prometheus.io/path: /actuator/prometheus
+        prometheus.io/path: /prometheus
     spec:
       containers:
       - name: zipkin
