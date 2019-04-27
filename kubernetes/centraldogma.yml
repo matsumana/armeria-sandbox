@@ -14,6 +14,10 @@ spec:
     metadata:
       labels:
         app: centraldogma
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "36462"
+        prometheus.io/path: /monitor/metrics
     spec:
       containers:
       - name: centraldogma
