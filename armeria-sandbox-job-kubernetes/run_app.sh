@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # add Kubernetes cert to Java key store
 echo changeit | keytool -import -trustcacerts -file /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -keystore $JAVA_HOME/lib/security/cacerts -noprompt

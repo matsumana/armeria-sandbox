@@ -1,21 +1,7 @@
-FROM matsumana/debian9-openjdk11 as builder
+FROM bellsoft/liberica-openjdk-alpine-musl:11.0.3
 
-RUN jlink \
-    --compress=2 \
-    --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported \
-    --bind-services \
-    --output=/tmp/jre
-
-
-
-FROM debian:9.5-slim
-
-COPY --from=builder /tmp/jre /root/jre
 ADD ./build/libs/*.jar /root/app.jar
 ADD ./run_app.sh /root/run_app.sh
-
-ENV JAVA_HOME=/root/jre
-ENV PATH="$JAVA_HOME/bin:$PATH"
 
 ENTRYPOINT ["/root/run_app.sh"]
 

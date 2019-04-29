@@ -2,7 +2,7 @@ gradlew-clean-build:
 	./gradlew --no-daemon clean build
 
 build-with-docker:
-	docker run --rm -v "$(HOME)"/.gradle:/root/.gradle -v "$(PWD)":/root/armeria-sandbox -w /root/armeria-sandbox matsumana/debian9-openjdk11 bash -c "./gradlew --no-daemon clean build"
+	docker run --rm -v "$(HOME)"/.gradle:/root/.gradle -v "$(PWD)":/root/armeria-sandbox -w /root/armeria-sandbox bellsoft/liberica-openjdk-debian:11.0.3 bash -c "./gradlew --no-daemon clean build"
 
 docker-ps:
 	docker ps -a
