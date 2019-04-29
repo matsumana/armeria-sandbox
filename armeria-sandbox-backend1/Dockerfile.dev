@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-alpine-musl:11.0.3
+FROM azul/zulu-openjdk-alpine:11.0.3
 
 ADD ./build/libs/*.jar /root/app.jar
 ADD ./run_app.sh /root/run_app.sh
