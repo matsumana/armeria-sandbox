@@ -1,7 +1,7 @@
 // Thrift server
 project(":armeria-sandbox-backend2") {
     dependencies {
-        implementation project(":armeria-sandbox-thrift")
+        implementation project(":armeria-sandbox-grpc")
         implementation project(":armeria-sandbox-common")
         implementation "org.springframework.boot:spring-boot-starter-validation"
     }

@@ -1,11 +1,11 @@
 // Thrift IDL
-apply plugin: 'com.google.osdetector'
-
 project(":armeria-sandbox-thrift") {
+    apply plugin: "com.google.osdetector"
     apply plugin: "org.jruyi.thrift"
 
     dependencies {
         api "org.apache.thrift:libthrift"
+        api "com.linecorp.armeria:armeria-thrift"
         implementation "javax.annotation:javax.annotation-api"
     }
 

@@ -2,6 +2,7 @@
 project(":armeria-sandbox-frontend") {
     dependencies {
         implementation project(":armeria-sandbox-thrift")
+        implementation project(":armeria-sandbox-grpc")
         implementation project(":armeria-sandbox-common")
         implementation "org.springframework.boot:spring-boot-starter-validation"
     }

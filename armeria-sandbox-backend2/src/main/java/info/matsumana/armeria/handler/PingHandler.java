@@ -1,16 +1,21 @@
 package info.matsumana.armeria.handler;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.async.AsyncMethodCallback;
 import org.springframework.stereotype.Component;
 
-import info.matsumana.armeria.thrift.PingService;
+import info.matsumana.armeria.grpc.Ping.PingReply;
+import info.matsumana.armeria.grpc.Ping.PingRequest;
+import info.matsumana.armeria.grpc.PingServiceGrpc.PingServiceImplBase;
+import io.grpc.stub.StreamObserver;
 
 @Component
-public class PingHandler implements PingService.AsyncIface {
+public class PingHandler extends PingServiceImplBase {
 
     @Override
-    public void ping(AsyncMethodCallback<String> resultHandler) throws TException {
-        resultHandler.onComplete("pong");
+    public void ping(PingRequest req, StreamObserver<PingReply> responseObserver) {
+        final PingReply reply = PingReply.newBuilder()
+                                         .setMessage("pong")
+                                         .build();
+        responseObserver.onNext(reply);
+        responseObserver.onCompleted();
     }
 }

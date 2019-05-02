@@ -30,24 +30,24 @@ public class ArmeriaThriftServiceConfig {
     @Bean
     public ThriftServiceRegistrationBean pingService(PingService.AsyncIface service) {
         return new ThriftServiceRegistrationBean()
+                .setServiceName("pingService")
                 .setPath("/thrift/ping")
                 .setService(THttpService.of(service)
                                         .decorate(HttpTracingService.newDecorator(tracing))
                                         .decorate(LoggingService.newDecorator()))
-                .setServiceName("PingService")
                 .setExampleRequests(List.of(new PingService.ping_args()));
     }
 
     @Bean
     public ThriftServiceRegistrationBean hello3Service(Hello3Service.AsyncIface service) {
         return new ThriftServiceRegistrationBean()
+                .setServiceName("hello3Service")
                 .setPath("/thrift/hello3")
                 .setService(THttpService.of(service)
                                         .decorate(ThrottlingHttpService.newDecorator(
                                                 throttlingHelper.newThrottlingStrategy("backend3")))
                                         .decorate(HttpTracingService.newDecorator(tracing))
                                         .decorate(LoggingService.newDecorator()))
-                .setServiceName("Hello3Service")
                 .setExampleRequests(List.of(new Hello3Service.hello_args("foo")));
     }
 }

@@ -31,35 +31,35 @@ public class ArmeriaThriftServiceConfig {
     @Bean
     public ThriftServiceRegistrationBean pingService(PingService.AsyncIface service) {
         return new ThriftServiceRegistrationBean()
+                .setServiceName("pingService")
                 .setPath("/thrift/ping")
                 .setService(THttpService.of(service)
                                         .decorate(HttpTracingService.newDecorator(tracing))
                                         .decorate(LoggingService.newDecorator()))
-                .setServiceName("PingService")
                 .setExampleRequests(List.of(new PingService.ping_args()));
     }
 
     @Bean
     public ThriftServiceRegistrationBean failService(FailService.AsyncIface service) {
         return new ThriftServiceRegistrationBean()
+                .setServiceName("failService")
                 .setPath("/thrift/fail")
                 .setService(THttpService.of(service)
                                         .decorate(HttpTracingService.newDecorator(tracing))
                                         .decorate(LoggingService.newDecorator()))
-                .setServiceName("FailService")
                 .setExampleRequests(List.of(new FailService.fail_args()));
     }
 
     @Bean
     public ThriftServiceRegistrationBean hello1Service(Hello1Service.AsyncIface service) {
         return new ThriftServiceRegistrationBean()
+                .setServiceName("hello1Service")
                 .setPath("/thrift/hello1")
                 .setService(THttpService.of(service)
                                         .decorate(ThrottlingHttpService.newDecorator(
                                                 throttlingHelper.newThrottlingStrategy("backend1")))
                                         .decorate(HttpTracingService.newDecorator(tracing))
                                         .decorate(LoggingService.newDecorator()))
-                .setServiceName("Hello1Service")
                 .setExampleRequests(List.of(new Hello1Service.hello_args("foo")));
     }
 }

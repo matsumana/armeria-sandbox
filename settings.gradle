@@ -1,4 +1,5 @@
 include "armeria-sandbox-thrift"
+include "armeria-sandbox-grpc"
 include "armeria-sandbox-common"
 include "armeria-sandbox-backend1"
 include "armeria-sandbox-backend2"
