@@ -13,11 +13,12 @@ import com.linecorp.armeria.client.ClientBuilder;
 import com.linecorp.armeria.client.HttpClient;
 import com.linecorp.armeria.common.AggregatedHttpMessage;
 import com.linecorp.armeria.common.HttpStatus;
-import com.linecorp.armeria.common.thrift.ThriftCompletableFuture;
 import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
-import info.matsumana.armeria.thrift.Hello2Service;
+import info.matsumana.armeria.grpc.Hello2.Hello2Reply;
+import info.matsumana.armeria.grpc.Hello2.Hello2Request;
+import info.matsumana.armeria.grpc.Hello2ServiceGrpc.Hello2ServiceBlockingStub;
 
 @SpringJUnitConfig(TestContext.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE,
@@ -28,14 +29,14 @@ public class IntegrationTest {
     private Server server;
 
     private HttpClient client;
-    private Hello2Service.AsyncIface hello2Service;
+    private Hello2ServiceBlockingStub hello2Service;
 
     @BeforeEach
     public void beforeEach() {
         final int port = server.activePort().get().localAddress().getPort();
         client = HttpClient.of("http://127.0.0.1:" + port);
-        hello2Service = new ClientBuilder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello2", port))
-                .build(Hello2Service.AsyncIface.class);
+        hello2Service = new ClientBuilder(String.format("gproto+h2c://127.0.0.1:%d/", port))
+                .build(Hello2ServiceBlockingStub.class);
     }
 
     @Test
@@ -59,9 +60,11 @@ public class IntegrationTest {
 
     @Test
     public void hello() throws Exception {
-        final ThriftCompletableFuture<String> future = new ThriftCompletableFuture<>();
-        hello2Service.hello("foo", future);
-        final String res = future.get();
+        final Hello2Request request = Hello2Request.newBuilder()
+                                                   .setName("foo")
+                                                   .build();
+        final Hello2Reply reply = hello2Service.hello(request);
+        final String res = reply.getMessage();
         assertThat(res).isEqualTo("[backend2] Hello, foo");
     }
 }

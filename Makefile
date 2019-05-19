@@ -63,9 +63,9 @@ kubectl-delete-depends:
 
 kubectl-create-depends-data:
 	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod | grep '^centraldogma-' | awk '{print $$1}'))
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "dogma --connect=localhost:36462 new armeriaSandbox"
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "dogma --connect=localhost:36462 new armeriaSandbox/apiServers"
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "echo '{\"backend1\": {\"ratio\": 1}, \"backend2\": {\"ratio\": 1}, \"backend3\": {\"ratio\": 1}, \"backend4\": {\"ratio\": 1}, \"frontend\": {\"ratio\": 1}}' > /tmp/throttling.json && dogma --connect=localhost:36462 put armeriaSandbox/apiServers /tmp/throttling.json -m 'Add initial throttling.json'"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"armeriaSandbox\"}' http://localhost:36462/api/v1/projects"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"apiServers\"}' http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
+	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"commitMessage\": {\"summary\": \"Add initial throttling.json\", \"detail\": {\"content\": \"\", \"markup\": \"PLAINTEXT\"}}, \"file\": {\"name\": \"throttling.json\", \"type\": \"TEXT\", \"content\": \"{\\\"backend1\\\": {\\\"ratio\\\": 1}, \\\"backend2\\\": {\\\"ratio\\\": 1}, \\\"backend3\\\": {\\\"ratio\\\": 1}, \\\"backend4\\\": {\\\"ratio\\\": 1}}\", \"path\": \"/throttling.json\"}}' http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
 
 kubectl-create-apps:
 	kubectl apply -f ./armeria-sandbox-job-kubernetes/kubernetes.yml

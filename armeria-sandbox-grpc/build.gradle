@@ -1,0 +1,44 @@
+// gRPC IDL
+project(":armeria-sandbox-grpc") {
+    apply plugin: "com.google.protobuf"
+
+    dependencies {
+        api "com.linecorp.armeria:armeria-grpc"
+        implementation "javax.annotation:javax.annotation-api"
+    }
+
+    protobuf {
+        generatedFilesBaseDir = "$projectDir/build/generated-sources/grpc"
+        protoc {
+            artifact = "com.google.protobuf:protoc:${protocVersion}"
+        }
+
+        plugins {
+            grpc {
+                artifact = "io.grpc:protoc-gen-grpc-java:${protocGenGrpcJavaVersion}"
+            }
+        }
+
+        generateProtoTasks {
+            all()*.plugins {
+                grpc {}
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs "$projectDir/build/generated-sources/grpc/main/grpc"
+                srcDirs "$projectDir/build/generated-sources/grpc/main/java"
+            }
+        }
+    }
+
+    bootJar {
+        enabled = false
+    }
+    jar {
+        enabled = true
+    }
+}

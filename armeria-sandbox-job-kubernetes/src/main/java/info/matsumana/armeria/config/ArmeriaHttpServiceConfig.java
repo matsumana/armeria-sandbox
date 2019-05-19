@@ -13,7 +13,7 @@ public class ArmeriaHttpServiceConfig {
     @Bean
     public AnnotatedServiceRegistrationBean rootHandlerRegistrationBean(RootHandler handler) {
         return new AnnotatedServiceRegistrationBean()
-                .setServiceName("rootHandler")
+                .setServiceName("rootService")
                 .setService(handler);
     }
 }

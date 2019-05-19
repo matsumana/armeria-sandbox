@@ -1,16 +1,21 @@
 package info.matsumana.armeria.handler;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.async.AsyncMethodCallback;
 import org.springframework.stereotype.Component;
 
-import info.matsumana.armeria.thrift.Hello2Service;
+import info.matsumana.armeria.grpc.Hello2.Hello2Reply;
+import info.matsumana.armeria.grpc.Hello2.Hello2Request;
+import info.matsumana.armeria.grpc.Hello2ServiceGrpc.Hello2ServiceImplBase;
+import io.grpc.stub.StreamObserver;
 
 @Component
-public class Hello2Handler implements Hello2Service.AsyncIface {
+public class Hello2Handler extends Hello2ServiceImplBase {
 
     @Override
-    public void hello(String name, AsyncMethodCallback<String> resultHandler) throws TException {
-        resultHandler.onComplete("[backend2] Hello, " + name);
+    public void hello(Hello2Request req, StreamObserver<Hello2Reply> responseObserver) {
+        final Hello2Reply reply = Hello2Reply.newBuilder()
+                                             .setMessage("[backend2] Hello, " + req.getName())
+                                             .build();
+        responseObserver.onNext(reply);
+        responseObserver.onCompleted();
     }
 }

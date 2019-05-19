@@ -28,9 +28,9 @@ import com.linecorp.armeria.common.RpcRequest;
 import com.linecorp.armeria.common.RpcResponse;
 
 import brave.Tracing;
+import info.matsumana.armeria.grpc.Hello2ServiceGrpc.Hello2ServiceFutureStub;
 import info.matsumana.armeria.helper.EndpointGroupHelper;
 import info.matsumana.armeria.thrift.Hello1Service;
-import info.matsumana.armeria.thrift.Hello2Service;
 import info.matsumana.armeria.thrift.Hello3Service;
 import io.micrometer.core.instrument.MeterRegistry;
 
@@ -66,16 +66,16 @@ public class ArmeriaClientConfig {
     }
 
     @Bean
-    Hello2Service.AsyncIface hello2Service() {
+    Hello2ServiceFutureStub hello2Service() {
         final EndpointGroup group = endpointGroupHelper.newEndpointGroup("/backend2.json",
                                                                          apiServerSetting.getBackend2());
         registerEndpointGroup(group, "backend2");
-        return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello2", "backend2"))
+        return new ClientBuilder(String.format("gproto+h2c://group:%s/", "backend2"))
                 .rpcDecorator(newCircuitBreakerDecorator())
                 .decorator(HttpTracingClient.newDecorator(tracing, "backend2"))
                 .decorator(LoggingClient.newDecorator())
                 .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
-                .build(Hello2Service.AsyncIface.class);
+                .build(Hello2ServiceFutureStub.class);
     }
 
     @Bean

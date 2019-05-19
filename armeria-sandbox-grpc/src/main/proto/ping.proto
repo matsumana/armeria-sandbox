@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package info.matsumana.armeria.grpc;
+option java_package = "info.matsumana.armeria.grpc";
+
+service PingService {
+    rpc Ping (PingRequest) returns (PingReply) {
+    }
+}
+
+message PingRequest {
+}
+
+message PingReply {
+    string message = 1;
+}

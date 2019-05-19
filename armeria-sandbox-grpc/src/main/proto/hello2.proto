@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package info.matsumana.armeria.grpc;
+option java_package = "info.matsumana.armeria.grpc";
+
+service Hello2Service {
+    rpc Hello (Hello2Request) returns (Hello2Reply) {
+    }
+}
+
+message Hello2Request {
+    string name = 1;
+}
+
+message Hello2Reply {
+    string message = 1;
+}
