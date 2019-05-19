@@ -2,7 +2,7 @@ FROM azul/zulu-openjdk-alpine:11.0.3 as builder
 
 RUN jlink \
     --compress=2 \
-    --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported \
+    --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported,java.instrument \
     --bind-services \
     --output=/tmp/jre
 
