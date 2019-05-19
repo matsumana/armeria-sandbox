@@ -39,10 +39,10 @@ spec:
         args:
         - --spring.profiles.active=kubernetes
         - --logging.level.info.matsumana.armeria=DEBUG
-        - --zipkin.endpoint=http://zipkin.default.svc.cluster.local:9411/api/v2/spans
-        - --centraldogma.server.host=centraldogma.default.svc.cluster.local
+        - --zipkin.endpoint=http://zipkin:9411/api/v2/spans
+        - --centraldogma.server.host=centraldogma
         - --centraldogma.server.port=36462
-        - --api-servers.kubernetes.host=kubernetes.default.svc.cluster.local
+        - --api-servers.kubernetes.host=kubernetes
         - --api-servers.kubernetes.port=443
         - --api-servers.kubernetes.scheme=https
         - --kubernetes.namespace=default
