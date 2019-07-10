@@ -12,8 +12,11 @@ import org.springframework.context.annotation.Configuration;
 import com.linecorp.armeria.client.Client;
 import com.linecorp.armeria.client.ClientBuilder;
 import com.linecorp.armeria.client.ClientRequestContext;
+import com.linecorp.armeria.client.brave.BraveClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerBuilder;
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerHttpClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRpcClient;
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerStrategy;
 import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.EndpointGroupRegistry;
@@ -21,9 +24,12 @@ import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpoin
 import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroupBuilder;
 import com.linecorp.armeria.client.logging.LoggingClient;
 import com.linecorp.armeria.client.retry.Backoff;
+import com.linecorp.armeria.client.retry.RetryStrategy;
 import com.linecorp.armeria.client.retry.RetryStrategyWithContent;
+import com.linecorp.armeria.client.retry.RetryingHttpClient;
 import com.linecorp.armeria.client.retry.RetryingRpcClient;
-import com.linecorp.armeria.client.tracing.HttpTracingClient;
+import com.linecorp.armeria.common.HttpRequest;
+import com.linecorp.armeria.common.HttpResponse;
 import com.linecorp.armeria.common.RpcRequest;
 import com.linecorp.armeria.common.RpcResponse;
 
@@ -58,8 +64,8 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend1());
         registerEndpointGroup(group, "backend1");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello1", "backend1"))
-                .rpcDecorator(newCircuitBreakerDecorator())
-                .decorator(HttpTracingClient.newDecorator(tracing, "backend1"))
+                .rpcDecorator(newCircuitBreakerRpcDecorator())
+                .decorator(BraveClient.newDecorator(tracing, "backend1"))
                 .decorator(LoggingClient.newDecorator())
                 .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
                 .build(Hello1Service.AsyncIface.class);
@@ -71,10 +77,11 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend2());
         registerEndpointGroup(group, "backend2");
         return new ClientBuilder(String.format("gproto+h2c://group:%s/", "backend2"))
-                .rpcDecorator(newCircuitBreakerDecorator())
-                .decorator(HttpTracingClient.newDecorator(tracing, "backend2"))
+                .decorator(newCircuitBreakerHttpDecorator())
+                .decorator(BraveClient.newDecorator(tracing, "backend2"))
                 .decorator(LoggingClient.newDecorator())
-                .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                .decorator(RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
+                                                           MAX_TOTAL_ATTEMPTS))
                 .build(Hello2ServiceFutureStub.class);
     }
 
@@ -84,8 +91,8 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend3());
         registerEndpointGroup(group, "backend3");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello3", "backend3"))
-                .rpcDecorator(newCircuitBreakerDecorator())
-                .decorator(HttpTracingClient.newDecorator(tracing, "backend3"))
+                .rpcDecorator(newCircuitBreakerRpcDecorator())
+                .decorator(BraveClient.newDecorator(tracing, "backend3"))
                 .decorator(LoggingClient.newDecorator())
                 .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
                 .build(Hello3Service.AsyncIface.class);
@@ -100,7 +107,7 @@ public class ArmeriaClientConfig {
         }
     }
 
-    private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerDecorator() {
+    private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerRpcDecorator() {
         return CircuitBreakerRpcClient.newPerHostDecorator(
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
                 groupName -> new CircuitBreakerBuilder("frontend" + '_' + groupName)
@@ -109,6 +116,16 @@ public class ArmeriaClientConfig {
                         .build(),
                 (ctx, response) -> response.completionFuture()
                                            .handle((res, cause) -> cause == null));
+    }
+
+    private Function<Client<HttpRequest, HttpResponse>, CircuitBreakerHttpClient> newCircuitBreakerHttpDecorator() {
+        return CircuitBreakerHttpClient.newPerHostDecorator(
+//        return CircuitBreakerHttpClient.newPerHostAndMethodDecorator(
+                groupName -> new CircuitBreakerBuilder("frontend" + '_' + groupName)
+                        .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
+                        .failureRateThreshold(0.1)  // TODO need tuning
+                        .build(),
+                CircuitBreakerStrategy.onServerErrorStatus());
     }
 
     private static RetryStrategyWithContent<RpcResponse> newRetryStrategy() {

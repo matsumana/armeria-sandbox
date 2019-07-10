@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.common.grpc.GrpcSerializationFormats;
+import com.linecorp.armeria.server.brave.BraveService;
 import com.linecorp.armeria.server.grpc.GrpcServiceBuilder;
 import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.throttling.ThrottlingHttpService;
-import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.GrpcServiceRegistrationBean;
 import com.linecorp.armeria.spring.GrpcServiceRegistrationBean.ExampleRequest;
 
@@ -43,7 +43,7 @@ public class ArmeriaGrpcServiceConfig {
                                     .supportedSerializationFormats(GrpcSerializationFormats.values())
                                     .enableUnframedRequests(true)
                                     .build())
-                .setDecorators(HttpTracingService.newDecorator(tracing),
+                .setDecorators(BraveService.newDecorator(tracing),
                                LoggingService.newDecorator())
                 .setExampleRequests(List.of(ExampleRequest.of(PingServiceGrpc.SERVICE_NAME,
                                                               "Ping",
@@ -62,7 +62,7 @@ public class ArmeriaGrpcServiceConfig {
                                     .build())
                 .setDecorators(
                         ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend2")),
-                        HttpTracingService.newDecorator(tracing),
+                        BraveService.newDecorator(tracing),
                         LoggingService.newDecorator())
                 .setExampleRequests(List.of(ExampleRequest.of(Hello2ServiceGrpc.SERVICE_NAME,
                                                               "Hello",

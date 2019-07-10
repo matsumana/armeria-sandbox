@@ -3,7 +3,7 @@ package info.matsumana.armeria.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.linecorp.armeria.common.tracing.RequestContextCurrentTraceContext;
+import com.linecorp.armeria.common.brave.RequestContextCurrentTraceContext;
 
 import brave.Tracing;
 import zipkin2.Span;
@@ -26,7 +26,7 @@ public class ZipkinTracingFactory {
     public Tracing create(String serviceName) {
         return Tracing.newBuilder()
                       .localServiceName(serviceName)
-                      .currentTraceContext(RequestContextCurrentTraceContext.DEFAULT)
+                      .currentTraceContext(RequestContextCurrentTraceContext.ofDefault())
                       .spanReporter(spanReporter())
                       .build();
     }
