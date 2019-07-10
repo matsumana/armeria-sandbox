@@ -6,17 +6,18 @@
 
 - DocService
 - Thrift API (Async)
-- REST API
+- gRPC API (Async)
+- REST API (Async)
 - Retrofit integration
 - RxJava 2
 - Spring Boot integration
 - Zipkin integration
-  - Server side: HttpTracingService
-  - Client side: HttpTracingClient
+  - Server side: BraveService
+  - Client side: BraveClient
 - Throttling
   - Server side: ThrottlingHttpService
 - Automatic retry
-  - Client side: RetryingRpcClient(Thrift), RetryingHttpClient(REST)
+  - Client side: RetryingRpcClient(Thrift), RetryingHttpClient(gRPC, REST)
 - Circuit Breaker
   - Client side: CircuitBreakerRpcClient(Thrift), CircuitBreakerHttpClient(REST)
 - Client-side load balancing
@@ -105,6 +106,6 @@ $ docker rm registry
 - [Prometheus' scraping targets](http://localhost:30000/targets)
 - [Armeria's CircuitBreaker metrics](http://localhost:30000/graph?g0.range_input=1h&g0.expr=armeria_client_circuitBreaker_requests&g0.tab=0&g1.range_input=1h&g1.expr=irate(armeria_client_circuitBreaker_transitions_total%5B1m%5D)&g1.tab=0&g2.range_input=1h&g2.expr=irate(armeria_client_circuitBreaker_rejectedRequests_total%5B1m%5D)&g2.tab=0)
 - [Armeria's Client EndpointGroup metrics](http://localhost:30000/graph?g0.range_input=1h&g0.expr=armeria_client_endpointGroup_count&g0.tab=0&g1.range_input=1h&g1.expr=armeria_client_endpointGroup_healthy&g1.tab=0)
-- [Zipkin](http://localhost:30001/zipkin/?serviceName=frontend&spanName=all&lookback=3600000&startTs=1541703780415&endTs=1541707380415&annotationQuery=&minDuration=&limit=10&sortOrder=timestamp-desc)
+- [Zipkin](http://localhost:30001/zipkin/)
 - [Central Dogma](http://localhost:30002/#/projects/armeriaSandbox/repos/apiServers)
 - [App frontend](http://localhost:31000/hello/foo)
