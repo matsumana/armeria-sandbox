@@ -11,7 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.linecorp.armeria.client.ClientBuilder;
 import com.linecorp.armeria.client.HttpClient;
-import com.linecorp.armeria.common.AggregatedHttpMessage;
+import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.server.Server;
 
@@ -41,20 +41,20 @@ public class IntegrationTest {
 
     @Test
     public void healthCheck() throws Exception {
-        final AggregatedHttpMessage res = client.get("/internal/healthcheck").aggregate().join();
+        final AggregatedHttpResponse res = client.get("/internal/healthcheck").aggregate().join();
         assertThat(res.status()).isEqualTo(HttpStatus.OK);
         assertThat(res.content().toStringUtf8()).isEqualTo("ok");
     }
 
     @Test
     public void docs() throws Exception {
-        final AggregatedHttpMessage res = client.get("/internal/docs/").aggregate().join();
+        final AggregatedHttpResponse res = client.get("/internal/docs/").aggregate().join();
         assertThat(res.status()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     public void metrics() throws Exception {
-        final AggregatedHttpMessage res = client.get("/internal/metrics").aggregate().join();
+        final AggregatedHttpResponse res = client.get("/internal/metrics").aggregate().join();
         assertThat(res.status()).isEqualTo(HttpStatus.OK);
     }
 

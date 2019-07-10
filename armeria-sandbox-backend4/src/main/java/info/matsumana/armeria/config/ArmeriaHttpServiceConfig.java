@@ -3,9 +3,9 @@ package info.matsumana.armeria.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.linecorp.armeria.server.brave.BraveService;
 import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.throttling.ThrottlingHttpService;
-import com.linecorp.armeria.server.tracing.HttpTracingService;
 import com.linecorp.armeria.spring.AnnotatedServiceRegistrationBean;
 
 import brave.Tracing;
@@ -29,7 +29,7 @@ public class ArmeriaHttpServiceConfig {
         return new AnnotatedServiceRegistrationBean()
                 .setServiceName("rootService")
                 .setService(handler)
-                .setDecorators(HttpTracingService.newDecorator(tracing),
+                .setDecorators(BraveService.newDecorator(tracing),
                                LoggingService.newDecorator());
     }
 
@@ -40,7 +40,7 @@ public class ArmeriaHttpServiceConfig {
                 .setService(handler)
                 .setDecorators(ThrottlingHttpService
                                        .newDecorator(throttlingHelper.newThrottlingStrategy("backend4")),
-                               HttpTracingService.newDecorator(tracing),
+                               BraveService.newDecorator(tracing),
                                LoggingService.newDecorator());
     }
 }
