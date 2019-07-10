@@ -17,6 +17,7 @@ import info.matsumana.armeria.grpc.Hello2ServiceGrpc.Hello2ServiceFutureStub;
 import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.Hello3Service;
 import info.matsumana.armeria.util.SingleInteropUtil;
+import io.grpc.StatusRuntimeException;
 import io.reactivex.Single;
 
 @Service
@@ -65,9 +66,13 @@ public class HelloService {
                                            .doOnSuccess(res -> log.debug("hello2Service res={}", res))
                                            .doOnError(e -> log.debug("hello2Service exception", e))
                                            .onErrorReturn(e -> {
-                                               if (e instanceof FailFastException) {
-                                                   // Circuit Breaker fallback
-                                                   return "[backend2 - fallback] Hello, ???";
+                                               if (e instanceof StatusRuntimeException) {
+                                                   final Throwable cause = e.getCause();
+                                                   if (cause instanceof FailFastException) {
+                                                       // Circuit Breaker fallback
+                                                       return "[backend2 - fallback] Hello, ???";
+                                                   }
+                                                   throw new RuntimeException(cause);
                                                }
                                                throw new RuntimeException(e);
                                            }),
