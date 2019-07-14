@@ -14,74 +14,46 @@ docker-image-prune:
 	docker image prune
 
 docker-build-kubernetes-dev:
-	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.dev ./armeria-sandbox-job-kubernetes
-	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.dev ./armeria-sandbox-frontend
-	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.dev ./armeria-sandbox-backend1
-	docker build -t localhost:5000/armeria-sandbox-backend2 -f ./armeria-sandbox-backend2/Dockerfile.dev ./armeria-sandbox-backend2
-	docker build -t localhost:5000/armeria-sandbox-backend3 -f ./armeria-sandbox-backend3/Dockerfile.dev ./armeria-sandbox-backend3
-	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.dev ./armeria-sandbox-backend4
+	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.dev ./armeria-sandbox-job-kubernetes:latest
+	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.dev ./armeria-sandbox-frontend:latest
+	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.dev ./armeria-sandbox-backend1:latest
+	docker build -t localhost:5000/armeria-sandbox-backend2 -f ./armeria-sandbox-backend2/Dockerfile.dev ./armeria-sandbox-backend2:latest
+	docker build -t localhost:5000/armeria-sandbox-backend3 -f ./armeria-sandbox-backend3/Dockerfile.dev ./armeria-sandbox-backend3:latest
+	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.dev ./armeria-sandbox-backend4:latest
 
 docker-build-kubernetes-production:
-	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.production ./armeria-sandbox-job-kubernetes
-	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.production ./armeria-sandbox-frontend
-	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.production ./armeria-sandbox-backend1
-	docker build -t localhost:5000/armeria-sandbox-backend2 -f ./armeria-sandbox-backend2/Dockerfile.production ./armeria-sandbox-backend2
-	docker build -t localhost:5000/armeria-sandbox-backend3 -f ./armeria-sandbox-backend3/Dockerfile.production ./armeria-sandbox-backend3
-	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.production ./armeria-sandbox-backend4
+	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.production ./armeria-sandbox-job-kubernetes:latest
+	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.production ./armeria-sandbox-frontend:latest
+	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.production ./armeria-sandbox-backend1:latest
+	docker build -t localhost:5000/armeria-sandbox-backend2 -f ./armeria-sandbox-backend2/Dockerfile.production ./armeria-sandbox-backend2:latest
+	docker build -t localhost:5000/armeria-sandbox-backend3 -f ./armeria-sandbox-backend3/Dockerfile.production ./armeria-sandbox-backend3:latest
+	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.production ./armeria-sandbox-backend4:latest
 
 docker-push:
-	docker push localhost:5000/armeria-sandbox-job-kubernetes
-	docker push localhost:5000/armeria-sandbox-frontend
-	docker push localhost:5000/armeria-sandbox-backend1
-	docker push localhost:5000/armeria-sandbox-backend2
-	docker push localhost:5000/armeria-sandbox-backend3
-	docker push localhost:5000/armeria-sandbox-backend4
+	docker push localhost:5000/armeria-sandbox-job-kubernetes:latest
+	docker push localhost:5000/armeria-sandbox-frontend:latest
+	docker push localhost:5000/armeria-sandbox-backend1:latest
+	docker push localhost:5000/armeria-sandbox-backend2:latest
+	docker push localhost:5000/armeria-sandbox-backend3:latest
+	docker push localhost:5000/armeria-sandbox-backend4:latest
 
-kubectl-rollout: docker-push
-	kubectl set image deployment/armeria-sandbox-job-kubernetes armeria-sandbox-job-kubernetes=localhost:5000/armeria-sandbox-job-kubernetes:latest
-	kubectl rollout status deployment/armeria-sandbox-job-kubernetes
-	kubectl set image deployment/armeria-sandbox-backend1 armeria-sandbox-backend1=localhost:5000/armeria-sandbox-backend1:latest
-	kubectl rollout status deployment/armeria-sandbox-backend1
-	kubectl set image deployment/armeria-sandbox-backend2 armeria-sandbox-backend2=localhost:5000/armeria-sandbox-backend2:latest
-	kubectl rollout status deployment/armeria-sandbox-backend2
-	kubectl set image deployment/armeria-sandbox-backend3 armeria-sandbox-backend3=localhost:5000/armeria-sandbox-backend3:latest
-	kubectl rollout status deployment/armeria-sandbox-backend3
-	kubectl set image deployment/armeria-sandbox-backend4 armeria-sandbox-backend4=localhost:5000/armeria-sandbox-backend4:latest
-	kubectl rollout status deployment/armeria-sandbox-backend4
-	kubectl set image deployment/armeria-sandbox-frontend armeria-sandbox-frontend=localhost:5000/armeria-sandbox-frontend:latest
-	kubectl rollout status deployment/armeria-sandbox-frontend
+kubectl-create-infra:
+	kubectl apply -f ./manifests/infra -R
 
-kubectl-create-depends:
-	kubectl apply -f ./kubernetes/centraldogma.yml
-	kubectl apply -f ./kubernetes/zipkin.yml
-	kubectl apply -f ./kubernetes/prometheus.yml
+kubectl-delete-infra:
+	kubectl delete -f ./manifests/infra -R
 
-kubectl-delete-depends:
-	kubectl delete -f ./kubernetes/centraldogma.yml
-	kubectl delete -f ./kubernetes/zipkin.yml
-	kubectl delete -f ./kubernetes/prometheus.yml
-
-kubectl-create-depends-data:
+kubectl-create-infra-data:
 	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod | grep '^centraldogma-' | awk '{print $$1}'))
 	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"armeriaSandbox\"}' http://localhost:36462/api/v1/projects"
 	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"apiServers\"}' http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
 	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"commitMessage\": {\"summary\": \"Add initial throttling.json\", \"detail\": {\"content\": \"\", \"markup\": \"PLAINTEXT\"}}, \"file\": {\"name\": \"throttling.json\", \"type\": \"TEXT\", \"content\": \"{\\\"backend1\\\": {\\\"ratio\\\": 1}, \\\"backend2\\\": {\\\"ratio\\\": 1}, \\\"backend3\\\": {\\\"ratio\\\": 1}, \\\"backend4\\\": {\\\"ratio\\\": 1}}\", \"path\": \"/throttling.json\"}}' http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
 
 kubectl-create-apps:
-	kubectl apply -f ./armeria-sandbox-job-kubernetes/kubernetes.yml
-	kubectl apply -f ./armeria-sandbox-backend1/kubernetes.yml
-	kubectl apply -f ./armeria-sandbox-backend2/kubernetes.yml
-	kubectl apply -f ./armeria-sandbox-backend3/kubernetes.yml
-	kubectl apply -f ./armeria-sandbox-backend4/kubernetes.yml
-	kubectl apply -f ./armeria-sandbox-frontend/kubernetes.yml
+	kubectl apply -f ./manifests/app -R
 
 kubectl-delete-apps:
-	kubectl delete -f ./armeria-sandbox-job-kubernetes/kubernetes.yml
-	kubectl delete -f ./armeria-sandbox-backend1/kubernetes.yml
-	kubectl delete -f ./armeria-sandbox-backend2/kubernetes.yml
-	kubectl delete -f ./armeria-sandbox-backend3/kubernetes.yml
-	kubectl delete -f ./armeria-sandbox-backend4/kubernetes.yml
-	kubectl delete -f ./armeria-sandbox-frontend/kubernetes.yml
+	kubectl delete -f ./manifests/app -R
 
 kubectl-get:
 	kubectl get deployment -o wide
