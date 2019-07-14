@@ -42,13 +42,13 @@ $ docker run -d -p 5000:5000 --name registry registry:2.6
 #### launch dependent Docker containers
 
 ```
-$ make kubectl-create-depends
+$ make kubectl-create-infra
 ```
 
 #### generate initial project, repository data in Central Dogma
 
 ```
-$ make kubectl-create-depends-data
+$ make kubectl-create-infra-data
 ```
 
 <br>
@@ -91,7 +91,7 @@ $ make kubectl-create-apps
 
 ```
 $ make kubectl-delete-apps
-$ make kubectl-delete-depends
+$ make kubectl-delete-infra
 $ docker stop registry
 $ docker rm registry
 ```
