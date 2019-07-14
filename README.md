@@ -1,6 +1,6 @@
 # armeria-sandbox
 
-![](https://matsumana.files.wordpress.com/2018/11/armeria_central-dogma-k8s-overview1.png)
+![](https://matsumana.files.wordpress.com/2019/07/armeria_central-dogma-k8s-overview.png)
 
 ## Armeria features which use in this app
 
