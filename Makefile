@@ -14,20 +14,20 @@ docker-image-prune:
 	docker image prune
 
 docker-build-kubernetes-dev:
-	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.dev ./armeria-sandbox-job-kubernetes:latest
-	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.dev ./armeria-sandbox-frontend:latest
-	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.dev ./armeria-sandbox-backend1:latest
-	docker build -t localhost:5000/armeria-sandbox-backend2 -f ./armeria-sandbox-backend2/Dockerfile.dev ./armeria-sandbox-backend2:latest
-	docker build -t localhost:5000/armeria-sandbox-backend3 -f ./armeria-sandbox-backend3/Dockerfile.dev ./armeria-sandbox-backend3:latest
-	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.dev ./armeria-sandbox-backend4:latest
+	docker build -t localhost:5000/armeria-sandbox-job-kubernetes:latest -f ./armeria-sandbox-job-kubernetes/Dockerfile.dev ./armeria-sandbox-job-kubernetes
+	docker build -t localhost:5000/armeria-sandbox-frontend:latest -f ./armeria-sandbox-frontend/Dockerfile.dev ./armeria-sandbox-frontend
+	docker build -t localhost:5000/armeria-sandbox-backend1:latest -f ./armeria-sandbox-backend1/Dockerfile.dev ./armeria-sandbox-backend1
+	docker build -t localhost:5000/armeria-sandbox-backend2:latest -f ./armeria-sandbox-backend2/Dockerfile.dev ./armeria-sandbox-backend2
+	docker build -t localhost:5000/armeria-sandbox-backend3:latest -f ./armeria-sandbox-backend3/Dockerfile.dev ./armeria-sandbox-backend3
+	docker build -t localhost:5000/armeria-sandbox-backend4:latest -f ./armeria-sandbox-backend4/Dockerfile.dev ./armeria-sandbox-backend4
 
 docker-build-kubernetes-production:
-	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.production ./armeria-sandbox-job-kubernetes:latest
-	docker build -t localhost:5000/armeria-sandbox-frontend -f ./armeria-sandbox-frontend/Dockerfile.production ./armeria-sandbox-frontend:latest
-	docker build -t localhost:5000/armeria-sandbox-backend1 -f ./armeria-sandbox-backend1/Dockerfile.production ./armeria-sandbox-backend1:latest
-	docker build -t localhost:5000/armeria-sandbox-backend2 -f ./armeria-sandbox-backend2/Dockerfile.production ./armeria-sandbox-backend2:latest
-	docker build -t localhost:5000/armeria-sandbox-backend3 -f ./armeria-sandbox-backend3/Dockerfile.production ./armeria-sandbox-backend3:latest
-	docker build -t localhost:5000/armeria-sandbox-backend4 -f ./armeria-sandbox-backend4/Dockerfile.production ./armeria-sandbox-backend4:latest
+	docker build -t localhost:5000/armeria-sandbox-job-kubernetes -f ./armeria-sandbox-job-kubernetes/Dockerfile.production ./armeria-sandbox-job-kubernetes
+	docker build -t localhost:5000/armeria-sandbox-frontend:latest -f ./armeria-sandbox-frontend/Dockerfile.production ./armeria-sandbox-frontend
+	docker build -t localhost:5000/armeria-sandbox-backend1:latest -f ./armeria-sandbox-backend1/Dockerfile.production ./armeria-sandbox-backend1
+	docker build -t localhost:5000/armeria-sandbox-backend2:latest -f ./armeria-sandbox-backend2/Dockerfile.production ./armeria-sandbox-backend2
+	docker build -t localhost:5000/armeria-sandbox-backend3:latest -f ./armeria-sandbox-backend3/Dockerfile.production ./armeria-sandbox-backend3
+	docker build -t localhost:5000/armeria-sandbox-backend4:latest -f ./armeria-sandbox-backend4/Dockerfile.production ./armeria-sandbox-backend4
 
 docker-push:
 	docker push localhost:5000/armeria-sandbox-job-kubernetes:latest
