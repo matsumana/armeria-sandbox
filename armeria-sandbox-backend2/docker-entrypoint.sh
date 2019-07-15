@@ -1,4 +1,7 @@
 #!/bin/sh
+
+# ref: https://medium.com/@gchudnov/trapping-signals-in-docker-containers-7a57fdda7d86
+
 set -x
 
 pid=0
