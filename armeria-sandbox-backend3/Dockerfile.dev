@@ -1,9 +1,11 @@
-FROM azul/zulu-openjdk-alpine:11.0.3
+FROM bellsoft/liberica-openjdk-centos:11.0.3
 
 # Tini
 # https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/
 # https://github.com/krallin/tini
-RUN apk add --no-cache tini
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
+RUN chmod +x /sbin/tini
 
 ADD ./build/libs/*.jar /root/app.jar
 ADD ./docker-entrypoint.sh /root/docker-entrypoint.sh

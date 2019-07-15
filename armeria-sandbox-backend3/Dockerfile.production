@@ -1,26 +1,14 @@
-FROM azul/zulu-openjdk-alpine:11.0.3 as builder
-
-RUN jlink \
-    --compress=2 \
-    --add-modules=java.base,java.logging,java.sql,java.desktop,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.unsupported \
-    --bind-services \
-    --output=/tmp/jre
-
-
-
-FROM alpine:3.9.3
+FROM bellsoft/liberica-openjdk-centos:11.0.3
 
 # Tini
 # https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/
 # https://github.com/krallin/tini
-RUN apk add --no-cache tini
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
+RUN chmod +x /sbin/tini
 
-COPY --from=builder /tmp/jre /root/jre
 ADD ./build/libs/*.jar /root/app.jar
 ADD ./docker-entrypoint.sh /root/docker-entrypoint.sh
-
-ENV JAVA_HOME=/root/jre
-ENV PATH="$JAVA_HOME/bin:$PATH"
 
 ENTRYPOINT ["/sbin/tini", "--", "/root/docker-entrypoint.sh"]
 
