@@ -19,6 +19,7 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: /internal/metrics
     spec:
+      terminationGracePeriodSeconds: 60  # Need to extend until the app shuts down
       containers:
       - name: armeria-sandbox-backend2
         image: localhost:5000/armeria-sandbox-backend2
