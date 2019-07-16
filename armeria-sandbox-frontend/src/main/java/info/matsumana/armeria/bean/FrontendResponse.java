@@ -44,4 +44,14 @@ public class FrontendResponse implements Serializable {
     public void setBackend4(HelloResponse backend4) {
         this.backend4 = backend4;
     }
+
+    @Override
+    public String toString() {
+        return "FrontendResponse{" +
+               "backend1=" + backend1 +
+               ", backend2=" + backend2 +
+               ", backend3=" + backend3 +
+               ", backend4=" + backend4 +
+               '}';
+    }
 }

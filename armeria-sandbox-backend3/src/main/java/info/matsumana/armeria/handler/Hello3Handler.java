@@ -36,7 +36,7 @@ public class Hello3Handler implements Hello3Service.AsyncIface {
                      .onErrorReturn(e -> {
                          if (e instanceof FailFastException || e.getCause() instanceof FailFastException) {
                              // Circuit Breaker fallback
-                             return new Hello4Response("", "Hello, ???");
+                             return new Hello4Response("", "[fallback] Hello, ???");
                          }
                          throw new RuntimeException(e);
                      })

@@ -62,7 +62,7 @@ public class HelloService {
                                        .onErrorReturn(e -> {
                                            if (e instanceof FailFastException) {
                                                // Circuit Breaker fallback
-                                               return new Hello1Response("", "Hello, ???");
+                                               return new Hello1Response("", "[fallback] Hello, ???");
                                            }
                                            throw new RuntimeException(e);
                                        })
@@ -83,7 +83,7 @@ public class HelloService {
                                                        return Hello2Response
                                                                .newBuilder()
                                                                .setServerName("")
-                                                               .setMessage("Hello, ???")
+                                                               .setMessage("[fallback] Hello, ???")
                                                                .build();
                                                    }
                                                    throw new RuntimeException(cause);
@@ -102,7 +102,7 @@ public class HelloService {
                                        .onErrorReturn(e -> {
                                            if (e instanceof FailFastException) {
                                                // Circuit Breaker fallback
-                                               return new Hello3Response("", "Hello, ???",
+                                               return new Hello3Response("", "[fallback] Hello, ???",
                                                                          new Hello4Response("", ""));
                                            }
                                            throw new RuntimeException(e);
