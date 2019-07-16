@@ -28,7 +28,7 @@ import brave.Tracing;
 import info.matsumana.armeria.helper.EndpointGroupHelper;
 import io.micrometer.core.instrument.MeterRegistry;
 import retrofit2.Retrofit;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Configuration
 public class ArmeriaClientConfig {
@@ -61,8 +61,7 @@ public class ArmeriaClientConfig {
 
         return new ArmeriaRetrofitBuilder()
                 .baseUrl(String.format("http://group:%s/", "backend4"))
-                .addConverterFactory(ScalarsConverterFactory.create())
-//                .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create())
                 .withClientOptions((uri, optionsBuilder) -> optionsBuilder
                         .decorator(newCircuitBreakerDecorator())
                         .decorator(BraveClient.newDecorator(tracing, "backend4"))

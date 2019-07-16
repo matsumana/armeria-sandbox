@@ -17,6 +17,7 @@ import com.linecorp.armeria.common.thrift.ThriftCompletableFuture;
 import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
+import info.matsumana.armeria.thrift.Hello1Response;
 import info.matsumana.armeria.thrift.Hello1Service;
 
 @SpringJUnitConfig(TestContext.class)
@@ -59,9 +60,9 @@ public class IntegrationTest {
 
     @Test
     public void hello() throws Exception {
-        final ThriftCompletableFuture<String> future = new ThriftCompletableFuture<>();
+        final ThriftCompletableFuture<Hello1Response> future = new ThriftCompletableFuture<>();
         hello1Service.hello("foo", future);
-        final String res = future.get();
-        assertThat(res).isEqualTo("[backend1] Hello, foo");
+        final Hello1Response res = future.get();
+        assertThat(res.getMessage()).isEqualTo("Hello, foo");
     }
 }

@@ -4,13 +4,13 @@ package info.matsumana.armeria.grpc;
 option java_package = "info.matsumana.armeria.grpc";
 
 service PingService {
-    rpc Ping (PingRequest) returns (PingReply) {
+    rpc Ping (PingRequest) returns (PingResponse) {
     }
 }
 
 message PingRequest {
 }
 
-message PingReply {
+message PingResponse {
     string message = 1;
 }
