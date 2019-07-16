@@ -4,7 +4,7 @@ package info.matsumana.armeria.grpc;
 option java_package = "info.matsumana.armeria.grpc";
 
 service Hello2Service {
-    rpc Hello (Hello2Request) returns (Hello2Reply) {
+    rpc Hello (Hello2Request) returns (Hello2Response) {
     }
 }
 
@@ -12,6 +12,7 @@ message Hello2Request {
     string name = 1;
 }
 
-message Hello2Reply {
-    string message = 1;
+message Hello2Response {
+    string serverName = 1;
+    string message = 2;
 }

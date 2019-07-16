@@ -16,8 +16,8 @@ import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
-import info.matsumana.armeria.grpc.Hello2.Hello2Reply;
 import info.matsumana.armeria.grpc.Hello2.Hello2Request;
+import info.matsumana.armeria.grpc.Hello2.Hello2Response;
 import info.matsumana.armeria.grpc.Hello2ServiceGrpc.Hello2ServiceBlockingStub;
 
 @SpringJUnitConfig(TestContext.class)
@@ -63,8 +63,8 @@ public class IntegrationTest {
         final Hello2Request request = Hello2Request.newBuilder()
                                                    .setName("foo")
                                                    .build();
-        final Hello2Reply reply = hello2Service.hello(request);
-        final String res = reply.getMessage();
-        assertThat(res).isEqualTo("[backend2] Hello, foo");
+        final Hello2Response response = hello2Service.hello(request);
+        final String message = response.getMessage();
+        assertThat(message).isEqualTo("Hello, foo");
     }
 }
