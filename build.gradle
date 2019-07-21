@@ -65,7 +65,6 @@ subprojects {
             dependency "com.google.guava:guava:${guavaVersion}"
 
             dependency "org.apache.thrift:libthrift:${libthriftVersion}"
-            dependency "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
             dependency "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
             dependency "com.github.akarnokd:rxjava2-jdk8-interop:${rxJava2Jdk8InteropVersion}"
             dependency "com.linecorp.centraldogma:centraldogma-client-armeria:${centraldogmaVersion}"
