@@ -1,5 +1,7 @@
 package info.matsumana.armeria.task;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -8,13 +10,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 import com.linecorp.centraldogma.client.CentralDogma;
 import com.linecorp.centraldogma.common.Change;
 import com.linecorp.centraldogma.common.Revision;
 
 import info.matsumana.armeria.bean.kubernetes.PodList;
 import info.matsumana.armeria.helper.EndpointGroupHelper;
-import info.matsumana.armeria.helper.KubernetesModelHelper;
 import info.matsumana.armeria.retrofit.KubernetesClient;
 import retrofit2.Retrofit;
 
@@ -22,6 +28,10 @@ import retrofit2.Retrofit;
 public class PodInfoCollector {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    private static final ObjectWriter podListWriter = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .writerFor(new TypeReference<PodList>() {});
 
     public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
     public static final String AUTHORIZATION_HEADER_VALUE = "Bearer %s";
@@ -48,30 +58,31 @@ public class PodInfoCollector {
     }
 
     private void saveToCentralDogma(String app) {
-        final String json = getPodInfo(app);
+        final PodList podList = getPodInfo(app);
+        final String json = serializePodList(podList);
 
-        log.debug("json = {}", json);
-
-        // Since resourceVersion which is included Kubernetes api response will be changed every request,
-        // deserialize and serialize it to remove it from json.
-        // Then save it to Central Dogma.
-        final PodList podList = KubernetesModelHelper.deserializePodList(json);
-        final String treeShakedJson = KubernetesModelHelper.serializePodList(podList);
-
-        log.debug("treeShakedJson = {}", treeShakedJson);
+        log.debug("pods = {}", json);
 
         centralDogma.push(EndpointGroupHelper.CENTRAL_DOGMA_PROJECT,
                           EndpointGroupHelper.CENTRAL_DOGMA_REPOSITORY,
                           Revision.HEAD,
                           String.format("Updated by %s", getClass().getName()),
-                          Change.ofTextUpsert(String.format("/%s.json", app), treeShakedJson));
+                          Change.ofTextUpsert(String.format("/%s.json", app), json));
 
     }
 
-    private String getPodInfo(String app) {
+    private PodList getPodInfo(String app) {
         return client.pods(String.format(AUTHORIZATION_HEADER_VALUE, token),
                            namespace,
                            String.format(LABEL_SELECTOR, app))
                      .join();
+    }
+
+    private static String serializePodList(PodList podList) {
+        try {
+            return podListWriter.writeValueAsString(podList);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

@@ -5,7 +5,6 @@ project(":armeria-sandbox-job-kubernetes") {
         implementation project(":armeria-sandbox-common")
         implementation "org.springframework.boot:spring-boot-starter-validation"
         implementation "com.linecorp.armeria:armeria-retrofit2"
-        implementation "com.squareup.retrofit2:converter-scalars"
-//        implementation "com.squareup.retrofit2:converter-jackson"
+        implementation "com.squareup.retrofit2:converter-jackson"
     }
 }

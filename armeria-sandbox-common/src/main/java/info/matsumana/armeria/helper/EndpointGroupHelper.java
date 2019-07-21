@@ -3,6 +3,8 @@ package info.matsumana.armeria.helper;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -12,6 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 
 import com.linecorp.armeria.client.Endpoint;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
@@ -24,12 +32,17 @@ import com.linecorp.centraldogma.common.Query;
 import info.matsumana.armeria.bean.kubernetes.Container;
 import info.matsumana.armeria.bean.kubernetes.ContainerPort;
 import info.matsumana.armeria.bean.kubernetes.Pod;
+import info.matsumana.armeria.bean.kubernetes.PodList;
 import info.matsumana.armeria.config.ApiServerSetting.EndpointSetting;
 
 @Component
 public class EndpointGroupHelper {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    private static final ObjectReader podListReader = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .readerFor(new TypeReference<PodList>() {});
 
     public static final String CENTRAL_DOGMA_PROJECT = "armeriaSandbox";
     public static final String CENTRAL_DOGMA_REPOSITORY = "apiServers";
@@ -57,12 +70,11 @@ public class EndpointGroupHelper {
                              Query.ofJsonPath(centralDogmaFile),
                              jsonNode -> {
                                  final List<Endpoint> endpoints =
-                                         KubernetesModelHelper.deserializePodList(jsonNode)
-                                                              .getItems().stream()
-                                                              .filter(pod -> "Running".equals(pod.getStatus()
-                                                                                                 .getPhase()))
-                                                              .map(toEndpoint())
-                                                              .collect(toUnmodifiableList());
+                                         deserializePodList(jsonNode)
+                                                 .getItems().stream()
+                                                 .filter(pod -> "Running".equals(pod.getStatus().getPhase()))
+                                                 .map(toEndpoint())
+                                                 .collect(toUnmodifiableList());
 
                                  log.info("centralDogmaFile = {}, endpoints = {}",
                                           centralDogmaFile, endpoints);
@@ -80,6 +92,14 @@ public class EndpointGroupHelper {
         }
 
         return group;
+    }
+
+    private static PodList deserializePodList(JsonNode jsonNode) {
+        try {
+            return podListReader.readValue(jsonNode);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private static Function<Pod, Endpoint> toEndpoint() {
