@@ -5,7 +5,7 @@ buildscript {
         osdetectorGradlePluginVersion = "1.6.2"
 
         springBootVersion = "2.1.6.RELEASE"
-        armeriaVersion = "0.88.0"
+        armeriaVersion = "0.89.0"
         thriftVersion = "0.12"
         libthriftVersion = thriftVersion + ".0"
         guavaVersion = "28.0-jre"
@@ -14,7 +14,7 @@ buildscript {
         braveVersion = "5.6.6"
         protocVersion = "3.8.0"
         protocGenGrpcJavaVersion = "1.22.0"
-        centraldogmaVersion = "0.40.1"
+        centraldogmaVersion = "0.41.0"
     }
     repositories {
         mavenCentral()

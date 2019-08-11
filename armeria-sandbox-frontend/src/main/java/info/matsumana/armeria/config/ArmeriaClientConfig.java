@@ -64,10 +64,10 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend1());
         registerEndpointGroup(group, "backend1");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello1", "backend1"))
-                .rpcDecorator(newCircuitBreakerRpcDecorator())
                 .decorator(BraveClient.newDecorator(tracing, "backend1"))
-                .decorator(LoggingClient.newDecorator())
+                .rpcDecorator(newCircuitBreakerRpcDecorator())
                 .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                .decorator(LoggingClient.newDecorator())
                 .build(Hello1Service.AsyncIface.class);
     }
 
@@ -77,11 +77,11 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend2());
         registerEndpointGroup(group, "backend2");
         return new ClientBuilder(String.format("gproto+h2c://group:%s/", "backend2"))
-                .decorator(newCircuitBreakerHttpDecorator())
                 .decorator(BraveClient.newDecorator(tracing, "backend2"))
-                .decorator(LoggingClient.newDecorator())
+                .decorator(newCircuitBreakerHttpDecorator())
                 .decorator(RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
                                                            MAX_TOTAL_ATTEMPTS))
+                .decorator(LoggingClient.newDecorator())
                 .build(Hello2ServiceFutureStub.class);
     }
 
@@ -91,10 +91,10 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend3());
         registerEndpointGroup(group, "backend3");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello3", "backend3"))
-                .rpcDecorator(newCircuitBreakerRpcDecorator())
                 .decorator(BraveClient.newDecorator(tracing, "backend3"))
-                .decorator(LoggingClient.newDecorator())
+                .rpcDecorator(newCircuitBreakerRpcDecorator())
                 .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                .decorator(LoggingClient.newDecorator())
                 .build(Hello3Service.AsyncIface.class);
     }
 
