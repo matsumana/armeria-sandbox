@@ -45,8 +45,8 @@ public class ArmeriaThriftServiceConfig {
                 .setPath("/thrift/hello1")
                 .setService(THttpService.of(service))
                 .setDecorators(
-                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend1")),
                         BraveService.newDecorator(tracing),
+                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend1")),
                         LoggingService.newDecorator())
                 .setExampleRequests(List.of(new Hello1Service.hello_args("foo")));
     }

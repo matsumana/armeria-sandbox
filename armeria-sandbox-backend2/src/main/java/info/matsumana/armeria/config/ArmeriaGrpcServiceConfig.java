@@ -61,8 +61,8 @@ public class ArmeriaGrpcServiceConfig {
                                     .enableUnframedRequests(true)
                                     .build())
                 .setDecorators(
-                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend2")),
                         BraveService.newDecorator(tracing),
+                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend2")),
                         LoggingService.newDecorator())
                 .setExampleRequests(List.of(ExampleRequest.of(Hello2ServiceGrpc.SERVICE_NAME,
                                                               "Hello",

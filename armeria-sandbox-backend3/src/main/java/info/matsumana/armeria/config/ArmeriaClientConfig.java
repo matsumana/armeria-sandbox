@@ -63,11 +63,11 @@ public class ArmeriaClientConfig {
                 .baseUrl(String.format("http://group:%s/", "backend4"))
                 .addConverterFactory(JacksonConverterFactory.create())
                 .withClientOptions((uri, optionsBuilder) -> optionsBuilder
-                        .decorator(newCircuitBreakerDecorator())
                         .decorator(BraveClient.newDecorator(tracing, "backend4"))
-                        .decorator(LoggingClient.newDecorator())
+                        .decorator(newCircuitBreakerDecorator())
                         .decorator(RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
-                                                                   MAX_TOTAL_ATTEMPTS)))
+                                                                   MAX_TOTAL_ATTEMPTS))
+                        .decorator(LoggingClient.newDecorator()))
                 .build();
     }
 

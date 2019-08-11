@@ -39,8 +39,8 @@ public class ArmeriaHttpServiceConfig {
                 .setServiceName("helloService")
                 .setService(handler)
                 .setDecorators(
-                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("frontend")),
                         BraveService.newDecorator(tracing),
+                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("frontend")),
                         LoggingService.newDecorator());
     }
 }
