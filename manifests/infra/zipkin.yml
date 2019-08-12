@@ -24,13 +24,13 @@ spec:
         image: openzipkin/zipkin:2.15
         ports:
         - containerPort: 9411
-#        resources:
-#          requests:
-#            memory: "1Gi"
-#            cpu: "500m"
-#          limits:
-#            memory: "1Gi"
-#            cpu: "500m"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
 
 ---
 kind: Service
