@@ -67,9 +67,7 @@ $ make build-with-docker
 #### build Docker images
 
 ```
-$ make docker-build-kubernetes-dev
-# or
-$ make docker-build-kubernetes-production
+$ make docker-build
 ```
 
 #### push Docker images to local Docker registry

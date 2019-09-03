@@ -19,41 +19,61 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: /internal/metrics
     spec:
-      terminationGracePeriodSeconds: 60  # Need to extend until the app shuts down
       containers:
       - name: armeria-sandbox-backend1
         image: localhost:5000/armeria-sandbox-backend1
-        env:
-        - name: JAVA_OPTS
-          value: >-
-            -Djava.rmi.server.hostname=127.0.0.1
-            -Dcom.sun.management.jmxremote
-            -Dcom.sun.management.jmxremote.rmi.port=8686
-            -Dcom.sun.management.jmxremote.port=8686
-            -Dcom.sun.management.jmxremote.local.only=false
-            -Dcom.sun.management.jmxremote.ssl=false
-            -Dcom.sun.management.jmxremote.authenticate=false
-            -Djava.net.preferIPv4Stack=true
-            -Xlog:gc*=debug:/root/gc_%t_%p.log:time,level,tags:filesize=1024m,filecount=5
-            -XX:StartFlightRecording=name=on_startup,filename=/root/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m
-            -Xms128m -Xmx128m
         args:
         - --spring.profiles.active=kubernetes
         - --logging.level.info.matsumana.armeria=DEBUG
         - --zipkin.endpoint=http://zipkin:9411/api/v2/spans
         - --centraldogma.server.host=centraldogma
         - --centraldogma.server.port=36462
+        command:
+          [
+            "java",
+            "-Djava.rmi.server.hostname=127.0.0.1",
+            "-Dcom.sun.management.jmxremote",
+            "-Dcom.sun.management.jmxremote.rmi.port=8686",
+            "-Dcom.sun.management.jmxremote.port=8686",
+            "-Dcom.sun.management.jmxremote.local.only=false",
+            "-Dcom.sun.management.jmxremote.ssl=false",
+            "-Dcom.sun.management.jmxremote.authenticate=false",
+            "-Xlog:gc*=debug:/root/gc_%t_%p.log:time,level,tags:filesize=1024m,filecount=5",
+            "-XX:StartFlightRecording=name=on_startup,filename=/root/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m",
+            "-Djava.net.preferIPv4Stack=true",
+            "-Xms128m",
+            "-Xmx128m",
+            "-jar",
+            "/root/app.jar"
+          ]
         ports:
         - containerPort: 8080  # Application
         - containerPort: 8686  # JMX
         - containerPort: 5005  # Java debugger
-#        resources:
-#          requests:
-#            memory: "128Mi"
-#            cpu: "250m"
-#          limits:
-#            memory: "256Mi"
-#            cpu: "250m"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /internal/healthcheck
+            port: 8080
+          initialDelaySeconds: 60  # Need to wait until the app starts up
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /internal/healthcheck
+            port: 8080
+          initialDelaySeconds: 30  # Need to wait until the app is ready
+          periodSeconds: 10
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "-c", "sleep 5"]  # Wait a few seconds to service-out from the Service before the SIGTERM signal is sent
+      terminationGracePeriodSeconds: 120  # Need to wait until the app shuts down
 
 ---
 kind: Service
