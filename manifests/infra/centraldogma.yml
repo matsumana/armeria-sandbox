@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: centraldogma
-        image: line/centraldogma:0.41.0
+        image: line/centraldogma:0.41.3
         ports:
         - containerPort: 36462
         resources:
