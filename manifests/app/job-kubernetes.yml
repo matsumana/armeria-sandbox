@@ -57,10 +57,10 @@ spec:
         - containerPort: 5005  # Java debugger
         resources:
           requests:
-            memory: "128Mi"
+            memory: "256Mi"
             cpu: "250m"
           limits:
-            memory: "256Mi"
+            memory: "512Mi"
             cpu: "500m"
         livenessProbe:
           httpGet:
