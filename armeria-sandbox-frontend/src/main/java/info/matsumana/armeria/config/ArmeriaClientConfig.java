@@ -20,8 +20,7 @@ import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerStrategy;
 import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.EndpointGroupRegistry;
-import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroup;
-import com.linecorp.armeria.client.endpoint.healthcheck.HttpHealthCheckedEndpointGroupBuilder;
+import com.linecorp.armeria.client.endpoint.healthcheck.HealthCheckedEndpointGroup;
 import com.linecorp.armeria.client.logging.LoggingClient;
 import com.linecorp.armeria.client.retry.Backoff;
 import com.linecorp.armeria.client.retry.RetryStrategy;
@@ -99,9 +98,8 @@ public class ArmeriaClientConfig {
     }
 
     private void registerEndpointGroup(EndpointGroup group, String groupName) {
-        final HttpHealthCheckedEndpointGroup healthCheckedGroup =
-                new HttpHealthCheckedEndpointGroupBuilder(group, "/internal/healthcheck")
-                        .build();
+        final HealthCheckedEndpointGroup healthCheckedGroup = HealthCheckedEndpointGroup.of(group,
+                                                                                            "/internal/healthcheck");
         if (EndpointGroupRegistry.register(groupName, healthCheckedGroup, WEIGHTED_ROUND_ROBIN)) {
             healthCheckedGroup.newMeterBinder(groupName).bindTo(meterRegistry);
         }
