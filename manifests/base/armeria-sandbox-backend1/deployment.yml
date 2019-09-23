@@ -26,8 +26,8 @@ spec:
         - configMapRef:
             name: armeria-sandbox-backend1-config
         args:
-        - --zipkin.endpoint=http://zipkin:9411/api/v2/spans
-        - --centraldogma.server.host=centraldogma
+        - --zipkin.endpoint=http://zipkin.infra.svc.cluster.local:9411/api/v2/spans
+        - --centraldogma.server.host=centraldogma.infra.svc.cluster.local
         - --centraldogma.server.port=36462
         command:
           [

@@ -5,6 +5,7 @@ metadata:
   name: zipkin
   labels:
     app: zipkin
+  namespace: infra
 spec:
   replicas: 1
   selector:
@@ -37,6 +38,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: zipkin
+  namespace: infra
 spec:
   type: NodePort
   selector:

@@ -1,5 +1,4 @@
-#namespace: dev
-namespace: default
+namespace: dev
 
 resources:
   - ../../base
@@ -44,5 +43,4 @@ configMapGenerator:
     - SPRING_PROFILES_ACTIVE=kubernetes
     - JAVA_OPTIONS_HEAP_SIZE=128m
     - LOGGING_LEVEL_INFO_MATSUMANA_ARMERIA=DEBUG
-#    - KUBERNETES_NAMESPACE=dev
-    - KUBERNETES_NAMESPACE=default
+    - KUBERNETES_NAMESPACE=dev

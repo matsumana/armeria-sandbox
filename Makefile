@@ -36,10 +36,10 @@ kubectl-delete-infra:
 	kubectl delete -f ./manifests/infra -R
 
 kubectl-create-infra-data:
-	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod | grep '^centraldogma-' | awk '{print $$1}'))
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"armeriaSandbox\"}' http://localhost:36462/api/v1/projects"
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"apiServers\"}' http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
-	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"commitMessage\": {\"summary\": \"Add initial throttling.json\", \"detail\": {\"content\": \"\", \"markup\": \"PLAINTEXT\"}}, \"file\": {\"name\": \"throttling.json\", \"type\": \"TEXT\", \"content\": \"{\\\"backend1\\\": {\\\"ratio\\\": 1}, \\\"backend2\\\": {\\\"ratio\\\": 1}, \\\"backend3\\\": {\\\"ratio\\\": 1}, \\\"backend4\\\": {\\\"ratio\\\": 1}}\", \"path\": \"/throttling.json\"}}' http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
+	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod --namespace=infra | grep '^centraldogma-' | awk '{print $$1}'))
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"armeriaSandbox\"}' http://localhost:36462/api/v1/projects"
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"apiServers\"}' http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"commitMessage\": {\"summary\": \"Add initial throttling.json\", \"detail\": {\"content\": \"\", \"markup\": \"PLAINTEXT\"}}, \"file\": {\"name\": \"throttling.json\", \"type\": \"TEXT\", \"content\": \"{\\\"backend1\\\": {\\\"ratio\\\": 1}, \\\"backend2\\\": {\\\"ratio\\\": 1}, \\\"backend3\\\": {\\\"ratio\\\": 1}, \\\"backend4\\\": {\\\"ratio\\\": 1}}\", \"path\": \"/throttling.json\"}}' http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
 
 kubectl-create-apps-dev:
 	kustomize build manifests/overlays/dev | kubectl apply -f -
@@ -54,7 +54,8 @@ kubectl-delete-apps-prod:
 	kustomize build manifests/overlays/prod | kubectl delete -f -
 
 kubectl-get:
-	kubectl get deployment -o wide
-	kubectl get svc -o wide
-	kubectl get configMap -o wide
-	kubectl get pod -o wide
+	kubectl get namespace -o wide --all-namespaces
+	kubectl get deployment -o wide --all-namespaces
+	kubectl get svc -o wide --all-namespaces
+	kubectl get configMap -o wide --all-namespaces
+	kubectl get pod -o wide --all-namespaces
