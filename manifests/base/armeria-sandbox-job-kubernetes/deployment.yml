@@ -5,6 +5,9 @@ metadata:
   name: armeria-sandbox-job-kubernetes
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: armeria-sandbox-job-kubernetes
   template:
     metadata:
       labels:

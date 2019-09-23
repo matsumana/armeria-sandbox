@@ -5,6 +5,9 @@ metadata:
   name: armeria-sandbox-backend1
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: armeria-sandbox-backend1
   template:
     metadata:
       labels:
