@@ -1,9 +1,6 @@
 #namespace: prod
 namespace: default
 
-commonLabels:
-  phase: prod
-
 resources:
   - ../../base
   - namespace.yml

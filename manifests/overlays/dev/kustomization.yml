@@ -1,9 +1,6 @@
 #namespace: dev
 namespace: default
 
-commonLabels:
-  phase: dev
-
 resources:
   - ../../base
   - namespace.yml
