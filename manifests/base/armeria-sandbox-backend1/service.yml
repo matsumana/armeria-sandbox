@@ -1,0 +1,15 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: armeria-sandbox-backend1
+spec:
+  type: NodePort
+  selector:
+    app: armeria-sandbox-backend1
+  ports:
+  - name: app
+    protocol: TCP
+    targetPort: 8080
+    port: 8080
+    nodePort: 31100

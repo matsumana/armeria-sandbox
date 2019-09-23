@@ -47,6 +47,7 @@ public class EndpointGroupHelper {
     public static final String CENTRAL_DOGMA_PROJECT = "armeriaSandbox";
     public static final String CENTRAL_DOGMA_REPOSITORY = "apiServers";
     private static final int JMX_PORT = 8686;
+    private static final int DEBUGGER_PORT = 5005;
 
     private final CentralDogma centralDogma;
 
@@ -115,7 +116,8 @@ public class EndpointGroupHelper {
 
     private static Function<Container, Integer> toPort() {
         return container -> container.getPorts().stream()
-                                     .filter(port -> port.getContainerPort() != JMX_PORT)
+                                     .filter(port -> port.getContainerPort() != JMX_PORT
+                                                     && port.getContainerPort() != DEBUGGER_PORT)
                                      .map(ContainerPort::getContainerPort)
                                      .findFirst()  // I expect 1 pod has only 1 port except JMX port
                                      .orElseThrow(() -> new RuntimeException("port not found"));

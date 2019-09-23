@@ -41,13 +41,20 @@ kubectl-create-infra-data:
 	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"apiServers\"}' http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
 	kubectl exec -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"commitMessage\": {\"summary\": \"Add initial throttling.json\", \"detail\": {\"content\": \"\", \"markup\": \"PLAINTEXT\"}}, \"file\": {\"name\": \"throttling.json\", \"type\": \"TEXT\", \"content\": \"{\\\"backend1\\\": {\\\"ratio\\\": 1}, \\\"backend2\\\": {\\\"ratio\\\": 1}, \\\"backend3\\\": {\\\"ratio\\\": 1}, \\\"backend4\\\": {\\\"ratio\\\": 1}}\", \"path\": \"/throttling.json\"}}' http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
 
-kubectl-create-apps:
-	kubectl apply -f ./manifests/app -R
+kubectl-create-apps-dev:
+	kustomize build manifests/overlays/dev | kubectl apply -f -
 
-kubectl-delete-apps:
-	kubectl delete -f ./manifests/app -R
+kubectl-create-apps-prod:
+	kustomize build manifests/overlays/prod | kubectl apply -f -
+
+kubectl-delete-apps-dev:
+	kustomize build manifests/overlays/dev | kubectl delete -f -
+
+kubectl-delete-apps-prod:
+	kustomize build manifests/overlays/prod | kubectl delete -f -
 
 kubectl-get:
 	kubectl get deployment -o wide
 	kubectl get svc -o wide
+	kubectl get configMap -o wide
 	kubectl get pod -o wide
