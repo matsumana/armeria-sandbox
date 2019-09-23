@@ -94,11 +94,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      deployment: prometheus
+      app prometheus
   template:
     metadata:
       labels:
-        deployment: prometheus
+        app prometheus
     spec:
       containers:
       - name: prometheus
@@ -131,7 +131,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    deployment: prometheus
+    app prometheus
   ports:
   - protocol: TCP
     targetPort: 9090

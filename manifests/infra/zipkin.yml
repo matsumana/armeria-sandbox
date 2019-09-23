@@ -7,11 +7,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      deployment: zipkin
+      app zipkin
   template:
     metadata:
       labels:
-        deployment: zipkin
+        app zipkin
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9411"
@@ -38,7 +38,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    deployment: zipkin
+    app zipkin
   ports:
   - protocol: TCP
     targetPort: 9411

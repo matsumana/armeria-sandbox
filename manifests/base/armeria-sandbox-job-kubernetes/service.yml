@@ -6,7 +6,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    deployment: armeria-sandbox-job-kubernetes
+    app armeria-sandbox-job-kubernetes
   ports:
   - name: app
     protocol: TCP

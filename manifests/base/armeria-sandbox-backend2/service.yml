@@ -6,7 +6,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    deployment: armeria-sandbox-backend2
+    app armeria-sandbox-backend2
   ports:
   - name: app
     protocol: TCP

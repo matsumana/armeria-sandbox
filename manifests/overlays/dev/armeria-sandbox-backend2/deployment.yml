@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       labels:
-        deployment: armeria-sandbox-backend2
+        app armeria-sandbox-backend2
     spec:
       containers:
       - name: armeria-sandbox-backend2
