@@ -1,0 +1,19 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: armeria-sandbox-frontend
+spec:
+  template:
+    metadata:
+      labels:
+        deployment: armeria-sandbox-frontend
+    spec:
+      containers:
+      - name: armeria-sandbox-frontend
+        ports:
+        - containerPort: 5005  # Java debugger
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

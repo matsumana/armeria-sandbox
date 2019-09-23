@@ -1,0 +1,57 @@
+#namespace: prod
+namespace: default
+
+commonLabels:
+  phase: prod
+
+resources:
+  - ../../base
+  - namespace.yml
+
+patchesStrategicMerge:
+  - armeria-sandbox-backend1/deployment.yml
+  - armeria-sandbox-backend2/deployment.yml
+  - armeria-sandbox-backend3/deployment.yml
+  - armeria-sandbox-backend4/deployment.yml
+  - armeria-sandbox-frontend/deployment.yml
+  - armeria-sandbox-job-kubernetes/deployment.yml
+
+configMapGenerator:
+  - name: armeria-sandbox-backend1-config
+    literals:
+    - SPRING_PROFILES_ACTIVE=kubernetes
+    - JAVA_OPTIONS_DEBUGGER=
+    - JAVA_OPTIONS_HEAP_SIZE=256m
+    - LOGGING_LEVEL_INFO_MATSUMANA_ARMERIA=INFO
+  - name: armeria-sandbox-backend2-config
+    literals:
+    - SPRING_PROFILES_ACTIVE=kubernetes
+    - JAVA_OPTIONS_DEBUGGER=
+    - JAVA_OPTIONS_HEAP_SIZE=256m
+    - LOGGING_LEVEL_INFO_MATSUMANA_ARMERIA=INFO
+  - name: armeria-sandbox-backend3-config
+    literals:
+    - SPRING_PROFILES_ACTIVE=kubernetes
+    - JAVA_OPTIONS_DEBUGGER=
+    - JAVA_OPTIONS_HEAP_SIZE=256m
+    - LOGGING_LEVEL_INFO_MATSUMANA_ARMERIA=INFO
+  - name: armeria-sandbox-backend4-config
+    literals:
+    - SPRING_PROFILES_ACTIVE=kubernetes
+    - JAVA_OPTIONS_DEBUGGER=
+    - JAVA_OPTIONS_HEAP_SIZE=256m
+    - LOGGING_LEVEL_INFO_MATSUMANA_ARMERIA=INFO
+  - name: armeria-sandbox-frontend-config
+    literals:
+    - SPRING_PROFILES_ACTIVE=kubernetes
+    - JAVA_OPTIONS_DEBUGGER=
+    - JAVA_OPTIONS_HEAP_SIZE=256m
+    - LOGGING_LEVEL_INFO_MATSUMANA_ARMERIA=INFO
+  - name: armeria-sandbox-job-kubernetes-config
+    literals:
+    - SPRING_PROFILES_ACTIVE=kubernetes
+    - JAVA_OPTIONS_DEBUGGER=
+    - JAVA_OPTIONS_HEAP_SIZE=256m
+    - LOGGING_LEVEL_INFO_MATSUMANA_ARMERIA=INFO
+#    - KUBERNETES_NAMESPACE=prod
+    - KUBERNETES_NAMESPACE=default

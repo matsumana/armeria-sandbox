@@ -1,0 +1,16 @@
+commonLabels:
+  app: armeria-sandbox
+
+resources:
+  - armeria-sandbox-backend1/deployment.yml
+  - armeria-sandbox-backend1/service.yml
+  - armeria-sandbox-backend2/deployment.yml
+  - armeria-sandbox-backend2/service.yml
+  - armeria-sandbox-backend3/deployment.yml
+  - armeria-sandbox-backend3/service.yml
+  - armeria-sandbox-backend4/deployment.yml
+  - armeria-sandbox-backend4/service.yml
+  - armeria-sandbox-frontend/deployment.yml
+  - armeria-sandbox-frontend/service.yml
+  - armeria-sandbox-job-kubernetes/deployment.yml
+  - armeria-sandbox-job-kubernetes/service.yml

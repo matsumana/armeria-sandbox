@@ -1,0 +1,17 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: armeria-sandbox-backend3
+spec:
+  template:
+    metadata:
+      labels:
+        deployment: armeria-sandbox-backend3
+    spec:
+      containers:
+      - name: armeria-sandbox-backend3
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1"

@@ -2,35 +2,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: armeria-sandbox-frontend
-  labels:
-    app: armeria-sandbox-frontend
+  name: armeria-sandbox-backend2
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: armeria-sandbox-frontend
   template:
     metadata:
       labels:
-        app: armeria-sandbox-frontend
+        deployment: armeria-sandbox-backend2
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
         prometheus.io/path: /internal/metrics
     spec:
       containers:
-      - name: armeria-sandbox-frontend
-        image: localhost:5000/armeria-sandbox-frontend
+      - name: armeria-sandbox-backend2
+        image: localhost:5000/armeria-sandbox-backend2
+        envFrom:
+        - configMapRef:
+            name: armeria-sandbox-backend2-config
         args:
-        - --spring.profiles.active=kubernetes
-        - --logging.level.info.matsumana.armeria=DEBUG
         - --zipkin.endpoint=http://zipkin:9411/api/v2/spans
         - --centraldogma.server.host=centraldogma
         - --centraldogma.server.port=36462
         command:
           [
             "java",
+            "$(JAVA_OPTIONS_DEBUGGER)",
             "-Djava.rmi.server.hostname=127.0.0.1",
             "-Dcom.sun.management.jmxremote",
             "-Dcom.sun.management.jmxremote.rmi.port=8686",
@@ -41,22 +38,18 @@ spec:
             "-Xlog:gc*=debug:/root/gc_%t_%p.log:time,level,tags:filesize=1024m,filecount=5",
             "-XX:StartFlightRecording=name=on_startup,filename=/root/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m",
             "-Djava.net.preferIPv4Stack=true",
-            "-Xms128m",
-            "-Xmx128m",
+            "-Xms$(JAVA_OPTIONS_HEAP_SIZE)",
+            "-Xmx$(JAVA_OPTIONS_HEAP_SIZE)",
             "-jar",
             "/root/app.jar"
           ]
         ports:
         - containerPort: 8080  # Application
         - containerPort: 8686  # JMX
-        - containerPort: 5005  # Java debugger
         resources:
           requests:
             memory: "256Mi"
             cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
         livenessProbe:
           httpGet:
             path: /internal/healthcheck
@@ -74,19 +67,3 @@ spec:
             exec:
               command: ["sh", "-c", "sleep 5"]  # Wait a few seconds to service-out from the Service before the SIGTERM signal is sent
       terminationGracePeriodSeconds: 120  # Need to wait until the app shuts down
-
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: armeria-sandbox-frontend
-spec:
-  type: NodePort
-  selector:
-    app: armeria-sandbox-frontend
-  ports:
-  - name: app
-    protocol: TCP
-    targetPort: 8080
-    port: 8080
-    nodePort: 31000
