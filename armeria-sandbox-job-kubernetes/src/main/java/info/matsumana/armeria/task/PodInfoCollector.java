@@ -68,7 +68,6 @@ public class PodInfoCollector {
                           Revision.HEAD,
                           String.format("Updated by %s", getClass().getName()),
                           Change.ofTextUpsert(String.format("/%s.json", app), json));
-
     }
 
     private PodList getPodInfo(String app) {

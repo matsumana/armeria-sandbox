@@ -1,0 +1,19 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: armeria-sandbox-job-kubernetes
+spec:
+  template:
+    metadata:
+      labels:
+        app: armeria-sandbox-job-kubernetes
+    spec:
+      containers:
+      - name: armeria-sandbox-job-kubernetes
+        ports:
+        - containerPort: 5005  # Java debugger
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

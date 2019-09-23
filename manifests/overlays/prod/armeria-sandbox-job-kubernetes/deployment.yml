@@ -1,0 +1,17 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: armeria-sandbox-job-kubernetes
+spec:
+  template:
+    metadata:
+      labels:
+        app: armeria-sandbox-job-kubernetes
+    spec:
+      containers:
+      - name: armeria-sandbox-job-kubernetes
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1"

@@ -1,0 +1,15 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: armeria-sandbox-job-kubernetes
+spec:
+  type: NodePort
+  selector:
+    app: armeria-sandbox-job-kubernetes
+  ports:
+  - name: app
+    protocol: TCP
+    targetPort: 8080
+    port: 8080
+    nodePort: 32000
