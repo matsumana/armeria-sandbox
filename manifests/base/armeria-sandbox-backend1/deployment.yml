@@ -8,7 +8,7 @@ spec:
   template:
     metadata:
       labels:
-        app armeria-sandbox-backend1
+        app: armeria-sandbox-backend1
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"

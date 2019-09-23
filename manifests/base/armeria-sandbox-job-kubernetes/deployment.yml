@@ -8,7 +8,7 @@ spec:
   template:
     metadata:
       labels:
-        app armeria-sandbox-job-kubernetes
+        app: armeria-sandbox-job-kubernetes
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"

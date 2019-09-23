@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       labels:
-        app armeria-sandbox-job-kubernetes
+        app: armeria-sandbox-job-kubernetes
     spec:
       containers:
       - name: armeria-sandbox-job-kubernetes

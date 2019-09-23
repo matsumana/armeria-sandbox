@@ -35,7 +35,7 @@ public class PodInfoCollector {
 
     public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
     public static final String AUTHORIZATION_HEADER_VALUE = "Bearer %s";
-    private static final String LABEL_SELECTOR = "deployment=armeria-sandbox-%s";
+    private static final String LABEL_SELECTOR = "app=armeria-sandbox-%s";
 
     private final String namespace;
     private final String token;
@@ -57,8 +57,8 @@ public class PodInfoCollector {
               .forEach(this::saveToCentralDogma);
     }
 
-    private void saveToCentralDogma(String deployment) {
-        final PodList podList = getPodInfo(deployment);
+    private void saveToCentralDogma(String app) {
+        final PodList podList = getPodInfo(app);
         final String json = serializePodList(podList);
 
         log.debug("pods = {}", json);
@@ -67,13 +67,13 @@ public class PodInfoCollector {
                           EndpointGroupHelper.CENTRAL_DOGMA_REPOSITORY,
                           Revision.HEAD,
                           String.format("Updated by %s", getClass().getName()),
-                          Change.ofTextUpsert(String.format("/%s.json", deployment), json));
+                          Change.ofTextUpsert(String.format("/%s.json", app), json));
     }
 
-    private PodList getPodInfo(String deployment) {
+    private PodList getPodInfo(String app) {
         return client.pods(String.format(AUTHORIZATION_HEADER_VALUE, token),
                            namespace,
-                           String.format(LABEL_SELECTOR, deployment))
+                           String.format(LABEL_SELECTOR, app))
                      .join();
     }
 
