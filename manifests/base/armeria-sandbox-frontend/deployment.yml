@@ -22,7 +22,7 @@ spec:
         image: localhost:5000/armeria-sandbox-frontend
         envFrom:
         - configMapRef:
-            name: armeria-sandbox-backend2-config
+            name: armeria-sandbox-frontend-config
         args:
         - --zipkin.endpoint=http://zipkin:9411/api/v2/spans
         - --centraldogma.server.host=centraldogma
