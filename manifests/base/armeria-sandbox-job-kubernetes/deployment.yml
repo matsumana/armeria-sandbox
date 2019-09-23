@@ -26,10 +26,10 @@ spec:
         - configMapRef:
             name: armeria-sandbox-job-kubernetes-config
         args:
-        - --zipkin.endpoint=http://zipkin:9411/api/v2/spans
-        - --centraldogma.server.host=centraldogma
+        - --zipkin.endpoint=http://zipkin.infra.svc.cluster.local:9411/api/v2/spans
+        - --centraldogma.server.host=centraldogma.infra.svc.cluster.local
         - --centraldogma.server.port=36462
-        - --api-servers.kubernetes.host=kubernetes
+        - --api-servers.kubernetes.host=kubernetes.default.svc.cluster.local
         - --api-servers.kubernetes.port=443
         - --api-servers.kubernetes.scheme=https
         - --kubernetes.namespace=$(KUBERNETES_NAMESPACE)

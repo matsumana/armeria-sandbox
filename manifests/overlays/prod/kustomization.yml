@@ -1,5 +1,4 @@
-#namespace: prod
-namespace: default
+namespace: prod
 
 resources:
   - ../../base
@@ -44,8 +43,7 @@ configMapGenerator:
     - SPRING_PROFILES_ACTIVE=kubernetes
     - JAVA_OPTIONS_HEAP_SIZE=256m
     - LOGGING_LEVEL_INFO_MATSUMANA_ARMERIA=INFO
-#    - KUBERNETES_NAMESPACE=prod
-    - KUBERNETES_NAMESPACE=default
+    - KUBERNETES_NAMESPACE=prod
 
 patchesJson6902:
   - target:

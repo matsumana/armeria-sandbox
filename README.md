@@ -79,7 +79,9 @@ $ make docker-push
 #### deploy the app
 
 ```
-$ make kubectl-create-apps
+$ make kubectl-create-apps-dev
+# or
+$ make kubectl-create-apps-prod
 ```
 
 <br>
@@ -88,7 +90,7 @@ $ make kubectl-create-apps
 ## How to dispose
 
 ```
-$ make kubectl-delete-apps
+$ make kubectl-delete-apps-dev #or kubectl-create-apps-prod
 $ make kubectl-delete-infra
 $ docker stop registry
 $ docker rm registry
