@@ -4,10 +4,11 @@ project(":armeria-sandbox-common") {
         api "com.linecorp.armeria:armeria-spring-boot-starter"
         api "com.linecorp.armeria:armeria-spring-boot-actuator-starter"
         api "com.linecorp.armeria:armeria-rxjava"
-        api "com.linecorp.armeria:armeria-zipkin"
+        api "com.linecorp.armeria:armeria-brave"
         api "com.github.akarnokd:rxjava2-jdk8-interop"
         api "io.zipkin.reporter2:zipkin-sender-urlconnection"
         api "com.linecorp.centraldogma:centraldogma-client-armeria"
+        api "io.micrometer:micrometer-registry-prometheus"
     }
 
     bootJar {

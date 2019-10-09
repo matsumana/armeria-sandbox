@@ -4,17 +4,18 @@ buildscript {
         protobufGradlePluginVersion = "0.8.9"
         osdetectorGradlePluginVersion = "1.6.2"
 
-        springBootVersion = "2.1.8.RELEASE"
-        armeriaVersion = "0.91.0"
+        springBootVersion = "2.1.9.RELEASE"
+        armeriaVersion = "0.94.0"
         thriftVersion = "0.12"
         libthriftVersion = thriftVersion + ".0"
         guavaVersion = "28.1-jre"
-        retrofitVersion = "2.6.1"
+        retrofitVersion = "2.6.2"
         rxJava2Jdk8InteropVersion = "0.3.7"
-        braveVersion = "5.6.8"
-        protocVersion = "3.9.1"
-        protocGenGrpcJavaVersion = "1.22.1"
-        centraldogmaVersion = "0.41.3"
+        braveVersion = "5.8.0"
+        protocVersion = "3.10.0"
+        protocGenGrpcJavaVersion = "1.24.0"
+        centraldogmaVersion = "0.43.1"
+        micrometerVersion = "1.3.0"
     }
     repositories {
         mavenCentral()
@@ -50,6 +51,7 @@ subprojects {
         imports {
             mavenBom "com.linecorp.armeria:armeria-bom:${armeriaVersion}"
             mavenBom "io.zipkin.brave:brave-bom:${braveVersion}"
+            mavenBom "io.micrometer:micrometer-bom:${micrometerVersion}"
         }
         dependencies {
             // To override version which Armeria use

@@ -13,7 +13,7 @@ import com.linecorp.armeria.client.Client;
 import com.linecorp.armeria.client.ClientBuilder;
 import com.linecorp.armeria.client.ClientRequestContext;
 import com.linecorp.armeria.client.brave.BraveClient;
-import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerBuilder;
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreaker;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerHttpClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRpcClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerStrategy;
@@ -108,10 +108,10 @@ public class ArmeriaClientConfig {
     private Function<Client<RpcRequest, RpcResponse>, CircuitBreakerRpcClient> newCircuitBreakerRpcDecorator() {
         return CircuitBreakerRpcClient.newPerHostDecorator(
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
-                groupName -> new CircuitBreakerBuilder("frontend" + '_' + groupName)
-                        .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
-                        .failureRateThreshold(0.1)  // TODO need tuning
-                        .build(),
+                groupName -> CircuitBreaker.builder("frontend" + '_' + groupName)
+                                           .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
+                                           .failureRateThreshold(0.1)  // TODO need tuning
+                                           .build(),
                 (ctx, response) -> response.completionFuture()
                                            .handle((res, cause) -> cause == null));
     }
@@ -119,10 +119,10 @@ public class ArmeriaClientConfig {
     private Function<Client<HttpRequest, HttpResponse>, CircuitBreakerHttpClient> newCircuitBreakerHttpDecorator() {
         return CircuitBreakerHttpClient.newPerHostDecorator(
 //        return CircuitBreakerHttpClient.newPerHostAndMethodDecorator(
-                groupName -> new CircuitBreakerBuilder("frontend" + '_' + groupName)
-                        .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
-                        .failureRateThreshold(0.1)  // TODO need tuning
-                        .build(),
+                groupName -> CircuitBreaker.builder("frontend" + '_' + groupName)
+                                           .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
+                                           .failureRateThreshold(0.1)  // TODO need tuning
+                                           .build(),
                 CircuitBreakerStrategy.onServerErrorStatus());
     }
 
