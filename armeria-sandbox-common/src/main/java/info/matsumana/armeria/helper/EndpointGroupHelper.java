@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 
 import com.linecorp.armeria.client.Endpoint;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
-import com.linecorp.armeria.client.endpoint.StaticEndpointGroup;
 import com.linecorp.centraldogma.client.CentralDogma;
 import com.linecorp.centraldogma.client.Watcher;
 import com.linecorp.centraldogma.client.armeria.CentralDogmaEndpointGroup;
@@ -124,9 +123,9 @@ public class EndpointGroupHelper {
     }
 
     private static EndpointGroup newStaticEndpointGroup(List<EndpointSetting> staticList) {
-        return new StaticEndpointGroup(staticList.stream()
-                                                 .map(setting -> Endpoint.of(setting.getHost(),
-                                                                             setting.getPort()))
-                                                 .collect(toUnmodifiableList()));
+        return EndpointGroup.of(staticList.stream()
+                                          .map(setting -> Endpoint.of(setting.getHost(),
+                                                                      setting.getPort()))
+                                          .collect(toUnmodifiableList()));
     }
 }

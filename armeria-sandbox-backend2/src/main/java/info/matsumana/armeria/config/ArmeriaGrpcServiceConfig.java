@@ -7,11 +7,11 @@ import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.common.grpc.GrpcSerializationFormats;
 import com.linecorp.armeria.server.brave.BraveService;
-import com.linecorp.armeria.server.grpc.GrpcServiceBuilder;
+import com.linecorp.armeria.server.grpc.GrpcService;
 import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.throttling.ThrottlingHttpService;
+import com.linecorp.armeria.spring.GrpcExampleRequest;
 import com.linecorp.armeria.spring.GrpcServiceRegistrationBean;
-import com.linecorp.armeria.spring.GrpcServiceRegistrationBean.ExampleRequest;
 
 import brave.Tracing;
 import info.matsumana.armeria.grpc.Hello2.Hello2Request;
@@ -37,37 +37,37 @@ public class ArmeriaGrpcServiceConfig {
     public GrpcServiceRegistrationBean pingService(PingHandler handler) {
         return new GrpcServiceRegistrationBean()
                 .setServiceName("pingService")
-                .setService(new GrpcServiceBuilder()
-                                    .addService(handler)
-                                    // see https://line.github.io/armeria/server-docservice.html
-                                    .supportedSerializationFormats(GrpcSerializationFormats.values())
-                                    .enableUnframedRequests(true)
-                                    .build())
+                .setService(GrpcService.builder()
+                                       .addService(handler)
+                                       // see https://line.github.io/armeria/server-docservice.html
+                                       .supportedSerializationFormats(GrpcSerializationFormats.values())
+                                       .enableUnframedRequests(true)
+                                       .build())
                 .setDecorators(BraveService.newDecorator(tracing),
                                LoggingService.newDecorator())
-                .setExampleRequests(List.of(ExampleRequest.of(PingServiceGrpc.SERVICE_NAME,
-                                                              "Ping",
-                                                              PingRequest.newBuilder().build())));
+                .setExampleRequests(List.of(GrpcExampleRequest.of(PingServiceGrpc.SERVICE_NAME,
+                                                                  "Ping",
+                                                                  PingRequest.newBuilder().build())));
     }
 
     @Bean
     public GrpcServiceRegistrationBean hello2Service(Hello2Handler handler) {
         return new GrpcServiceRegistrationBean()
                 .setServiceName("hello2Service")
-                .setService(new GrpcServiceBuilder()
-                                    .addService(handler)
-                                    // see https://line.github.io/armeria/server-docservice.html
-                                    .supportedSerializationFormats(GrpcSerializationFormats.values())
-                                    .enableUnframedRequests(true)
-                                    .build())
+                .setService(GrpcService.builder()
+                                       .addService(handler)
+                                       // see https://line.github.io/armeria/server-docservice.html
+                                       .supportedSerializationFormats(GrpcSerializationFormats.values())
+                                       .enableUnframedRequests(true)
+                                       .build())
                 .setDecorators(
                         BraveService.newDecorator(tracing),
                         ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend2")),
                         LoggingService.newDecorator())
-                .setExampleRequests(List.of(ExampleRequest.of(Hello2ServiceGrpc.SERVICE_NAME,
-                                                              "Hello",
-                                                              Hello2Request.newBuilder()
-                                                                           .setName("Armeria")
-                                                                           .build())));
+                .setExampleRequests(List.of(GrpcExampleRequest.of(Hello2ServiceGrpc.SERVICE_NAME,
+                                                                  "Hello",
+                                                                  Hello2Request.newBuilder()
+                                                                               .setName("Armeria")
+                                                                               .build())));
     }
 }

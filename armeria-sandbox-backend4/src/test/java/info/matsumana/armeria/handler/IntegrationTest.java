@@ -45,7 +45,7 @@ public class IntegrationTest {
     public void healthCheck() throws Exception {
         final AggregatedHttpResponse res = client.get("/internal/healthcheck").aggregate().join();
         assertThat(res.status()).isEqualTo(HttpStatus.OK);
-        assertThat(res.content().toStringUtf8()).isEqualTo("ok");
+        assertThat(res.content().toStringUtf8()).isEqualTo("{\"healthy\":true}");
     }
 
     @Test

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.client.Client;
 import com.linecorp.armeria.client.brave.BraveClient;
-import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerBuilder;
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreaker;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerHttpClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerStrategy;
 import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
@@ -72,10 +72,10 @@ public class ArmeriaClientConfig {
     private Function<Client<HttpRequest, HttpResponse>, CircuitBreakerHttpClient> newCircuitBreakerDecorator() {
         return CircuitBreakerHttpClient.newPerHostDecorator(
 //        return CircuitBreakerHttpClient.newPerHostAndMethodDecorator(
-                groupName -> new CircuitBreakerBuilder("backend3" + '_' + groupName)
-                        .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
-                        .failureRateThreshold(0.1)  // TODO need tuning
-                        .build(),
+                groupName -> CircuitBreaker.builder("backend3" + '_' + groupName)
+                                           .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
+                                           .failureRateThreshold(0.1)  // TODO need tuning
+                                           .build(),
                 CircuitBreakerStrategy.onServerErrorStatus());
     }
 }
