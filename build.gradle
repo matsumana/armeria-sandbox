@@ -4,7 +4,7 @@ buildscript {
         protobufGradlePluginVersion = "0.8.9"
         osdetectorGradlePluginVersion = "1.6.2"
 
-        springBootVersion = "2.1.9.RELEASE"
+        springBootVersion = "2.2.0.RELEASE"
         armeriaVersion = "0.94.0"
         thriftVersion = "0.12"
         libthriftVersion = thriftVersion + ".0"
