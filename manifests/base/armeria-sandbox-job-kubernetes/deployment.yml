@@ -38,6 +38,7 @@ spec:
             "/root/docker-entrypoint.sh",
             "java",
             "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
+            "-XX:+UseG1GC",
             "-Djava.rmi.server.hostname=127.0.0.1",
             "-Dcom.sun.management.jmxremote",
             "-Dcom.sun.management.jmxremote.rmi.port=8686",
