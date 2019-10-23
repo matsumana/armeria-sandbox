@@ -90,7 +90,7 @@ $ make kubectl-create-apps-prod
 ## How to dispose
 
 ```
-$ make kubectl-delete-apps-dev #or kubectl-create-apps-prod
+$ make kubectl-delete-apps-dev #or kubectl-delete-apps-prod
 $ make kubectl-delete-infra
 $ docker stop registry
 $ docker rm registry
