@@ -1,31 +1,13 @@
 buildscript {
-    ext {
-        thriftGradlePluginVersion = "0.4.1"
-        protobufGradlePluginVersion = "0.8.9"
-        osdetectorGradlePluginVersion = "1.6.2"
-
-        springBootVersion = "2.2.0.RELEASE"
-        armeriaVersion = "0.94.0"
-        thriftVersion = "0.12"
-        libthriftVersion = thriftVersion + ".0"
-        guavaVersion = "28.1-jre"
-        retrofitVersion = "2.6.2"
-        rxJava2Jdk8InteropVersion = "0.3.7"
-        braveVersion = "5.8.0"
-        protocVersion = "3.10.0"
-        protocGenGrpcJavaVersion = "1.24.0"
-        centraldogmaVersion = "0.43.1"
-        micrometerVersion = "1.3.0"
-    }
     repositories {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-        classpath "gradle.plugin.org.jruyi.gradle:thrift-gradle-plugin:${thriftGradlePluginVersion}"
-        classpath "com.google.protobuf:protobuf-gradle-plugin:${protobufGradlePluginVersion}"
-        classpath "com.google.gradle:osdetector-gradle-plugin:${osdetectorGradlePluginVersion}"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.property('spring-boot.version')}"
+        classpath "gradle.plugin.org.jruyi.gradle:thrift-gradle-plugin:${project.property('gradle-plugin-thrift.version')}"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:${project.property('gradle-plugin-protobuf.version')}"
+        classpath "com.google.gradle:osdetector-gradle-plugin:${project.property('gradle-plugin-osdetector.version')}"
     }
 }
 
@@ -49,35 +31,32 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom "com.linecorp.armeria:armeria-bom:${armeriaVersion}"
-            mavenBom "io.zipkin.brave:brave-bom:${braveVersion}"
-            mavenBom "io.micrometer:micrometer-bom:${micrometerVersion}"
+            mavenBom "com.linecorp.armeria:armeria-bom:${project.property('armeria.version')}"
+            mavenBom "io.zipkin.brave:brave-bom:${project.property('zipkin-brave.version')}"
+            mavenBom "io.micrometer:micrometer-bom:${project.property('micrometer.version')}"
         }
         dependencies {
             // To override version which Armeria use
-            dependency "org.springframework.boot:spring-boot-starter:${springBootVersion}"
-            dependency "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
-            dependency "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+            dependency "org.springframework.boot:spring-boot-starter:${project.property('spring-boot.version')}"
+            dependency "org.springframework.boot:spring-boot-starter-actuator:${project.property('spring-boot.version')}"
+            dependency "org.springframework.boot:spring-boot-starter-test:${project.property('spring-boot.version')}"
 
             // armeria-grpc depends on io.grpc:grpc-protobuf and it depends on x.y-android not x.y-jre
             // https://mvnrepository.com/artifact/io.grpc/grpc-protobuf/1.20.0
-            dependency "com.google.guava:guava:${guavaVersion}"
+            dependency "com.google.guava:guava:${project.property('guava.version')}"
 
-            dependency "org.apache.thrift:libthrift:${libthriftVersion}"
-            dependency "com.squareup.retrofit2:converter-jackson:${retrofitVersion}"
-            dependency "com.github.akarnokd:rxjava2-jdk8-interop:${rxJava2Jdk8InteropVersion}"
-            dependency "com.linecorp.centraldogma:centraldogma-client-armeria:${centraldogmaVersion}"
+            dependency "org.apache.thrift:libthrift:${project.property('libthrift.version')}"
+            dependency "com.squareup.retrofit2:converter-jackson:${project.property('retrofit.version')}"
+            dependency "com.github.akarnokd:rxjava2-jdk8-interop:${project.property('rxjava2-jdk8-interop.version')}"
+            dependency "com.linecorp.centraldogma:centraldogma-client-armeria:${project.property('central-dogma.version')}"
         }
     }
 
     dependencies {
         testImplementation("org.springframework.boot:spring-boot-starter-test") {
-            exclude group: "junit", module: "junit"
+            exclude group: "org.junit.vintage", module: "junit-vintage-engine"
         }
         testImplementation "org.assertj:assertj-core"
-        testImplementation "org.junit.jupiter:junit-jupiter-api"
-        testImplementation "org.junit.jupiter:junit-jupiter-params"
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
     }
 
     compileJava {
@@ -86,8 +65,5 @@ subprojects {
 
     test {
         useJUnitPlatform()
-        testLogging {
-            events "passed", "skipped", "failed"
-        }
     }
 }
