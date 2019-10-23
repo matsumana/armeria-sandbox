@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-centos:11.0.4
+FROM bellsoft/liberica-openjdk-centos:13.0.1
 
 ADD ./build/libs/*.jar /root/app.jar
 
