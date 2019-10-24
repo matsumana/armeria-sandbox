@@ -64,8 +64,8 @@ public class ArmeriaClientConfig {
         registerEndpointGroup(group, "backend1");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello1", "backend1"))
                 .decorator(BraveClient.newDecorator(tracing, "backend1"))
-                .rpcDecorator(newCircuitBreakerRpcDecorator())
                 .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                .rpcDecorator(newCircuitBreakerRpcDecorator())
                 .decorator(LoggingClient.newDecorator())
                 .build(Hello1Service.AsyncIface.class);
     }
@@ -77,9 +77,9 @@ public class ArmeriaClientConfig {
         registerEndpointGroup(group, "backend2");
         return new ClientBuilder(String.format("gproto+h2c://group:%s/", "backend2"))
                 .decorator(BraveClient.newDecorator(tracing, "backend2"))
-                .decorator(newCircuitBreakerHttpDecorator())
                 .decorator(RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
                                                            MAX_TOTAL_ATTEMPTS))
+                .decorator(newCircuitBreakerHttpDecorator())
                 .decorator(LoggingClient.newDecorator())
                 .build(Hello2ServiceFutureStub.class);
     }
@@ -91,8 +91,8 @@ public class ArmeriaClientConfig {
         registerEndpointGroup(group, "backend3");
         return new ClientBuilder(String.format("tbinary+h2c://group:%s/thrift/hello3", "backend3"))
                 .decorator(BraveClient.newDecorator(tracing, "backend3"))
-                .rpcDecorator(newCircuitBreakerRpcDecorator())
                 .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                .rpcDecorator(newCircuitBreakerRpcDecorator())
                 .decorator(LoggingClient.newDecorator())
                 .build(Hello3Service.AsyncIface.class);
     }

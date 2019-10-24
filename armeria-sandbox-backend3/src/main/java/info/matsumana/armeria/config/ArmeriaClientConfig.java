@@ -62,9 +62,9 @@ public class ArmeriaClientConfig {
                 .addConverterFactory(JacksonConverterFactory.create())
                 .withClientOptions((uri, optionsBuilder) -> optionsBuilder
                         .decorator(BraveClient.newDecorator(tracing, "backend4"))
-                        .decorator(newCircuitBreakerDecorator())
                         .decorator(RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
                                                                    MAX_TOTAL_ATTEMPTS))
+                        .decorator(newCircuitBreakerDecorator())
                         .decorator(LoggingClient.newDecorator()))
                 .build();
     }
