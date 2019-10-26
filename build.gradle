@@ -1,20 +1,22 @@
 buildscript {
+    ext.v = { project.property("${it}.version") }
+
     repositories {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
     }
+
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.property('spring-boot.version')}"
-        classpath "com.google.gradle:osdetector-gradle-plugin:${project.property('gradle-plugin-osdetector.version')}"
-        classpath "gradle.plugin.org.jruyi.gradle:thrift-gradle-plugin:${project.property('gradle-plugin-thrift.version')}"
-        classpath "com.google.protobuf:protobuf-gradle-plugin:${project.property('gradle-plugin-protobuf.version')}"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${v('spring-boot')}"
+        classpath "com.google.gradle:osdetector-gradle-plugin:${v('gradle-plugin-osdetector')}"
+        classpath "gradle.plugin.org.jruyi.gradle:thrift-gradle-plugin:${v('gradle-plugin-thrift')}"
+        classpath "com.google.protobuf:protobuf-gradle-plugin:${v('gradle-plugin-protobuf')}"
     }
 }
 
 subprojects {
     apply plugin: "java"
     apply plugin: "java-library"
-    apply plugin: "eclipse"
     apply plugin: "org.springframework.boot"
     apply plugin: "io.spring.dependency-management"
 
@@ -31,24 +33,24 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom "com.linecorp.armeria:armeria-bom:${project.property('armeria.version')}"
-            mavenBom "io.zipkin.brave:brave-bom:${project.property('zipkin-brave.version')}"
-            mavenBom "io.micrometer:micrometer-bom:${project.property('micrometer.version')}"
+            mavenBom "com.linecorp.armeria:armeria-bom:${v('armeria')}"
+            mavenBom "io.zipkin.brave:brave-bom:${v('zipkin-brave')}"
+            mavenBom "io.micrometer:micrometer-bom:${v('micrometer')}"
         }
         dependencies {
             // To override version which Armeria use
-            dependency "org.springframework.boot:spring-boot-starter:${project.property('spring-boot.version')}"
-            dependency "org.springframework.boot:spring-boot-starter-actuator:${project.property('spring-boot.version')}"
-            dependency "org.springframework.boot:spring-boot-starter-test:${project.property('spring-boot.version')}"
+            dependency "org.springframework.boot:spring-boot-starter:${v('spring-boot')}"
+            dependency "org.springframework.boot:spring-boot-starter-actuator:${v('spring-boot')}"
+            dependency "org.springframework.boot:spring-boot-starter-test:${v('spring-boot')}"
 
             // armeria-grpc depends on io.grpc:grpc-protobuf and it depends on x.y-android not x.y-jre
             // https://mvnrepository.com/artifact/io.grpc/grpc-protobuf/1.20.0
-            dependency "com.google.guava:guava:${project.property('guava.version')}"
+            dependency "com.google.guava:guava:${v('guava')}"
 
-            dependency "org.apache.thrift:libthrift:${project.property('libthrift.version')}"
-            dependency "com.squareup.retrofit2:converter-jackson:${project.property('retrofit.version')}"
-            dependency "com.github.akarnokd:rxjava2-jdk8-interop:${project.property('rxjava2-jdk8-interop.version')}"
-            dependency "com.linecorp.centraldogma:centraldogma-client-armeria:${project.property('central-dogma.version')}"
+            dependency "org.apache.thrift:libthrift:${v('libthrift')}"
+            dependency "com.squareup.retrofit2:converter-jackson:${v('retrofit')}"
+            dependency "com.github.akarnokd:rxjava2-jdk8-interop:${v('rxjava2-jdk8-interop')}"
+            dependency "com.linecorp.centraldogma:centraldogma-client-armeria:${v('central-dogma')}"
         }
     }
 
