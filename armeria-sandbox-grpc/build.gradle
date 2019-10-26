@@ -10,12 +10,12 @@ project(":armeria-sandbox-grpc") {
     protobuf {
         generatedFilesBaseDir = "$projectDir/build/generated-sources/grpc"
         protoc {
-            artifact = "com.google.protobuf:protoc:${project.property('protoc.version')}"
+            artifact = "com.google.protobuf:protoc:${v('protoc')}"
         }
 
         plugins {
             grpc {
-                artifact = "io.grpc:protoc-gen-grpc-java:${project.property('protoc-gen-grpc-java.version')}"
+                artifact = "io.grpc:protoc-gen-grpc-java:${v('protoc-gen-grpc-java')}"
             }
         }
 

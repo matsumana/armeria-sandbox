@@ -10,7 +10,7 @@ project(":armeria-sandbox-thrift") {
     }
 
     compileThrift {
-        thriftExecutable "${rootProject.projectDir}/lib/thrift/${project.property('thrift.version')}/thrift.${project.osdetector.classifier}"
+        thriftExecutable "${rootProject.projectDir}/lib/thrift/${v('thrift')}/thrift.${project.osdetector.classifier}"
     }
 
     bootJar {
