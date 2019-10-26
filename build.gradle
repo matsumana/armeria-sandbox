@@ -5,9 +5,9 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.property('spring-boot.version')}"
+        classpath "com.google.gradle:osdetector-gradle-plugin:${project.property('gradle-plugin-osdetector.version')}"
         classpath "gradle.plugin.org.jruyi.gradle:thrift-gradle-plugin:${project.property('gradle-plugin-thrift.version')}"
         classpath "com.google.protobuf:protobuf-gradle-plugin:${project.property('gradle-plugin-protobuf.version')}"
-        classpath "com.google.gradle:osdetector-gradle-plugin:${project.property('gradle-plugin-osdetector.version')}"
     }
 }
 
