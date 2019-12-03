@@ -6,4 +6,3 @@ ADD ./docker-entrypoint.sh /root/docker-entrypoint.sh
 CMD ["/bin/bash"]
 
 EXPOSE 8080
-EXPOSE 8686
