@@ -21,17 +21,17 @@ spec:
         prometheus.io/path: /monitor/metrics
     spec:
       containers:
-      - name: centraldogma
-        image: line/centraldogma:0.43.1
-        ports:
-        - containerPort: 36462
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
+        - name: centraldogma
+          image: line/centraldogma:0.43.1
+          ports:
+            - containerPort: 36462
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
 
 ---
 kind: Service
@@ -44,7 +44,7 @@ spec:
   selector:
     app: centraldogma
   ports:
-  - protocol: TCP
-    targetPort: 36462
-    port: 36462
-    nodePort: 30002
+    - protocol: TCP
+      targetPort: 36462
+      port: 36462
+      nodePort: 30002

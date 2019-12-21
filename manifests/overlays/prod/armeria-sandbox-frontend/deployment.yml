@@ -10,8 +10,8 @@ spec:
         app: armeria-sandbox-frontend
     spec:
       containers:
-      - name: armeria-sandbox-frontend
-        resources:
-          limits:
-            memory: "1Gi"
-            cpu: "1"
+        - name: armeria-sandbox-frontend
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1"

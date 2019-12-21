@@ -10,10 +10,10 @@ spec:
         app: armeria-sandbox-frontend
     spec:
       containers:
-      - name: armeria-sandbox-frontend
-        ports:
-        - containerPort: 5005  # Java debugger
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+        - name: armeria-sandbox-frontend
+          ports:
+            - containerPort: 5005  # Java debugger
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

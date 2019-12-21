@@ -20,55 +20,55 @@ spec:
         prometheus.io/path: /internal/metrics
     spec:
       containers:
-      - name: armeria-sandbox-backend4
-        image: localhost:5000/armeria-sandbox-backend4
-        envFrom:
-        - configMapRef:
-            name: armeria-sandbox-backend4-config
-        args:
-        - --zipkin.endpoint=http://zipkin.infra.svc.cluster.local:9411/api/v2/spans
-        - --centraldogma.server.host=centraldogma.infra.svc.cluster.local
-        - --centraldogma.server.port=36462
-        command:
-          [
-            "java",
-            "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
-            "-XX:+UseG1GC",
-            "-Djava.rmi.server.hostname=127.0.0.1",
-            "-Dcom.sun.management.jmxremote",
-            "-Dcom.sun.management.jmxremote.rmi.port=8686",
-            "-Dcom.sun.management.jmxremote.port=8686",
-            "-Dcom.sun.management.jmxremote.local.only=false",
-            "-Dcom.sun.management.jmxremote.ssl=false",
-            "-Dcom.sun.management.jmxremote.authenticate=false",
-            "-Xlog:gc*=debug:/root/gc_%t_%p.log:time,level,tags:filesize=1024m,filecount=5",
-            "-XX:StartFlightRecording=name=on_startup,filename=/root/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m",
-            "-Djava.net.preferIPv4Stack=true",
-            "-Xms$(JAVA_OPTIONS_HEAP_SIZE)",
-            "-Xmx$(JAVA_OPTIONS_HEAP_SIZE)",
-            "-jar",
-            "/root/app.jar"
-          ]
-        ports:
-        - containerPort: 8080  # Application
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-        livenessProbe:
-          httpGet:
-            path: /internal/healthcheck
-            port: 8080
-          initialDelaySeconds: 60  # Need to wait until the app starts up
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /internal/healthcheck
-            port: 8080
-          initialDelaySeconds: 30  # Need to wait until the app is ready
-          periodSeconds: 10
-        lifecycle:
-          preStop:
-            exec:
-              command: ["sh", "-c", "sleep 5"]  # Wait a few seconds to service-out from the Service before the SIGTERM signal is sent
+        - name: armeria-sandbox-backend4
+          image: localhost:5000/armeria-sandbox-backend4
+          envFrom:
+            - configMapRef:
+                name: armeria-sandbox-backend4-config
+          args:
+            - --zipkin.endpoint=http://zipkin.infra.svc.cluster.local:9411/api/v2/spans
+            - --centraldogma.server.host=centraldogma.infra.svc.cluster.local
+            - --centraldogma.server.port=36462
+          command:
+            [
+              "java",
+              "-XX:+UseG1GC",
+              "-Djava.rmi.server.hostname=127.0.0.1",
+              "-Dcom.sun.management.jmxremote",
+              "-Dcom.sun.management.jmxremote.rmi.port=8686",
+              "-Dcom.sun.management.jmxremote.port=8686",
+              "-Dcom.sun.management.jmxremote.local.only=false",
+              "-Dcom.sun.management.jmxremote.ssl=false",
+              "-Dcom.sun.management.jmxremote.authenticate=false",
+              "-Xlog:gc*=debug:/app/log/gc_%t_%p.log:time,level,tags:filesize=1024m,filecount=5",
+              "-XX:StartFlightRecording=name=on_startup,filename=/app/log/flight_recording.jfr,dumponexit=true,delay=2m,maxsize=512m",
+              "-Djava.net.preferIPv4Stack=true",
+              "-Xms$(JAVA_OPTIONS_HEAP_SIZE)",
+              "-Xmx$(JAVA_OPTIONS_HEAP_SIZE)",
+              "-cp",
+              "/app:/app/lib-app/*:/app/lib/*",
+              "info.matsumana.armeria.Application"
+            ]
+          ports:
+            - containerPort: 8080  # Application
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          livenessProbe:
+            httpGet:
+              path: /internal/healthcheck
+              port: 8080
+            initialDelaySeconds: 60  # Need to wait until the app starts up
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /internal/healthcheck
+              port: 8080
+            initialDelaySeconds: 30  # Need to wait until the app is ready
+            periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 5"]  # Wait a few seconds to service-out from the Service before the SIGTERM signal is sent
       terminationGracePeriodSeconds: 120  # Need to wait until the app shuts down

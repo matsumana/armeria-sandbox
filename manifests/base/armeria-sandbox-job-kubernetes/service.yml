@@ -8,8 +8,8 @@ spec:
   selector:
     app: armeria-sandbox-job-kubernetes
   ports:
-  - name: app
-    protocol: TCP
-    targetPort: 8080
-    port: 8080
-    nodePort: 32000
+    - name: app
+      protocol: TCP
+      targetPort: 8080
+      port: 8080
+      nodePort: 32000
