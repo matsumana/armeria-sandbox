@@ -21,17 +21,17 @@ spec:
         prometheus.io/path: /prometheus
     spec:
       containers:
-      - name: zipkin
-        image: openzipkin/zipkin-slim:2.18.3
-        ports:
-        - containerPort: 9411
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
+        - name: zipkin
+          image: openzipkin/zipkin-slim:2.18.3
+          ports:
+            - containerPort: 9411
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
 
 ---
 kind: Service
@@ -44,7 +44,7 @@ spec:
   selector:
     app: zipkin
   ports:
-  - protocol: TCP
-    targetPort: 9411
-    port: 9411
-    nodePort: 30001
+    - protocol: TCP
+      targetPort: 9411
+      port: 9411
+      nodePort: 30001

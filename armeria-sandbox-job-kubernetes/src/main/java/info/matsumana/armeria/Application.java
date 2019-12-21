@@ -8,15 +8,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class JobApplication {
+public class Application {
 
-    private static final Logger logger = LoggerFactory.getLogger(JobApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Start shutting down");
         }));
 
-        SpringApplication.run(JobApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

@@ -6,15 +6,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FrontendApplication {
+public class Application {
 
-    private static final Logger logger = LoggerFactory.getLogger(FrontendApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Start shutting down");
         }));
 
-        SpringApplication.run(FrontendApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

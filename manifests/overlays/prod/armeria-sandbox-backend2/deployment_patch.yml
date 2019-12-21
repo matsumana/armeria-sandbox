@@ -2,7 +2,3 @@
 - op: replace
   path: /spec/replicas
   value: 2
-
-# remove JVM debug option
-- op: remove
-  path: /spec/template/spec/containers/0/command/1

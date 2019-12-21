@@ -8,8 +8,8 @@ spec:
   selector:
     app: armeria-sandbox-backend2
   ports:
-  - name: app
-    protocol: TCP
-    targetPort: 8080
-    port: 8080
-    nodePort: 31200
+    - name: app
+      protocol: TCP
+      targetPort: 8080
+      port: 8080
+      nodePort: 31200
