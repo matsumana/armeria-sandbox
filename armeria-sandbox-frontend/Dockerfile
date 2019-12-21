@@ -11,7 +11,7 @@ USER app
 WORKDIR /tmp
 RUN jlink \
     --compress=2 \
-    --add-modules=java.base,jdk.unsupported,java.xml,java.desktop,jdk.management,jdk.management.agent,jdk.jfr \
+    --add-modules=java.base,jdk.unsupported,java.xml,java.desktop,java.sql,jdk.management,jdk.management.agent,jdk.jfr \
     --output=jre \
     --bind-services
 
