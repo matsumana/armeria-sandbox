@@ -76,9 +76,3 @@ patchesJson6902:
       kind: Deployment
       name: armeria-sandbox-frontend
     path: armeria-sandbox-frontend/deployment_patch.yml
-  - target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: armeria-sandbox-job-kubernetes
-    path: armeria-sandbox-job-kubernetes/deployment_patch.yml
