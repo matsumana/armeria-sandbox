@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.server.brave.BraveService;
 import com.linecorp.armeria.server.logging.LoggingService;
-import com.linecorp.armeria.server.throttling.ThrottlingHttpService;
+import com.linecorp.armeria.server.throttling.ThrottlingService;
 import com.linecorp.armeria.spring.AnnotatedServiceRegistrationBean;
 
 import brave.Tracing;
@@ -40,7 +40,7 @@ public class ArmeriaHttpServiceConfig {
                 .setService(handler)
                 .setDecorators(
                         BraveService.newDecorator(tracing),
-                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("frontend")),
+                        ThrottlingService.newDecorator(throttlingHelper.newThrottlingStrategy("frontend")),
                         LoggingService.newDecorator());
     }
 }

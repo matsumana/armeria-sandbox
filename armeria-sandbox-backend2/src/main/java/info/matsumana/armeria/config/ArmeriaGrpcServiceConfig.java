@@ -9,7 +9,7 @@ import com.linecorp.armeria.common.grpc.GrpcSerializationFormats;
 import com.linecorp.armeria.server.brave.BraveService;
 import com.linecorp.armeria.server.grpc.GrpcService;
 import com.linecorp.armeria.server.logging.LoggingService;
-import com.linecorp.armeria.server.throttling.ThrottlingHttpService;
+import com.linecorp.armeria.server.throttling.ThrottlingService;
 import com.linecorp.armeria.spring.GrpcExampleRequest;
 import com.linecorp.armeria.spring.GrpcServiceRegistrationBean;
 
@@ -62,7 +62,7 @@ public class ArmeriaGrpcServiceConfig {
                                        .build())
                 .setDecorators(
                         BraveService.newDecorator(tracing),
-                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend2")),
+                        ThrottlingService.newDecorator(throttlingHelper.newThrottlingStrategy("backend2")),
                         LoggingService.newDecorator())
                 .setExampleRequests(List.of(GrpcExampleRequest.of(Hello2ServiceGrpc.SERVICE_NAME,
                                                                   "Hello",

@@ -1,27 +1,26 @@
 package info.matsumana.armeria.config;
 
-import static com.linecorp.armeria.client.endpoint.EndpointSelectionStrategy.WEIGHTED_ROUND_ROBIN;
-
 import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.linecorp.armeria.client.Client;
+import com.linecorp.armeria.client.ClientDecoration;
+import com.linecorp.armeria.client.ClientDecorationBuilder;
+import com.linecorp.armeria.client.ClientOption;
+import com.linecorp.armeria.client.ClientOptionValue;
+import com.linecorp.armeria.client.HttpClient;
 import com.linecorp.armeria.client.brave.BraveClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreaker;
-import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerHttpClient;
-import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerStrategy;
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerClient;
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRule;
 import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
-import com.linecorp.armeria.client.endpoint.EndpointGroupRegistry;
 import com.linecorp.armeria.client.endpoint.healthcheck.HealthCheckedEndpointGroup;
 import com.linecorp.armeria.client.logging.LoggingClient;
-import com.linecorp.armeria.client.retrofit2.ArmeriaRetrofitBuilder;
-import com.linecorp.armeria.client.retry.RetryStrategy;
-import com.linecorp.armeria.client.retry.RetryingHttpClient;
-import com.linecorp.armeria.common.HttpRequest;
-import com.linecorp.armeria.common.HttpResponse;
+import com.linecorp.armeria.client.retrofit2.ArmeriaRetrofit;
+import com.linecorp.armeria.client.retry.RetryRule;
+import com.linecorp.armeria.client.retry.RetryingClient;
 
 import brave.Tracing;
 import info.matsumana.armeria.helper.EndpointGroupHelper;
@@ -53,29 +52,33 @@ public class ArmeriaClientConfig {
                                                                          apiServerSetting.getBackend4());
         final HealthCheckedEndpointGroup healthCheckedGroup = HealthCheckedEndpointGroup.of(group,
                                                                                             "/internal/healthcheck");
-        if (EndpointGroupRegistry.register("backend4", healthCheckedGroup, WEIGHTED_ROUND_ROBIN)) {
-            healthCheckedGroup.newMeterBinder("backend4").bindTo(meterRegistry);
-        }
+        healthCheckedGroup.newMeterBinder("backend4").bindTo(meterRegistry);
 
-        return new ArmeriaRetrofitBuilder()
-                .baseUrl(String.format("http://group:%s/", "backend4"))
-                .addConverterFactory(JacksonConverterFactory.create())
-                .withClientOptions((uri, optionsBuilder) -> optionsBuilder
-                        .decorator(BraveClient.newDecorator(tracing, "backend4"))
-                        .decorator(RetryingHttpClient.newDecorator(RetryStrategy.onServerErrorStatus(),
-                                                                   MAX_TOTAL_ATTEMPTS))
-                        .decorator(newCircuitBreakerDecorator())
-                        .decorator(LoggingClient.newDecorator()))
-                .build();
+        return ArmeriaRetrofit.builder("http", healthCheckedGroup)
+                              .addConverterFactory(JacksonConverterFactory.create())
+                              .option(createDecorationOption())
+                              .build();
     }
 
-    private Function<Client<HttpRequest, HttpResponse>, CircuitBreakerHttpClient> newCircuitBreakerDecorator() {
-        return CircuitBreakerHttpClient.newPerHostDecorator(
-//        return CircuitBreakerHttpClient.newPerHostAndMethodDecorator(
+    private ClientOptionValue<ClientDecoration> createDecorationOption() {
+        final ClientDecorationBuilder clientDecorationBuilder = ClientDecoration.builder();
+        final ClientDecoration clientDecoration =
+                clientDecorationBuilder.add(BraveClient.newDecorator(tracing, "backend4"))
+                                       .add(RetryingClient.newDecorator(RetryRule.onServerErrorStatus(),
+                                                                        MAX_TOTAL_ATTEMPTS))
+                                       .add(newCircuitBreakerDecorator())
+                                       .add(LoggingClient.newDecorator())
+                                       .build();
+        return ClientOption.DECORATION.newValue(clientDecoration);
+    }
+
+    private Function<? super HttpClient, CircuitBreakerClient> newCircuitBreakerDecorator() {
+        return CircuitBreakerClient.newPerHostDecorator(
+//        return CircuitBreakerClient.newPerHostAndMethodDecorator(
                 groupName -> CircuitBreaker.builder("backend3" + '_' + groupName)
                                            .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
                                            .failureRateThreshold(0.1)  // TODO need tuning
                                            .build(),
-                CircuitBreakerStrategy.onServerErrorStatus());
+                CircuitBreakerRule.onServerErrorStatus());
     }
 }

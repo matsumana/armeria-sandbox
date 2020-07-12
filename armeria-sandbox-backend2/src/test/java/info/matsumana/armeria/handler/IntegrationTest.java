@@ -9,8 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.linecorp.armeria.client.ClientBuilder;
-import com.linecorp.armeria.client.HttpClient;
+import com.linecorp.armeria.client.Clients;
+import com.linecorp.armeria.client.WebClient;
 import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.server.Server;
@@ -28,15 +28,15 @@ public class IntegrationTest {
     @Autowired
     private Server server;
 
-    private HttpClient client;
+    private WebClient client;
     private Hello2ServiceBlockingStub hello2Service;
 
     @BeforeEach
     public void beforeEach() {
-        final int port = server.activePort().get().localAddress().getPort();
-        client = HttpClient.of("http://127.0.0.1:" + port);
-        hello2Service = new ClientBuilder(String.format("gproto+h2c://127.0.0.1:%d/", port))
-                .build(Hello2ServiceBlockingStub.class);
+        final int port = server.activeLocalPort();
+        client = WebClient.of("http://127.0.0.1:" + port);
+        hello2Service = Clients.builder(String.format("gproto+h2c://127.0.0.1:%d/", port))
+                               .build(Hello2ServiceBlockingStub.class);
     }
 
     @Test

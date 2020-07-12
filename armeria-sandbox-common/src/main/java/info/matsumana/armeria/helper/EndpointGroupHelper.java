@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
@@ -86,8 +87,8 @@ public class EndpointGroupHelper {
                 .ofWatcher(watcher, endpoints -> endpoints);
 
         try {
-            group.awaitInitialEndpoints(30, TimeUnit.SECONDS);
-        } catch (InterruptedException | TimeoutException e) {
+            group.whenReady().get(30, TimeUnit.SECONDS);
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
             throw new RuntimeException(e);
         }
 

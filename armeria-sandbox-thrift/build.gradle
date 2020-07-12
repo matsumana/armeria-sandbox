@@ -5,7 +5,7 @@ project(":armeria-sandbox-thrift") {
 
     dependencies {
         api "org.apache.thrift:libthrift"
-        api "com.linecorp.armeria:armeria-thrift"
+        api "com.linecorp.armeria:armeria-thrift${v('thrift')}"
         compileOnly "javax.annotation:javax.annotation-api"
     }
 

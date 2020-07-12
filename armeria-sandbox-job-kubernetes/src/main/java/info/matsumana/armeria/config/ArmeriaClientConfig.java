@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.linecorp.armeria.client.retrofit2.ArmeriaRetrofitBuilder;
+import com.linecorp.armeria.client.retrofit2.ArmeriaRetrofit;
 
 import info.matsumana.armeria.config.ApiServerSetting.EndpointSetting;
 import retrofit2.Retrofit;
@@ -31,9 +31,8 @@ public class ArmeriaClientConfig {
         final String host = endpointSetting.getHost();
         final int port = endpointSetting.getPort();
 
-        return new ArmeriaRetrofitBuilder()
-                .baseUrl(String.format("%s://%s:%d/", scheme, host, port))
-                .addConverterFactory(JacksonConverterFactory.create(objectMapper))
-                .build();
+        return ArmeriaRetrofit.builder(String.format("%s://%s:%d/", scheme, host, port))
+                              .addConverterFactory(JacksonConverterFactory.create(objectMapper))
+                              .build();
     }
 }
