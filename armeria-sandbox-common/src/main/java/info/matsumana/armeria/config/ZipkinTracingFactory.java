@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component;
 import com.linecorp.armeria.common.brave.RequestContextCurrentTraceContext;
 
 import brave.Tracing;
-import zipkin2.Span;
-import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.Sender;
+import zipkin2.reporter.brave.AsyncZipkinSpanHandler;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 
 @Component
@@ -27,18 +26,15 @@ public class ZipkinTracingFactory {
         return Tracing.newBuilder()
                       .localServiceName(serviceName)
                       .currentTraceContext(RequestContextCurrentTraceContext.ofDefault())
-                      .spanReporter(spanReporter())
+                      .addSpanHandler(spanHandler())
                       .build();
     }
 
     /**
      * Configuration for how to buffer spans into messages for Zipkin
      */
-    private AsyncReporter<Span> spanReporter() {
+    private AsyncZipkinSpanHandler spanHandler() {
         final Sender sender = URLConnectionSender.create(endpoint);
-        final AsyncReporter<Span> result = AsyncReporter.create(sender);
-        // make sure spans are reported on shutdown
-        Runtime.getRuntime().addShutdownHook(new Thread(result::close));
-        return result;
+        return AsyncZipkinSpanHandler.create(sender);
     }
 }
