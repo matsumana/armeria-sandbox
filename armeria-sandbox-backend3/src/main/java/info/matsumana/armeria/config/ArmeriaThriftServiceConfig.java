@@ -1,7 +1,5 @@
 package info.matsumana.armeria.config;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,7 +7,8 @@ import com.linecorp.armeria.server.brave.BraveService;
 import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.thrift.THttpService;
 import com.linecorp.armeria.server.throttling.ThrottlingService;
-import com.linecorp.armeria.spring.ThriftServiceRegistrationBean;
+import com.linecorp.armeria.spring.ArmeriaServerConfigurator;
+import com.linecorp.armeria.spring.DocServiceConfigurator;
 
 import brave.Tracing;
 import info.matsumana.armeria.helper.ThrottlingHelper;
@@ -28,26 +27,26 @@ public class ArmeriaThriftServiceConfig {
     }
 
     @Bean
-    public ThriftServiceRegistrationBean pingService(PingService.AsyncIface service) {
-        return new ThriftServiceRegistrationBean()
-                .setServiceName("pingService")
-                .setPath("/thrift/ping")
-                .setService(THttpService.of(service))
-                .setDecorators(BraveService.newDecorator(tracing),
-                               LoggingService.newDecorator())
-                .setExampleRequests(List.of(new PingService.ping_args()));
+    public ArmeriaServerConfigurator armeriaServerConfigurator(PingService.AsyncIface pingService,
+                                                               Hello3Service.AsyncIface hello3Service) {
+        return serverBuilder -> serverBuilder
+                .service("/thrift/ping",
+                         THttpService.of(pingService)
+                                     .decorate(BraveService.newDecorator(tracing))
+                                     .decorate(LoggingService.newDecorator()))
+                .service("/thrift/hello3",
+                         THttpService.of(hello3Service)
+                                     .decorate(BraveService.newDecorator(tracing))
+                                     .decorate(ThrottlingService.newDecorator(
+                                             throttlingHelper.newThrottlingStrategy("backend3")))
+                                     .decorate(LoggingService.newDecorator()));
     }
 
     @Bean
-    public ThriftServiceRegistrationBean hello3Service(Hello3Service.AsyncIface service) {
-        return new ThriftServiceRegistrationBean()
-                .setServiceName("hello3Service")
-                .setPath("/thrift/hello3")
-                .setService(THttpService.of(service))
-                .setDecorators(
-                        BraveService.newDecorator(tracing),
-                        ThrottlingService.newDecorator(throttlingHelper.newThrottlingStrategy("backend3")),
-                        LoggingService.newDecorator())
-                .setExampleRequests(List.of(new Hello3Service.hello_args("foo")));
+    public DocServiceConfigurator docServiceConfigurator() {
+        return docServiceBuilder -> {
+            docServiceBuilder.exampleRequest(new PingService.ping_args())
+                             .exampleRequest(new Hello3Service.hello_args("foo"));
+        };
     }
 }

@@ -3,7 +3,7 @@ package info.matsumana.armeria.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.linecorp.armeria.spring.AnnotatedServiceRegistrationBean;
+import com.linecorp.armeria.spring.ArmeriaServerConfigurator;
 
 import info.matsumana.armeria.handler.RootHandler;
 
@@ -11,9 +11,8 @@ import info.matsumana.armeria.handler.RootHandler;
 public class ArmeriaHttpServiceConfig {
 
     @Bean
-    public AnnotatedServiceRegistrationBean rootHandlerRegistrationBean(RootHandler handler) {
-        return new AnnotatedServiceRegistrationBean()
-                .setServiceName("rootService")
-                .setService(handler);
+    public ArmeriaServerConfigurator armeriaServerConfigurator(RootHandler rootHandler) {
+        return server -> server.annotatedService()
+                               .build(rootHandler);
     }
 }
