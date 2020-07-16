@@ -2,15 +2,11 @@ package info.matsumana.armeria.config;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
-import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
-
-import javax.annotation.Nullable;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.linecorp.armeria.client.ClientRequestContext;
 import com.linecorp.armeria.client.Clients;
 import com.linecorp.armeria.client.HttpClient;
 import com.linecorp.armeria.client.RpcClient;
@@ -30,6 +26,7 @@ import com.linecorp.armeria.client.retry.RetryRule;
 import com.linecorp.armeria.client.retry.RetryRuleWithContent;
 import com.linecorp.armeria.client.retry.RetryingClient;
 import com.linecorp.armeria.client.retry.RetryingRpcClient;
+import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.common.RpcResponse;
 
 import brave.Tracing;
@@ -64,7 +61,7 @@ public class ArmeriaClientConfig {
         registerEndpointGroup(group, "backend1");
         return Clients.builder("tbinary+h2c", group, "/thrift/hello1")
                       .decorator(BraveClient.newDecorator(tracing, "backend1"))
-                      .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                      .rpcDecorator(RetryingRpcClient.newDecorator(newRetryRpcStrategy(), MAX_TOTAL_ATTEMPTS))
                       .rpcDecorator(newCircuitBreakerRpcDecorator())
                       .decorator(LoggingClient.newDecorator())
                       .build(Hello1Service.AsyncIface.class);
@@ -77,8 +74,12 @@ public class ArmeriaClientConfig {
         registerEndpointGroup(group, "backend2");
         return Clients.builder("gproto+h2c", group, "/")
                       .decorator(BraveClient.newDecorator(tracing, "backend2"))
-                      .decorator(RetryingClient.newDecorator(RetryRule.onServerErrorStatus(),
-                                                             MAX_TOTAL_ATTEMPTS))
+                      .decorator(RetryingClient.newDecorator(
+                              // Armeria's ThrottlingService returns 429 while throttling
+                              RetryRule.of(RetryRule.onException(),
+                                           RetryRule.onServerErrorStatus(),
+                                           RetryRule.onStatus(HttpStatus.TOO_MANY_REQUESTS)),
+                              MAX_TOTAL_ATTEMPTS))
                       .decorator(newCircuitBreakerHttpDecorator())
                       .decorator(LoggingClient.newDecorator())
                       .build(Hello2ServiceFutureStub.class);
@@ -91,7 +92,7 @@ public class ArmeriaClientConfig {
         registerEndpointGroup(group, "backend3");
         return Clients.builder("tbinary+h2c", group, "/thrift/hello3")
                       .decorator(BraveClient.newDecorator(tracing, "backend3"))
-                      .rpcDecorator(RetryingRpcClient.newDecorator(newRetryStrategy(), MAX_TOTAL_ATTEMPTS))
+                      .rpcDecorator(RetryingRpcClient.newDecorator(newRetryRpcStrategy(), MAX_TOTAL_ATTEMPTS))
                       .rpcDecorator(newCircuitBreakerRpcDecorator())
                       .decorator(LoggingClient.newDecorator())
                       .build(Hello3Service.AsyncIface.class);
@@ -121,22 +122,18 @@ public class ArmeriaClientConfig {
                                            .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
                                            .failureRateThreshold(0.1)  // TODO need tuning
                                            .build(),
-                CircuitBreakerRule.onServerErrorStatus());
+                // Armeria's ThrottlingService returns 429 while throttling
+                CircuitBreakerRule.of(CircuitBreakerRule.onException(),
+                                      CircuitBreakerRule.onServerErrorStatus(),
+                                      CircuitBreakerRule.onStatus(HttpStatus.TOO_MANY_REQUESTS)));
     }
 
-    private static RetryRuleWithContent<RpcResponse> newRetryStrategy() {
-        return new RetryRuleWithContent<>() {
-            final Backoff backoff = Backoff.ofDefault();
-
-            @Override
-            public CompletionStage<RetryDecision> shouldRetry(ClientRequestContext ctx,
-                                                              @Nullable RpcResponse response,
-                                                              @Nullable Throwable cause) {
-                if (cause == null) {
-                    return completedFuture(RetryDecision.noRetry());
-                } else {
-                    return completedFuture(RetryDecision.retry(backoff));
-                }
+    private static RetryRuleWithContent<RpcResponse> newRetryRpcStrategy() {
+        return (ctx, response, cause) -> {
+            if (cause == null) {
+                return completedFuture(RetryDecision.noRetry());
+            } else {
+                return completedFuture(RetryDecision.retry(Backoff.ofDefault()));
             }
         };
     }

@@ -66,13 +66,13 @@ public class ArmeriaClientConfig {
                 clientDecorationBuilder.add(BraveClient.newDecorator(tracing, "backend4"))
                                        .add(RetryingClient.newDecorator(RetryRule.onServerErrorStatus(),
                                                                         MAX_TOTAL_ATTEMPTS))
-                                       .add(newCircuitBreakerDecorator())
+                                       .add(newCircuitBreakerHttpDecorator())
                                        .add(LoggingClient.newDecorator())
                                        .build();
         return ClientOption.DECORATION.newValue(clientDecoration);
     }
 
-    private Function<? super HttpClient, CircuitBreakerClient> newCircuitBreakerDecorator() {
+    private Function<? super HttpClient, CircuitBreakerClient> newCircuitBreakerHttpDecorator() {
         return CircuitBreakerClient.newPerHostDecorator(
 //        return CircuitBreakerClient.newPerHostAndMethodDecorator(
                 groupName -> CircuitBreaker.builder("backend3" + '_' + groupName)
