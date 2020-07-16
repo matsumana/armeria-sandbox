@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import com.linecorp.armeria.client.circuitbreaker.FailFastException;
-import com.linecorp.armeria.common.thrift.ThriftCompletableFuture;
+import com.linecorp.armeria.common.thrift.ThriftFuture;
 
 import hu.akarnokd.rxjava2.interop.SingleInterop;
 import info.matsumana.armeria.bean.FrontendResponse;
@@ -45,7 +45,7 @@ public class HelloService {
     public Single<FrontendResponse> hello(String name) throws TException {
 
         // Convert to Single
-        final ThriftCompletableFuture<Hello1Response> future1 = new ThriftCompletableFuture<>();
+        final ThriftFuture<Hello1Response> future1 = new ThriftFuture<>();
         hello1Service.hello(name, future1);
 
         final Hello2Request request = Hello2Request.newBuilder()
@@ -53,7 +53,7 @@ public class HelloService {
                                                    .build();
         final ListenableFuture<Hello2Response> future2 = hello2Service.hello(request);
 
-        final ThriftCompletableFuture<Hello3Response> future3 = new ThriftCompletableFuture<>();
+        final ThriftFuture<Hello3Response> future3 = new ThriftFuture<>();
         hello3Service.hello(name, future3);
 
         return Single.zip(SingleInterop.fromFuture(future1)

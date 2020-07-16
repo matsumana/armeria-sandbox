@@ -1,7 +1,5 @@
 package info.matsumana.armeria.config;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,9 +7,9 @@ import com.linecorp.armeria.common.grpc.GrpcSerializationFormats;
 import com.linecorp.armeria.server.brave.BraveService;
 import com.linecorp.armeria.server.grpc.GrpcService;
 import com.linecorp.armeria.server.logging.LoggingService;
-import com.linecorp.armeria.server.throttling.ThrottlingHttpService;
-import com.linecorp.armeria.spring.GrpcExampleRequest;
-import com.linecorp.armeria.spring.GrpcServiceRegistrationBean;
+import com.linecorp.armeria.server.throttling.ThrottlingService;
+import com.linecorp.armeria.spring.ArmeriaServerConfigurator;
+import com.linecorp.armeria.spring.DocServiceConfigurator;
 
 import brave.Tracing;
 import info.matsumana.armeria.grpc.Hello2.Hello2Request;
@@ -34,40 +32,38 @@ public class ArmeriaGrpcServiceConfig {
     }
 
     @Bean
-    public GrpcServiceRegistrationBean pingService(PingHandler handler) {
-        return new GrpcServiceRegistrationBean()
-                .setServiceName("pingService")
-                .setService(GrpcService.builder()
-                                       .addService(handler)
-                                       // see https://line.github.io/armeria/server-docservice.html
-                                       .supportedSerializationFormats(GrpcSerializationFormats.values())
-                                       .enableUnframedRequests(true)
-                                       .build())
-                .setDecorators(BraveService.newDecorator(tracing),
-                               LoggingService.newDecorator())
-                .setExampleRequests(List.of(GrpcExampleRequest.of(PingServiceGrpc.SERVICE_NAME,
-                                                                  "Ping",
-                                                                  PingRequest.newBuilder().build())));
+    public ArmeriaServerConfigurator armeriaServerConfigurator(PingHandler pingHandler,
+                                                               Hello2Handler hello2Handler) {
+        final var pingService = GrpcService.builder()
+                                           .addService(pingHandler)
+                                           .supportedSerializationFormats(GrpcSerializationFormats.values())
+                                           .enableUnframedRequests(true)
+                                           .build();
+        final var hello2Service = GrpcService.builder()
+                                             .addService(hello2Handler)
+                                             .supportedSerializationFormats(GrpcSerializationFormats.values())
+                                             .enableUnframedRequests(true)
+                                             .build();
+        return serverBuilder -> serverBuilder
+                .service(pingService,
+                         BraveService.newDecorator(tracing),
+                         LoggingService.newDecorator())
+                .service(hello2Service,
+                         BraveService.newDecorator(tracing),
+                         ThrottlingService.newDecorator(
+                                 throttlingHelper.newThrottlingStrategy("backend2")),
+                         LoggingService.newDecorator());
     }
 
     @Bean
-    public GrpcServiceRegistrationBean hello2Service(Hello2Handler handler) {
-        return new GrpcServiceRegistrationBean()
-                .setServiceName("hello2Service")
-                .setService(GrpcService.builder()
-                                       .addService(handler)
-                                       // see https://line.github.io/armeria/server-docservice.html
-                                       .supportedSerializationFormats(GrpcSerializationFormats.values())
-                                       .enableUnframedRequests(true)
-                                       .build())
-                .setDecorators(
-                        BraveService.newDecorator(tracing),
-                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend2")),
-                        LoggingService.newDecorator())
-                .setExampleRequests(List.of(GrpcExampleRequest.of(Hello2ServiceGrpc.SERVICE_NAME,
-                                                                  "Hello",
-                                                                  Hello2Request.newBuilder()
-                                                                               .setName("Armeria")
-                                                                               .build())));
+    public DocServiceConfigurator docServiceConfigurator() {
+        return docServiceBuilder -> docServiceBuilder.exampleRequestForMethod(PingServiceGrpc.SERVICE_NAME,
+                                                                              "Ping",
+                                                                              PingRequest.newBuilder().build())
+                                                     .exampleRequestForMethod(Hello2ServiceGrpc.SERVICE_NAME,
+                                                                              "Hello",
+                                                                              Hello2Request.newBuilder()
+                                                                                           .setName("Armeria")
+                                                                                           .build());
     }
 }

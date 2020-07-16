@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
-import com.linecorp.armeria.client.HttpClient;
+import com.linecorp.armeria.client.WebClient;
 import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.server.Server;
@@ -34,11 +34,11 @@ public class IntegrationTest {
     @Autowired
     private Server server;
 
-    private HttpClient client;
+    private WebClient client;
 
     @BeforeEach
     public void beforeEach() {
-        client = HttpClient.of("http://127.0.0.1:" + server.activePort().get().localAddress().getPort());
+        client = WebClient.of("http://127.0.0.1:" + server.activeLocalPort());
     }
 
     @Test

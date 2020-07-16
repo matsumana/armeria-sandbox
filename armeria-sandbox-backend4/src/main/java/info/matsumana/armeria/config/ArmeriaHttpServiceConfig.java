@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.server.brave.BraveService;
 import com.linecorp.armeria.server.logging.LoggingService;
-import com.linecorp.armeria.server.throttling.ThrottlingHttpService;
-import com.linecorp.armeria.spring.AnnotatedServiceRegistrationBean;
+import com.linecorp.armeria.server.throttling.ThrottlingService;
+import com.linecorp.armeria.spring.ArmeriaServerConfigurator;
 
 import brave.Tracing;
 import info.matsumana.armeria.handler.HelloHandler;
@@ -25,22 +25,20 @@ public class ArmeriaHttpServiceConfig {
     }
 
     @Bean
-    public AnnotatedServiceRegistrationBean rootHandlerRegistrationBean(RootHandler handler) {
-        return new AnnotatedServiceRegistrationBean()
-                .setServiceName("rootService")
-                .setService(handler)
-                .setDecorators(BraveService.newDecorator(tracing),
-                               LoggingService.newDecorator());
-    }
-
-    @Bean
-    public AnnotatedServiceRegistrationBean helloHandlerRegistrationBean(HelloHandler handler) {
-        return new AnnotatedServiceRegistrationBean()
-                .setServiceName("helloService")
-                .setService(handler)
-                .setDecorators(
-                        BraveService.newDecorator(tracing),
-                        ThrottlingHttpService.newDecorator(throttlingHelper.newThrottlingStrategy("backend4")),
-                        LoggingService.newDecorator());
+    public ArmeriaServerConfigurator armeriaServerConfigurator(RootHandler rootHandler,
+                                                               HelloHandler helloHandler) {
+        return server -> server
+                // rootHandler
+                .annotatedService()
+                .decorator(BraveService.newDecorator(tracing))
+                .decorator(LoggingService.newDecorator())
+                .build(rootHandler)
+                // helloHandler
+                .annotatedService()
+                .decorator(BraveService.newDecorator(tracing))
+                .decorator(ThrottlingService.newDecorator(
+                        throttlingHelper.newThrottlingStrategy("backend4")))
+                .decorator(LoggingService.newDecorator())
+                .build(helloHandler);
     }
 }

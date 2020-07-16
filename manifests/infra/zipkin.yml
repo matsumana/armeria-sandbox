@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: zipkin
-          image: openzipkin/zipkin-slim:2.18.3
+          image: openzipkin/zipkin-slim:2.21.5
           ports:
             - containerPort: 9411
           resources:
