@@ -1,6 +1,5 @@
 project(":armeria-sandbox-common") {
     dependencies {
-        api "com.linecorp.armeria:armeria"
         api "com.linecorp.armeria:armeria-spring-boot2-starter"
         api "com.linecorp.armeria:armeria-spring-boot2-actuator-starter"
         api "com.linecorp.armeria:armeria-rxjava2"
