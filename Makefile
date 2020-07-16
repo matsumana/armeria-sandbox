@@ -1,3 +1,5 @@
+PWD := $(shell pwd)
+
 gradlew-clean-build:
 	./gradlew --no-daemon clean build
 
@@ -14,6 +16,24 @@ docker-image-prune:
 	docker image prune
 
 docker-build:
+	cd $(PWD)/armeria-sandbox-job-kubernetes/build/libs && jar xvf *.jar
+	cd $(PWD)/armeria-sandbox-frontend/build/libs && jar xvf *.jar
+	cd $(PWD)/armeria-sandbox-backend1/build/libs && jar xvf *.jar
+	cd $(PWD)/armeria-sandbox-backend2/build/libs && jar xvf *.jar
+	cd $(PWD)/armeria-sandbox-backend3/build/libs && jar xvf *.jar
+	cd $(PWD)/armeria-sandbox-backend4/build/libs && jar xvf *.jar
+	mkdir $(PWD)/armeria-sandbox-job-kubernetes/build/libs/BOOT-INF/lib-app
+	mkdir $(PWD)/armeria-sandbox-frontend/build/libs/BOOT-INF/lib-app
+	mkdir $(PWD)/armeria-sandbox-backend1/build/libs/BOOT-INF/lib-app
+	mkdir $(PWD)/armeria-sandbox-backend2/build/libs/BOOT-INF/lib-app
+	mkdir $(PWD)/armeria-sandbox-backend3/build/libs/BOOT-INF/lib-app
+	mkdir $(PWD)/armeria-sandbox-backend4/build/libs/BOOT-INF/lib-app
+	mv $(PWD)/armeria-sandbox-job-kubernetes/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-job-kubernetes/build/libs/BOOT-INF/lib-app
+	mv $(PWD)/armeria-sandbox-frontend/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-frontend/build/libs/BOOT-INF/lib-app
+	mv $(PWD)/armeria-sandbox-backend1/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend1/build/libs/BOOT-INF/lib-app
+	mv $(PWD)/armeria-sandbox-backend2/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend2/build/libs/BOOT-INF/lib-app
+	mv $(PWD)/armeria-sandbox-backend3/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend3/build/libs/BOOT-INF/lib-app
+	mv $(PWD)/armeria-sandbox-backend4/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend4/build/libs/BOOT-INF/lib-app
 	docker build -t localhost:5000/armeria-sandbox-job-kubernetes:latest ./armeria-sandbox-job-kubernetes
 	docker build -t localhost:5000/armeria-sandbox-frontend:latest ./armeria-sandbox-frontend
 	docker build -t localhost:5000/armeria-sandbox-backend1:latest ./armeria-sandbox-backend1
