@@ -14,13 +14,13 @@ import info.matsumana.armeria.handler.RootHandler;
 import info.matsumana.armeria.helper.ThrottlingHelper;
 
 @Configuration
-public class ArmeriaHttpServiceConfig {
+public class ArmeriaServerConfig {
 
     private final Tracing tracing;
     private final ThrottlingHelper throttlingHelper;
 
-    ArmeriaHttpServiceConfig(ZipkinTracingFactory tracingFactory, ThrottlingHelper throttlingHelper) {
-        tracing = tracingFactory.create("backend4");
+    ArmeriaServerConfig(ZipkinTracingFactory tracingFactory, ThrottlingHelper throttlingHelper) {
+        tracing = tracingFactory.create("frontend");
         this.throttlingHelper = throttlingHelper;
     }
 
@@ -37,7 +37,7 @@ public class ArmeriaHttpServiceConfig {
                 .annotatedService()
                 .decorator(BraveService.newDecorator(tracing))
                 .decorator(ThrottlingService.newDecorator(
-                        throttlingHelper.newThrottlingStrategy("backend4")))
+                        throttlingHelper.newThrottlingStrategy("frontend")))
                 .decorator(LoggingService.newDecorator())
                 .build(helloHandler);
     }
