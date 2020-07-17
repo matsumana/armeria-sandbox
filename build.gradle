@@ -21,7 +21,7 @@ subprojects {
     apply plugin: "io.spring.dependency-management"
 
     group = "info.matsumana.armeria"
-    version = "0.8.0"
+    version = "0.8.1-SNAPSHOT"
 
     sourceCompatibility = JavaVersion.VERSION_14
     targetCompatibility = JavaVersion.VERSION_14
