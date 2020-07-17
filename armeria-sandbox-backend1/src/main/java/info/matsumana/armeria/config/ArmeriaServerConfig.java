@@ -16,12 +16,12 @@ import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.PingService;
 
 @Configuration
-public class ArmeriaThriftServiceConfig {
+public class ArmeriaServerConfig {
 
     private final Tracing tracing;
     private final ThrottlingHelper throttlingHelper;
 
-    ArmeriaThriftServiceConfig(ZipkinTracingFactory tracingFactory, ThrottlingHelper throttlingHelper) {
+    ArmeriaServerConfig(ZipkinTracingFactory tracingFactory, ThrottlingHelper throttlingHelper) {
         tracing = tracingFactory.create("backend1");
         this.throttlingHelper = throttlingHelper;
     }
