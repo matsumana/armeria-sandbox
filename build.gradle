@@ -64,10 +64,6 @@ subprojects {
         testImplementation "org.assertj:assertj-core"
     }
 
-    compileJava {
-        options.compilerArgs += "-parameters"
-    }
-
     test {
         useJUnitPlatform()
     }
