@@ -21,14 +21,14 @@ import info.matsumana.armeria.thrift.Hello1Service;
 import info.matsumana.armeria.thrift.Hello3Response;
 import info.matsumana.armeria.thrift.Hello3Service;
 import info.matsumana.armeria.thrift.Hello4Response;
-import info.matsumana.armeria.util.SingleInteropUtil;
+import info.matsumana.armeria.util.RxInteropUtil;
 import io.grpc.StatusRuntimeException;
 import io.reactivex.Single;
 
 @Service
 public class HelloService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(HelloService.class);
 
     private final Hello1Service.AsyncIface hello1Service;
     private final Hello2ServiceFutureStub hello2Service;
@@ -58,7 +58,7 @@ public class HelloService {
 
         return Single.zip(SingleInterop.fromFuture(future1)
                                        .doOnSuccess(res -> log.debug("hello1Service res={}", res))
-                                       .doOnError(e -> log.debug("hello1Service exception", e))
+                                       .doOnError(e -> log.error("hello1Service exception", e))
                                        .onErrorReturn(e -> {
                                            if (e instanceof FailFastException) {
                                                // Circuit Breaker fallback
@@ -72,33 +72,33 @@ public class HelloService {
                                            response.setMessage(res.getMessage());
                                            return response;
                                        }),
-                          SingleInteropUtil.fromListenableFuture(future2)
-                                           .doOnSuccess(res -> log.debug("hello2Service res={}", res))
-                                           .doOnError(e -> log.debug("hello2Service exception", e))
-                                           .onErrorReturn(e -> {
-                                               if (e instanceof StatusRuntimeException) {
-                                                   final Throwable cause = e.getCause();
-                                                   if (cause instanceof FailFastException) {
-                                                       // Circuit Breaker fallback
-                                                       return Hello2Response
-                                                               .newBuilder()
-                                                               .setServerName("")
-                                                               .setMessage("[fallback] Hello, ???")
-                                                               .build();
-                                                   }
-                                                   throw new RuntimeException(cause);
+                          RxInteropUtil.fromListenableFutureToSingle(future2)
+                                       .doOnSuccess(res -> log.debug("hello2Service res={}", res))
+                                       .doOnError(e -> log.error("hello2Service exception", e))
+                                       .onErrorReturn(e -> {
+                                           if (e instanceof StatusRuntimeException) {
+                                               final Throwable cause = e.getCause();
+                                               if (cause instanceof FailFastException) {
+                                                   // Circuit Breaker fallback
+                                                   return Hello2Response
+                                                           .newBuilder()
+                                                           .setServerName("")
+                                                           .setMessage("[fallback] Hello, ???")
+                                                           .build();
                                                }
-                                               throw new RuntimeException(e);
-                                           })
-                                           .map(res -> {
-                                               final HelloResponse response = new HelloResponse();
-                                               response.setServerName(res.getServerName());
-                                               response.setMessage(res.getMessage());
-                                               return response;
-                                           }),
+                                               throw new RuntimeException(cause);
+                                           }
+                                           throw new RuntimeException(e);
+                                       })
+                                       .map(res -> {
+                                           final HelloResponse response = new HelloResponse();
+                                           response.setServerName(res.getServerName());
+                                           response.setMessage(res.getMessage());
+                                           return response;
+                                       }),
                           SingleInterop.fromFuture(future3)
                                        .doOnSuccess(res -> log.debug("hello3Service res={}", res))
-                                       .doOnError(e -> log.debug("hello3Service exception", e))
+                                       .doOnError(e -> log.error("hello3Service exception", e))
                                        .onErrorReturn(e -> {
                                            if (e instanceof FailFastException) {
                                                // Circuit Breaker fallback

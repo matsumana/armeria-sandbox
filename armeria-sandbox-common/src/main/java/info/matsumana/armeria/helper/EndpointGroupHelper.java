@@ -38,7 +38,7 @@ import info.matsumana.armeria.config.ApiServerSetting.EndpointSetting;
 @Component
 public class EndpointGroupHelper {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(EndpointGroupHelper.class);
 
     private static final ObjectReader podListReader = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

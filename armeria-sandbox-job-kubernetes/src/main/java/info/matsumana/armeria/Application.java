@@ -10,12 +10,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class Application {
 
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            logger.info("Start shutting down");
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> log.info("Start shutting down")));
 
         SpringApplication.run(Application.class, args);
     }

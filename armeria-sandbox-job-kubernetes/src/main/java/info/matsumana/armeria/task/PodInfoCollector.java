@@ -27,7 +27,7 @@ import retrofit2.Retrofit;
 @Component
 public class PodInfoCollector {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(PodInfoCollector.class);
 
     private static final ObjectWriter podListWriter = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

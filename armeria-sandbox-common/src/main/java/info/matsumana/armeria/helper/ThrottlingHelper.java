@@ -33,7 +33,7 @@ import info.matsumana.armeria.config.ThrottlingSetting;
 @Component
 public class ThrottlingHelper {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(ThrottlingHelper.class);
     private static final ObjectReader reader = new ObjectMapper()
             .readerFor(new TypeReference<Map<String, ThrottlingSetting>>() {});
 
