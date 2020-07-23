@@ -10,6 +10,6 @@ public class RootHandler {
 
     @Get("/")
     public HttpResponse index() {
-        return HttpResponse.of("index");
+        return HttpResponse.of("It works!");
     }
 }

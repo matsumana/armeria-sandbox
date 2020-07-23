@@ -1,8 +1,8 @@
 package info.matsumana.armeria.handler;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -23,6 +23,8 @@ import io.reactivex.Single;
 @Component
 public class HelloHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(HelloHandler.class);
+
     private static final ObjectWriter objectWriter = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .writerFor(new TypeReference<FrontendResponse>() {});
@@ -34,23 +36,16 @@ public class HelloHandler {
     }
 
     @Get("/hello/:name")
-    public CompletableFuture<HttpResponse> hello(@Param String name) throws TException {
-
-        // Convert to Single<HttpResponse>
-        final Single<HttpResponse> singleResponse =
-                helloService.hello(name)
-                            .map(response -> {
-                                final String json = objectWriter.writeValueAsString(response);
-                                return HttpResponse.of(HttpStatus.OK, MediaType.JSON_UTF_8, json);
-                            });
-
-        // Convert to CompletableFuture
-        final CompletableFuture<HttpResponse> futureResponse = new CompletableFuture<>();
-        singleResponse.subscribe(futureResponse::complete, futureResponse::completeExceptionally);
-
-        return futureResponse
-                .exceptionally(e -> HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR,
-                                                    MediaType.PLAIN_TEXT_UTF_8,
-                                                    e.toString()));
+    public Single<HttpResponse> hello(@Param String name) throws TException {
+        return helloService.hello(name)
+                           .doOnError(e -> log.error("helloHandler exception", e))
+                           .map(response -> {
+                               final String json = objectWriter.writeValueAsString(response);
+                               return HttpResponse.of(HttpStatus.OK, MediaType.JSON_UTF_8, json);
+                           })
+                           .onErrorReturn(e -> HttpResponse.of(HttpStatus.INTERNAL_SERVER_ERROR,
+                                                               MediaType.PLAIN_TEXT_UTF_8,
+                                                               e.toString())
+                           );
     }
 }

@@ -19,7 +19,7 @@ import retrofit2.Retrofit;
 @Component
 public class Hello3Handler implements Hello3Service.AsyncIface {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(Hello3Handler.class);
 
     private final Retrofit retrofit;
 

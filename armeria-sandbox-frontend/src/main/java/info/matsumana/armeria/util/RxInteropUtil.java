@@ -7,11 +7,11 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import io.reactivex.Single;
 
-public final class SingleInteropUtil {
+public final class RxInteropUtil {
 
-    private SingleInteropUtil() {}
+    private RxInteropUtil() {}
 
-    public static <T> Single<T> fromListenableFuture(ListenableFuture<? extends T> future) {
+    public static <T> Single<T> fromListenableFutureToSingle(ListenableFuture<? extends T> future) {
         return Single.defer(() -> Single.create(e -> Futures.addCallback(
                 future,
                 new FutureCallback<T>() {
