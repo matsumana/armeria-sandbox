@@ -4,7 +4,7 @@ project(":armeria-sandbox-grpc") {
 
     dependencies {
         api "com.linecorp.armeria:armeria-grpc"
-        compileOnly "javax.annotation:javax.annotation-api"
+        compileOnly "jakarta.annotation:jakarta.annotation-api"
     }
 
     protobuf {

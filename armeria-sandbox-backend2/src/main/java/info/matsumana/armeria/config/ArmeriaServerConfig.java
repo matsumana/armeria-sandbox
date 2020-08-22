@@ -44,7 +44,7 @@ public class ArmeriaServerConfig {
                                              .supportedSerializationFormats(GrpcSerializationFormats.values())
                                              .enableUnframedRequests(true)
                                              .build();
-        return serverBuilder -> serverBuilder
+        return builder -> builder
                 .service(pingService,
                          BraveService.newDecorator(tracing),
                          LoggingService.newDecorator())
@@ -57,13 +57,12 @@ public class ArmeriaServerConfig {
 
     @Bean
     public DocServiceConfigurator docServiceConfigurator() {
-        return docServiceBuilder -> docServiceBuilder.exampleRequestForMethod(PingServiceGrpc.SERVICE_NAME,
-                                                                              "Ping",
-                                                                              PingRequest.newBuilder().build())
-                                                     .exampleRequestForMethod(Hello2ServiceGrpc.SERVICE_NAME,
-                                                                              "Hello",
-                                                                              Hello2Request.newBuilder()
-                                                                                           .setName("Armeria")
-                                                                                           .build());
+        return builder -> builder
+                .exampleRequests(PingServiceGrpc.SERVICE_NAME, "Ping",
+                                 PingRequest.newBuilder().build())
+                .exampleRequests(Hello2ServiceGrpc.SERVICE_NAME, "Hello",
+                                 Hello2Request.newBuilder()
+                                              .setName("Armeria")
+                                              .build());
     }
 }
