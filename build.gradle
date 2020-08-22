@@ -35,17 +35,8 @@ subprojects {
         imports {
             mavenBom "com.linecorp.armeria:armeria-bom:${v('armeria')}"
             mavenBom "io.zipkin.brave:brave-bom:${v('zipkin-brave')}"
-
-            // Override version Spring Boot use
-            mavenBom "io.netty:netty-bom:${v('netty')}"
-            mavenBom "io.micrometer:micrometer-bom:${v('micrometer')}"
         }
         dependencies {
-            // Override version Armeria use
-            dependency "org.springframework.boot:spring-boot-starter:${v('spring-boot')}"
-            dependency "org.springframework.boot:spring-boot-starter-actuator:${v('spring-boot')}"
-            dependency "org.springframework.boot:spring-boot-starter-test:${v('spring-boot')}"
-
             // armeria-grpc depends on io.grpc:grpc-protobuf and it depends on x.y-android not x.y-jre
             // https://mvnrepository.com/artifact/io.grpc/grpc-protobuf/1.20.0
             dependency "com.google.guava:guava:${v('guava')}"

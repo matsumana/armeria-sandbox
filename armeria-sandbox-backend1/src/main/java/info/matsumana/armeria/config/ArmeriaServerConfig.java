@@ -29,7 +29,7 @@ public class ArmeriaServerConfig {
     @Bean
     public ArmeriaServerConfigurator armeriaServerConfigurator(PingService.AsyncIface pingService,
                                                                Hello1Service.AsyncIface hello1Service) {
-        return serverBuilder -> serverBuilder
+        return builder -> builder
                 .service("/thrift/ping",
                          THttpService.of(pingService)
                                      .decorate(BraveService.newDecorator(tracing))
@@ -44,10 +44,8 @@ public class ArmeriaServerConfig {
 
     @Bean
     public DocServiceConfigurator docServiceConfigurator() {
-        return docServiceBuilder -> {
-            docServiceBuilder
-                    .exampleRequest(new PingService.ping_args())
-                    .exampleRequest(new Hello1Service.hello_args("foo"));
-        };
+        return builder -> builder
+                .exampleRequests(PingService.class, "ping", new PingService.ping_args())
+                .exampleRequests(Hello1Service.class, "hello", new Hello1Service.hello_args("foo"));
     }
 }

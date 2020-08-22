@@ -12,7 +12,7 @@ public class ArmeriaServerConfig {
 
     @Bean
     public ArmeriaServerConfigurator armeriaServerConfigurator(RootHandler rootHandler) {
-        return server -> server.annotatedService()
-                               .build(rootHandler);
+        return builder -> builder.annotatedService()
+                                 .build(rootHandler);
     }
 }

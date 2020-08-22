@@ -7,6 +7,7 @@ import com.linecorp.armeria.server.brave.BraveService;
 import com.linecorp.armeria.server.logging.LoggingService;
 import com.linecorp.armeria.server.throttling.ThrottlingService;
 import com.linecorp.armeria.spring.ArmeriaServerConfigurator;
+import com.linecorp.armeria.spring.DocServiceConfigurator;
 
 import brave.Tracing;
 import info.matsumana.armeria.handler.HelloHandler;
@@ -27,7 +28,7 @@ public class ArmeriaServerConfig {
     @Bean
     public ArmeriaServerConfigurator armeriaServerConfigurator(RootHandler rootHandler,
                                                                HelloHandler helloHandler) {
-        return server -> server
+        return builder -> builder
                 // rootHandler
                 .annotatedService()
                 .decorator(BraveService.newDecorator(tracing))
@@ -40,5 +41,11 @@ public class ArmeriaServerConfig {
                         throttlingHelper.newThrottlingStrategy("backend4")))
                 .decorator(LoggingService.newDecorator())
                 .build(helloHandler);
+    }
+
+    @Bean
+    public DocServiceConfigurator docServiceConfigurator() {
+        return builder -> builder.examplePaths(HelloHandler.class, "hello", "/hello/foo")
+                                 .build();
     }
 }

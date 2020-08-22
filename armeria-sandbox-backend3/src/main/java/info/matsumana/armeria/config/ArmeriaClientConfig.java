@@ -7,14 +7,14 @@ import org.springframework.context.annotation.Configuration;
 
 import com.linecorp.armeria.client.ClientDecoration;
 import com.linecorp.armeria.client.ClientDecorationBuilder;
-import com.linecorp.armeria.client.ClientOption;
 import com.linecorp.armeria.client.ClientOptionValue;
+import com.linecorp.armeria.client.ClientOptions;
 import com.linecorp.armeria.client.HttpClient;
 import com.linecorp.armeria.client.brave.BraveClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreaker;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerClient;
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerListener;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRule;
-import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.healthcheck.HealthCheckedEndpointGroup;
 import com.linecorp.armeria.client.logging.LoggingClient;
@@ -69,14 +69,14 @@ public class ArmeriaClientConfig {
                                        .add(newCircuitBreakerHttpDecorator())
                                        .add(LoggingClient.newDecorator())
                                        .build();
-        return ClientOption.DECORATION.newValue(clientDecoration);
+        return ClientOptions.DECORATION.newValue(clientDecoration);
     }
 
     private Function<? super HttpClient, CircuitBreakerClient> newCircuitBreakerHttpDecorator() {
         return CircuitBreakerClient.newPerHostDecorator(
 //        return CircuitBreakerClient.newPerHostAndMethodDecorator(
                 groupName -> CircuitBreaker.builder("backend3" + '_' + groupName)
-                                           .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
+                                           .listener(CircuitBreakerListener.metricCollecting(meterRegistry))
                                            .failureRateThreshold(0.1)  // TODO need tuning
                                            .build(),
                 CircuitBreakerRule.onServerErrorStatus());

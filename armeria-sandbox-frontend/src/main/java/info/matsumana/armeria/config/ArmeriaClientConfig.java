@@ -13,10 +13,10 @@ import com.linecorp.armeria.client.RpcClient;
 import com.linecorp.armeria.client.brave.BraveClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreaker;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerClient;
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerListener;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRpcClient;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRule;
 import com.linecorp.armeria.client.circuitbreaker.CircuitBreakerRuleWithContent;
-import com.linecorp.armeria.client.circuitbreaker.MetricCollectingCircuitBreakerListener;
 import com.linecorp.armeria.client.endpoint.EndpointGroup;
 import com.linecorp.armeria.client.endpoint.healthcheck.HealthCheckedEndpointGroup;
 import com.linecorp.armeria.client.logging.LoggingClient;
@@ -108,7 +108,7 @@ public class ArmeriaClientConfig {
         return CircuitBreakerRpcClient.newPerHostDecorator(
 //        return CircuitBreakerRpcClient.newPerHostAndMethodDecorator(
                 groupName -> CircuitBreaker.builder("frontend" + '_' + groupName)
-                                           .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
+                                           .listener(CircuitBreakerListener.metricCollecting(meterRegistry))
                                            .failureRateThreshold(0.1)  // TODO need tuning
                                            .build(),
                 CircuitBreakerRuleWithContent.onResponse((ctx, response) ->
@@ -119,7 +119,7 @@ public class ArmeriaClientConfig {
         return CircuitBreakerClient.newPerHostDecorator(
 //        return CircuitBreakerHttpClient.newPerHostAndMethodDecorator(
                 groupName -> CircuitBreaker.builder("frontend" + '_' + groupName)
-                                           .listener(new MetricCollectingCircuitBreakerListener(meterRegistry))
+                                           .listener(CircuitBreakerListener.metricCollecting(meterRegistry))
                                            .failureRateThreshold(0.1)  // TODO need tuning
                                            .build(),
                 // Armeria's ThrottlingService returns 429 while throttling
