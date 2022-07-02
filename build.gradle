@@ -23,8 +23,8 @@ subprojects {
     group = "info.matsumana.armeria"
     version = "0.8.1-SNAPSHOT"
 
-    sourceCompatibility = JavaVersion.VERSION_14
-    targetCompatibility = JavaVersion.VERSION_14
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
     repositories {

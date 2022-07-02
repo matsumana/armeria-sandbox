@@ -1,0 +1,5 @@
+armeria:
+  ports:
+    - port: 8080
+  internal-services:
+    port: 18080

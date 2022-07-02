@@ -13,7 +13,7 @@ import com.linecorp.armeria.client.Clients;
 import com.linecorp.armeria.client.WebClient;
 import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
-import com.linecorp.armeria.server.Server;
+import com.linecorp.armeria.spring.InternalServices;
 
 import info.matsumana.armeria.TestContext;
 import info.matsumana.armeria.grpc.Hello2.Hello2Request;
@@ -23,17 +23,17 @@ import info.matsumana.armeria.grpc.Hello2ServiceGrpc.Hello2ServiceBlockingStub;
 @SpringJUnitConfig(TestContext.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE,
         properties = "centraldogma.server.host=")
-public class IntegrationTest {
+public class IntegrationTest2 {
 
     @Autowired
-    private Server server;
+    private InternalServices internalServices;
 
     private WebClient client;
     private Hello2ServiceBlockingStub hello2Service;
 
     @BeforeEach
     public void beforeEach() {
-        final int port = server.activeLocalPort();
+        final int port = internalServices.internalServicePort().getPort();
         client = WebClient.of("http://127.0.0.1:" + port);
         hello2Service = Clients.builder(String.format("gproto+h2c://127.0.0.1:%d/", port))
                                .build(Hello2ServiceBlockingStub.class);

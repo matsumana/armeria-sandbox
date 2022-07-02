@@ -9,36 +9,34 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
+import com.linecorp.armeria.client.Clients;
 import com.linecorp.armeria.client.WebClient;
 import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
-import com.linecorp.armeria.server.Server;
+import com.linecorp.armeria.common.thrift.ThriftFuture;
+import com.linecorp.armeria.spring.InternalServices;
 
 import info.matsumana.armeria.TestContext;
-import info.matsumana.armeria.bean.handler.HelloResponse;
+import info.matsumana.armeria.thrift.Hello1Response;
+import info.matsumana.armeria.thrift.Hello1Service;
 
 @SpringJUnitConfig(TestContext.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE,
         properties = "centraldogma.server.host=")
-public class IntegrationTest {
-
-    private static final ObjectReader objectReader = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .readerFor(new TypeReference<HelloResponse>() {});
+public class IntegrationTest1 {
 
     @Autowired
-    private Server server;
+    private InternalServices internalServices;
 
     private WebClient client;
+    private Hello1Service.AsyncIface hello1Service;
 
     @BeforeEach
     public void beforeEach() {
-        client = WebClient.of("http://127.0.0.1:" + server.activeLocalPort());
+        final int port = internalServices.internalServicePort().getPort();
+        client = WebClient.of("http://127.0.0.1:" + port);
+        hello1Service = Clients.builder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello1", port))
+                               .build(Hello1Service.AsyncIface.class);
     }
 
     @Test
@@ -62,11 +60,9 @@ public class IntegrationTest {
 
     @Test
     public void hello() throws Exception {
-        final AggregatedHttpResponse res = client.get("/hello/bar").aggregate().join();
-        assertThat(res.status()).isEqualTo(HttpStatus.OK);
-
-        final String json = res.content().toStringUtf8();
-        final HelloResponse response = objectReader.readValue(json);
-        assertThat(response.getMessage()).isEqualTo("Hello, bar");
+        final ThriftFuture<Hello1Response> future = new ThriftFuture<>();
+        hello1Service.hello("foo", future);
+        final Hello1Response res = future.get();
+        assertThat(res.getMessage()).isEqualTo("Hello, foo");
     }
 }
