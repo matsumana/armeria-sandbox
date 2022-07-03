@@ -10,9 +10,6 @@ COPY --chown=app:app ./build/libs/META-INF         /app/META-INF
 COPY --chown=app:app ./build/libs/BOOT-INF/lib-app /app/lib-app
 COPY --chown=app:app ./build/libs/BOOT-INF/classes /app
 
-ENV JAVA_HOME "/app/jre"
-ENV PATH "$JAVA_HOME/bin:$PATH"
-
 CMD ["/bin/bash"]
 
 EXPOSE 8080
