@@ -34,20 +34,20 @@ docker-build:
 	mv $(PWD)/armeria-sandbox-backend2/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend2/build/libs/BOOT-INF/lib-app
 	mv $(PWD)/armeria-sandbox-backend3/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend3/build/libs/BOOT-INF/lib-app
 	mv $(PWD)/armeria-sandbox-backend4/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend4/build/libs/BOOT-INF/lib-app
-	docker build -t localhost:5000/armeria-sandbox-job-kubernetes:latest ./armeria-sandbox-job-kubernetes
-	docker build -t localhost:5000/armeria-sandbox-frontend:latest ./armeria-sandbox-frontend
-	docker build -t localhost:5000/armeria-sandbox-backend1:latest ./armeria-sandbox-backend1
-	docker build -t localhost:5000/armeria-sandbox-backend2:latest ./armeria-sandbox-backend2
-	docker build -t localhost:5000/armeria-sandbox-backend3:latest ./armeria-sandbox-backend3
-	docker build -t localhost:5000/armeria-sandbox-backend4:latest ./armeria-sandbox-backend4
+	docker build --platform linux/amd64 -t localhost:15000/armeria-sandbox-job-kubernetes:latest ./armeria-sandbox-job-kubernetes
+	docker build --platform linux/amd64 -t localhost:15000/armeria-sandbox-frontend:latest ./armeria-sandbox-frontend
+	docker build --platform linux/amd64 -t localhost:15000/armeria-sandbox-backend1:latest ./armeria-sandbox-backend1
+	docker build --platform linux/amd64 -t localhost:15000/armeria-sandbox-backend2:latest ./armeria-sandbox-backend2
+	docker build --platform linux/amd64 -t localhost:15000/armeria-sandbox-backend3:latest ./armeria-sandbox-backend3
+	docker build --platform linux/amd64 -t localhost:15000/armeria-sandbox-backend4:latest ./armeria-sandbox-backend4
 
 docker-push:
-	docker push localhost:5000/armeria-sandbox-job-kubernetes:latest
-	docker push localhost:5000/armeria-sandbox-frontend:latest
-	docker push localhost:5000/armeria-sandbox-backend1:latest
-	docker push localhost:5000/armeria-sandbox-backend2:latest
-	docker push localhost:5000/armeria-sandbox-backend3:latest
-	docker push localhost:5000/armeria-sandbox-backend4:latest
+	docker push localhost:15000/armeria-sandbox-job-kubernetes:latest
+	docker push localhost:15000/armeria-sandbox-frontend:latest
+	docker push localhost:15000/armeria-sandbox-backend1:latest
+	docker push localhost:15000/armeria-sandbox-backend2:latest
+	docker push localhost:15000/armeria-sandbox-backend3:latest
+	docker push localhost:15000/armeria-sandbox-backend4:latest
 
 kubectl-create-infra:
 	kubectl apply -f ./manifests/infra -R

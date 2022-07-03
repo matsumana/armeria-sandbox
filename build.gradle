@@ -27,6 +27,10 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_17
     [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
+    jar {
+        enabled = false
+    }
+
     repositories {
         mavenCentral()
     }

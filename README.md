@@ -36,7 +36,7 @@ ref: [Get started with Docker for Mac - Kubernetes](https://docs.docker.com/dock
 #### launch local Docker registry
 
 ```
-$ docker run -d -p 5000:5000 --name registry registry:2.6
+$ docker run -d -p 15000:5000 --name registry registry:2.8.1
 ```
 
 #### launch dependent Docker containers

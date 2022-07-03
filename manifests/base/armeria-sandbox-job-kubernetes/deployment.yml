@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: armeria-sandbox-job-kubernetes
-          image: localhost:5000/armeria-sandbox-job-kubernetes
+          image: localhost:15000/armeria-sandbox-job-kubernetes
           envFrom:
             - configMapRef:
                 name: armeria-sandbox-job-kubernetes-config
@@ -63,13 +63,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /internal/healthcheck
-              port: 8080
+              port: 18080
             initialDelaySeconds: 60  # Need to wait until the app starts up
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /internal/healthcheck
-              port: 8080
+              port: 18080
             initialDelaySeconds: 30  # Need to wait until the app is ready
             periodSeconds: 10
           lifecycle:
