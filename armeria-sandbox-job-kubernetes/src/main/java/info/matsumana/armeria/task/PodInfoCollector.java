@@ -3,6 +3,7 @@ package info.matsumana.armeria.task;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.linecorp.centraldogma.client.CentralDogma;
 import com.linecorp.centraldogma.common.Change;
+import com.linecorp.centraldogma.common.Markup;
 import com.linecorp.centraldogma.common.Revision;
 
 import info.matsumana.armeria.bean.kubernetes.PodList;
@@ -67,7 +69,8 @@ public class PodInfoCollector {
                           EndpointGroupHelper.CENTRAL_DOGMA_REPOSITORY,
                           Revision.HEAD,
                           String.format("Updated by %s", getClass().getName()),
-                          Change.ofTextUpsert(String.format("/%s.json", app), json));
+                          "", Markup.PLAINTEXT,
+                          List.of(Change.ofJsonUpsert(String.format("/%s.json", app), json)));
     }
 
     private PodList getPodInfo(String app) {
