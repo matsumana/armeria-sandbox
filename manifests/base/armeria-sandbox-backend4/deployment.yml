@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: armeria-sandbox-backend4
-          image: localhost:5000/armeria-sandbox-backend4
+          image: localhost:15000/armeria-sandbox-backend4
           envFrom:
             - configMapRef:
                 name: armeria-sandbox-backend4-config

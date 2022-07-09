@@ -1,0 +1,15 @@
+{
+  "file": {
+    "name": "throttling.json",
+    "type": "JSON",
+    "content": "{\"backend1\":{\"ratio\":1},\"backend2\":{\"ratio\":1},\"backend3\":{\"ratio\":1},\"backend4\":{\"ratio\":1}}",
+    "path": "/throttling.json"
+  },
+  "commitMessage": {
+    "summary": "Register initial throttling.json",
+    "detail": {
+      "content": "",
+      "markup": "PLAINTEXT"
+    }
+  }
+}

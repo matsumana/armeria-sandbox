@@ -13,30 +13,30 @@ import com.linecorp.armeria.client.Clients;
 import com.linecorp.armeria.client.WebClient;
 import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
-import com.linecorp.armeria.common.thrift.ThriftFuture;
 import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
-import info.matsumana.armeria.thrift.Hello1Response;
-import info.matsumana.armeria.thrift.Hello1Service;
+import info.matsumana.armeria.grpc.Hello2.Hello2Request;
+import info.matsumana.armeria.grpc.Hello2.Hello2Response;
+import info.matsumana.armeria.grpc.Hello2ServiceGrpc.Hello2ServiceBlockingStub;
 
 @SpringJUnitConfig(TestContext.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE,
         properties = "centraldogma.server.host=")
-public class IntegrationTest {
+public class IntegrationTest2 {
 
     @Autowired
     private Server server;
 
     private WebClient client;
-    private Hello1Service.AsyncIface hello1Service;
+    private Hello2ServiceBlockingStub hello2Service;
 
     @BeforeEach
     public void beforeEach() {
         final int port = server.activeLocalPort();
         client = WebClient.of("http://127.0.0.1:" + port);
-        hello1Service = Clients.builder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello1", port))
-                               .build(Hello1Service.AsyncIface.class);
+        hello2Service = Clients.builder(String.format("gproto+h2c://127.0.0.1:%d/", port))
+                               .build(Hello2ServiceBlockingStub.class);
     }
 
     @Test
@@ -60,9 +60,11 @@ public class IntegrationTest {
 
     @Test
     public void hello() throws Exception {
-        final ThriftFuture<Hello1Response> future = new ThriftFuture<>();
-        hello1Service.hello("foo", future);
-        final Hello1Response res = future.get();
-        assertThat(res.getMessage()).isEqualTo("Hello, foo");
+        final Hello2Request request = Hello2Request.newBuilder()
+                                                   .setName("foo")
+                                                   .build();
+        final Hello2Response response = hello2Service.hello(request);
+        final String message = response.getMessage();
+        assertThat(message).isEqualTo("Hello, foo");
     }
 }

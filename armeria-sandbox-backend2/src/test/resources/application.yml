@@ -1,4 +1,3 @@
 armeria:
   ports:
-  - port: 0
-    protocol: HTTP
+    - port: 0

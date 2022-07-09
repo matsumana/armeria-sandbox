@@ -34,20 +34,20 @@ docker-build:
 	mv $(PWD)/armeria-sandbox-backend2/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend2/build/libs/BOOT-INF/lib-app
 	mv $(PWD)/armeria-sandbox-backend3/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend3/build/libs/BOOT-INF/lib-app
 	mv $(PWD)/armeria-sandbox-backend4/build/libs/BOOT-INF/lib/armeria-sandbox-*.jar $(PWD)/armeria-sandbox-backend4/build/libs/BOOT-INF/lib-app
-	docker build -t localhost:5000/armeria-sandbox-job-kubernetes:latest ./armeria-sandbox-job-kubernetes
-	docker build -t localhost:5000/armeria-sandbox-frontend:latest ./armeria-sandbox-frontend
-	docker build -t localhost:5000/armeria-sandbox-backend1:latest ./armeria-sandbox-backend1
-	docker build -t localhost:5000/armeria-sandbox-backend2:latest ./armeria-sandbox-backend2
-	docker build -t localhost:5000/armeria-sandbox-backend3:latest ./armeria-sandbox-backend3
-	docker build -t localhost:5000/armeria-sandbox-backend4:latest ./armeria-sandbox-backend4
+	docker build -t localhost:15000/armeria-sandbox-job-kubernetes:latest ./armeria-sandbox-job-kubernetes
+	docker build -t localhost:15000/armeria-sandbox-frontend:latest ./armeria-sandbox-frontend
+	docker build -t localhost:15000/armeria-sandbox-backend1:latest ./armeria-sandbox-backend1
+	docker build -t localhost:15000/armeria-sandbox-backend2:latest ./armeria-sandbox-backend2
+	docker build -t localhost:15000/armeria-sandbox-backend3:latest ./armeria-sandbox-backend3
+	docker build -t localhost:15000/armeria-sandbox-backend4:latest ./armeria-sandbox-backend4
 
 docker-push:
-	docker push localhost:5000/armeria-sandbox-job-kubernetes:latest
-	docker push localhost:5000/armeria-sandbox-frontend:latest
-	docker push localhost:5000/armeria-sandbox-backend1:latest
-	docker push localhost:5000/armeria-sandbox-backend2:latest
-	docker push localhost:5000/armeria-sandbox-backend3:latest
-	docker push localhost:5000/armeria-sandbox-backend4:latest
+	docker push localhost:15000/armeria-sandbox-job-kubernetes:latest
+	docker push localhost:15000/armeria-sandbox-frontend:latest
+	docker push localhost:15000/armeria-sandbox-backend1:latest
+	docker push localhost:15000/armeria-sandbox-backend2:latest
+	docker push localhost:15000/armeria-sandbox-backend3:latest
+	docker push localhost:15000/armeria-sandbox-backend4:latest
 
 kubectl-create-infra:
 	kubectl apply -f ./manifests/infra -R
@@ -57,9 +57,12 @@ kubectl-delete-infra:
 
 kubectl-create-infra-data:
 	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod --namespace=infra | grep '^centraldogma-' | awk '{print $$1}'))
-	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"armeriaSandbox\"}' http://localhost:36462/api/v1/projects"
-	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"apiServers\"}' http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
-	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"commitMessage\": {\"summary\": \"Add initial throttling.json\", \"detail\": {\"content\": \"\", \"markup\": \"PLAINTEXT\"}}, \"file\": {\"name\": \"throttling.json\", \"type\": \"TEXT\", \"content\": \"{\\\"backend1\\\": {\\\"ratio\\\": 1}, \\\"backend2\\\": {\\\"ratio\\\": 1}, \\\"backend3\\\": {\\\"ratio\\\": 1}, \\\"backend4\\\": {\\\"ratio\\\": 1}}\", \"path\": \"/throttling.json\"}}' http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
+	kubectl cp --namespace=infra ./centralDogmaInitialData/project.json $(CENTRAL_DOGMA_POD):/tmp
+	kubectl cp --namespace=infra ./centralDogmaInitialData/repo.json $(CENTRAL_DOGMA_POD):/tmp
+	kubectl cp --namespace=infra ./centralDogmaInitialData/throttling.json $(CENTRAL_DOGMA_POD):/tmp
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d @/tmp/project.json http://localhost:36462/api/v1/projects"
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d @/tmp/repo.json http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d @/tmp/throttling.json http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
 
 kubectl-create-apps-dev:
 	kustomize build manifests/overlays/dev | kubectl apply -f -

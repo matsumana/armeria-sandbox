@@ -1,0 +1,16 @@
+---
+# Note:
+# This ClusterRoleBinding assigns the default view role to the default service account (system:serviceaccount:<namespace>:default)
+# The purpose is to make this sample application work with k8s easily.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: grant-view-to-default-sa
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: prod
+roleRef:
+  kind: ClusterRole
+  name: view
+  apiGroup: rbac.authorization.k8s.io

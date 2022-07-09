@@ -25,7 +25,7 @@ import info.matsumana.armeria.bean.handler.HelloResponse;
 @SpringJUnitConfig(TestContext.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE,
         properties = "centraldogma.server.host=")
-public class IntegrationTest {
+public class IntegrationTest4 {
 
     private static final ObjectReader objectReader = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -38,7 +38,8 @@ public class IntegrationTest {
 
     @BeforeEach
     public void beforeEach() {
-        client = WebClient.of("http://127.0.0.1:" + server.activeLocalPort());
+        final int port = server.activeLocalPort();
+        client = WebClient.of("http://127.0.0.1:" + port);
     }
 
     @Test

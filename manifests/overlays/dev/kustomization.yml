@@ -3,6 +3,7 @@ namespace: dev
 resources:
   - ../../base
   - namespace.yml
+  - grant-view-to-default-sa.yml
 
 patchesStrategicMerge:
   - armeria-sandbox-backend1/deployment.yml
