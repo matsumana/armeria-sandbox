@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.linecorp.armeria.client.WebClient;
 import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
-import com.linecorp.armeria.spring.InternalServices;
+import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
 import info.matsumana.armeria.bean.handler.HelloResponse;
@@ -32,13 +32,13 @@ public class IntegrationTest4 {
             .readerFor(new TypeReference<HelloResponse>() {});
 
     @Autowired
-    private InternalServices internalServices;
+    private Server server;
 
     private WebClient client;
 
     @BeforeEach
     public void beforeEach() {
-        final int port = internalServices.internalServicePort().getPort();
+        final int port = server.activeLocalPort();
         client = WebClient.of("http://127.0.0.1:" + port);
     }
 

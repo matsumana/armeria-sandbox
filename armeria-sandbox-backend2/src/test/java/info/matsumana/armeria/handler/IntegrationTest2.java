@@ -13,7 +13,7 @@ import com.linecorp.armeria.client.Clients;
 import com.linecorp.armeria.client.WebClient;
 import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
-import com.linecorp.armeria.spring.InternalServices;
+import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
 import info.matsumana.armeria.grpc.Hello2.Hello2Request;
@@ -26,14 +26,14 @@ import info.matsumana.armeria.grpc.Hello2ServiceGrpc.Hello2ServiceBlockingStub;
 public class IntegrationTest2 {
 
     @Autowired
-    private InternalServices internalServices;
+    private Server server;
 
     private WebClient client;
     private Hello2ServiceBlockingStub hello2Service;
 
     @BeforeEach
     public void beforeEach() {
-        final int port = internalServices.internalServicePort().getPort();
+        final int port = server.activeLocalPort();
         client = WebClient.of("http://127.0.0.1:" + port);
         hello2Service = Clients.builder(String.format("gproto+h2c://127.0.0.1:%d/", port))
                                .build(Hello2ServiceBlockingStub.class);

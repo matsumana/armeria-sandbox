@@ -63,13 +63,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /internal/healthcheck
-              port: 18080
+              port: 8080
             initialDelaySeconds: 60  # Need to wait until the app starts up
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /internal/healthcheck
-              port: 18080
+              port: 8080
             initialDelaySeconds: 30  # Need to wait until the app is ready
             periodSeconds: 10
           lifecycle:

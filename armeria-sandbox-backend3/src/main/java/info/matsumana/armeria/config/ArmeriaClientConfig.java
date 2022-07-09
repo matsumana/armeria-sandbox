@@ -21,6 +21,7 @@ import com.linecorp.armeria.client.logging.LoggingClient;
 import com.linecorp.armeria.client.retrofit2.ArmeriaRetrofit;
 import com.linecorp.armeria.client.retry.RetryRule;
 import com.linecorp.armeria.client.retry.RetryingClient;
+import com.linecorp.armeria.common.SessionProtocol;
 
 import brave.Tracing;
 import info.matsumana.armeria.helper.EndpointGroupHelper;
@@ -54,7 +55,7 @@ public class ArmeriaClientConfig {
                                                                                             "/internal/healthcheck");
         healthCheckedGroup.newMeterBinder("backend4").bindTo(meterRegistry);
 
-        return ArmeriaRetrofit.builder("http", healthCheckedGroup)
+        return ArmeriaRetrofit.builder(SessionProtocol.HTTP, healthCheckedGroup)
                               .addConverterFactory(JacksonConverterFactory.create())
                               .option(createDecorationOption())
                               .build();

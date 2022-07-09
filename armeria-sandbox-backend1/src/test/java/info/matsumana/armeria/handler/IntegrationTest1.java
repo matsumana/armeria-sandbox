@@ -14,7 +14,7 @@ import com.linecorp.armeria.client.WebClient;
 import com.linecorp.armeria.common.AggregatedHttpResponse;
 import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.common.thrift.ThriftFuture;
-import com.linecorp.armeria.spring.InternalServices;
+import com.linecorp.armeria.server.Server;
 
 import info.matsumana.armeria.TestContext;
 import info.matsumana.armeria.thrift.Hello1Response;
@@ -26,14 +26,14 @@ import info.matsumana.armeria.thrift.Hello1Service;
 public class IntegrationTest1 {
 
     @Autowired
-    private InternalServices internalServices;
+    private Server server;
 
     private WebClient client;
     private Hello1Service.AsyncIface hello1Service;
 
     @BeforeEach
     public void beforeEach() {
-        final int port = internalServices.internalServicePort().getPort();
+        final int port = server.activeLocalPort();
         client = WebClient.of("http://127.0.0.1:" + port);
         hello1Service = Clients.builder(String.format("tbinary+h2c://127.0.0.1:%d/thrift/hello1", port))
                                .build(Hello1Service.AsyncIface.class);
