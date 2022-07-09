@@ -57,9 +57,12 @@ kubectl-delete-infra:
 
 kubectl-create-infra-data:
 	$(eval CENTRAL_DOGMA_POD := $(shell kubectl get pod --namespace=infra | grep '^centraldogma-' | awk '{print $$1}'))
-	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"armeriaSandbox\"}' http://localhost:36462/api/v1/projects"
-	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"name\": \"apiServers\"}' http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
-	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d '{\"commitMessage\": {\"summary\": \"Add initial throttling.json\", \"detail\": {\"content\": \"\", \"markup\": \"PLAINTEXT\"}}, \"file\": {\"name\": \"throttling.json\", \"type\": \"TEXT\", \"content\": \"{\\\"backend1\\\": {\\\"ratio\\\": 1}, \\\"backend2\\\": {\\\"ratio\\\": 1}, \\\"backend3\\\": {\\\"ratio\\\": 1}, \\\"backend4\\\": {\\\"ratio\\\": 1}}\", \"path\": \"/throttling.json\"}}' http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
+	kubectl cp --namespace=infra ./centralDogmaInitialData/project.json $(CENTRAL_DOGMA_POD):/tmp
+	kubectl cp --namespace=infra ./centralDogmaInitialData/repo.json $(CENTRAL_DOGMA_POD):/tmp
+	kubectl cp --namespace=infra ./centralDogmaInitialData/throttling.json $(CENTRAL_DOGMA_POD):/tmp
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d @/tmp/project.json http://localhost:36462/api/v1/projects"
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d @/tmp/repo.json http://localhost:36462/api/v1/projects/armeriaSandbox/repos"
+	kubectl exec --namespace=infra -it $(CENTRAL_DOGMA_POD) -- /bin/bash -c "curl -X POST -H 'authorization: bearer anonymous' -H 'Content-Type: application/json' -d @/tmp/throttling.json http://localhost:36462/api/v0/projects/armeriaSandbox/repositories/apiServers/files/revisions/head"
 
 kubectl-create-apps-dev:
 	kustomize build manifests/overlays/dev | kubectl apply -f -
